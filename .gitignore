@@ -11,6 +11,15 @@ dist/
 .env
 .env.*
 !.env.example
+.dev.vars
+.dev.vars.*
+.wrangler/
+.neon
+.agents/
 
 # Logs
 *.log
+
+# Test Artifacts
+playwright-report/
+test-results/

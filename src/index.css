@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-950 text-slate-100 font-sans antialiased;
+    user-select: none;
+    touch-action: manipulation;
+  }
+}
+
+/* Custom Pirate theme styling */
+.pirate-wood-panel {
+  background: linear-gradient(180deg, #451a03 0%, #291002 100%);
+  border: 4px solid #78350f;
+  box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.15), 0 8px 16px rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+}
+
+.pirate-gold-text {
+  color: #fef08a;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8), 0 0 8px rgba(234, 179, 8, 0.4);
+}
+
+.pirate-button {
+  background: linear-gradient(180deg, #b45309 0%, #78350f 100%);
+  border: 2px solid #fef08a;
+  box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.3), 0 4px 6px rgba(0, 0, 0, 0.5);
+  transition: all 0.15s ease-in-out;
+}
+
+.pirate-button:hover:not(:disabled) {
+  background: linear-gradient(180deg, #d97706 0%, #92400e 100%);
+  transform: translateY(-1px);
+  box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.4), 0 6px 12px rgba(234, 179, 8, 0.3);
+}
+
+.pirate-button:active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.6);
+}
+
+.pirate-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(60%);
+}
+
+:root { --sea-ink:#081f2a; --sea-panel:#102e38; --sea-line:#456068; --brass:#ddb46c; --paper:#f4e6c9; --muted:#aac1c2; }
+body { margin:0; }
+button, select, input { font:inherit; }
+button:focus-visible, [role="tab"]:focus-visible, input:focus-visible, select:focus-visible { outline:3px solid #85e3d0; outline-offset:4px; }
+kbd { font-family:inherit; font-size:11px; font-weight:700; color:var(--brass); }
+.pirate-wood-panel { background:linear-gradient(145deg,#173b42,#0b242f); border:1px solid var(--brass); border-radius:12px; box-shadow:0 20px 70px #0009,inset 0 0 0 4px #ffffff06; }
+.pirate-button { background:linear-gradient(180deg,#ebca87,#c99b51); color:#172832!important; border:1px solid #ffe9bd; box-shadow:0 5px 18px #0004; }
+.pirate-button:hover:not(:disabled) { background:linear-gradient(180deg,#f6daa6,#dcb66f); box-shadow:0 7px 24px #0005; }
+.pirate-gold-text { color:var(--paper);text-shadow:0 2px 8px #0008; font-family:Georgia,'Times New Roman',serif; }
+.harbor-screen { width:100%; height:100dvh; overflow-y:auto; padding:28px; display:flex; background:var(--sea-ink); color:var(--paper); }
+.harbor-background { position:fixed; inset:0; pointer-events:none; background:linear-gradient(90deg,#061c2aea,#06263680),url('/assets/ui_scene_background.png') center/cover; }
+.harbor-shell { position:relative; width:min(100%,1040px); margin:auto; padding:30px 42px 22px; background:linear-gradient(120deg,#0a2532f5,#0f3540ef); border:1px solid #d6b57966; box-shadow:0 24px 80px #0006; border-radius:4px; }
+.harbor-heading h1 { font:700 clamp(36px,4vw,58px)/1.1 Georgia,serif; letter-spacing:-1.5px; margin:5px 0; }
+.harbor-heading h1 span { color:var(--brass); }
+.harbor-heading p { font-size:13px; color:var(--muted); margin:8px 0 20px; }
+.nautical-eyebrow { font-size:10px; text-transform:uppercase; letter-spacing:2.5px; color:var(--brass); font-weight:700; }
+.harbor-navigation { display:flex; gap:25px; border-bottom:1px solid #b5c7be33; }
+.harbor-navigation button { min-height:44px; color:var(--muted); font-size:13px; padding:10px 0; border-bottom:2px solid transparent; }
+.harbor-navigation button[aria-selected="true"] { color:var(--paper); border-color:var(--brass); }
+.harbor-content { padding:25px 0 8px; }
+.voyage-layout { display:grid; grid-template-columns:1fr 1fr; gap:54px; }
+.voyage-brief h2 { font:700 clamp(28px,3vw,40px)/1.1 Georgia,serif; margin:12px 0; letter-spacing:-.6px; }
+.voyage-brief h2 em { font-weight:400; color:var(--brass); }
+.voyage-brief>p { max-width:350px; font-size:13px; line-height:1.7; color:var(--muted); }
+.voyage-settings { display:flex; gap:24px; margin:18px 0; font-size:11px; color:var(--muted); }
+.voyage-settings strong { color:var(--paper); font-size:18px; margin-right:3px; }
+.voyage-actions { display:flex; align-items:center; gap:20px; }
+.voyage-start { border-radius:3px; min-height:57px; padding:10px 24px; font-weight:800; font-size:18px; text-align:left; flex:1; max-width:250px; }
+.voyage-start>span { float:right; padding-left:28px; font-size:26px; }
+.voyage-start small { display:block; font-size:9px; letter-spacing:2px; text-transform:uppercase; opacity:.7; }
+.voyage-options { min-height:48px; color:var(--paper); font-size:13px; border-bottom:1px solid #ddb46c55; }
+.captains-chart { border-left:1px solid #b5c7be26; padding-left:35px; }
+.cannon-diagram { position:relative; height:172px; display:flex; justify-content:center; align-items:end; margin-bottom:12px; }
+.cannon-diagram img { height:115px; width:auto; filter:drop-shadow(0 9px 7px #0006); }
+.cannon-diagram>span { position:absolute; font-size:12px; color:var(--paper); text-align:center; }
+.cannon-diagram kbd { display:block; margin-bottom:5px; }
+.diagram-front { top:16px; left:50%; transform:translateX(-50%); }
+.diagram-port { left:4px; top:88px; }
+.diagram-starboard { right:0; top:88px; }
+.cannon-diagram small { font-size:10px; color:var(--muted); }
+.chart-controls { display:flex; gap:8px; justify-content:space-between; font-size:10px; padding:12px 0; border-block:1px solid #b5c7be26; }
+.chart-controls kbd { display:block; }
+.chart-tip { font-size:11px; line-height:1.6; color:var(--muted); margin:13px 0; }
+.enemy-guide { display:grid; gap:6px; font-size:11px; color:var(--muted); }
+.enemy-guide strong { color:var(--paper); }
+.enemy-guide i { display:inline-block; width:7px; height:7px; margin-right:5px; }
+.chaser-mark { background:#ff886d; border-radius:50%; }
+.shooter-mark { background:#efc475; transform:rotate(45deg); }
+.chart-touch { font-size:9px; color:var(--muted); margin-top:12px; }
+.harbor-footer { border-top:1px solid #b5c7be26; margin-top:18px; padding-top:15px; display:flex; align-items:center; justify-content:space-between; gap:15px; font-size:10px; color:var(--muted); }
+.harbor-footer img { width:60px; opacity:.7; }
+.harbor-records { max-width:820px; }
+.battle-hud { position:absolute; inset:0; padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)); pointer-events:none; color:var(--paper); }
+.battle-top { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.hull-panel, .battle-metrics, .battle-pause, .desktop-battery { background:#08232eeb; border:1px solid #d6b57970; border-radius:5px; box-shadow:0 5px 18px #0003; }
+.hull-panel { width:210px; padding:10px 14px; }
+.hull-caption { display:flex; justify-content:space-between; align-items:center; gap:12px; font-size:10px; }
+.hull-caption>span { text-transform:uppercase; letter-spacing:1px; color:var(--muted); }
+.hull-caption strong { font-size:14px; }.hull-caption small { font-size:9px; color:var(--muted); }
+.hull-track { height:5px; background:#fff2; margin-top:7px; border-radius:2px; overflow:hidden; }
+.hull-track i { display:block; height:100%; transition:width .1s; }
+.battle-metrics { display:flex; gap:20px; padding:7px 20px; text-align:center; }
+.battle-metrics small { display:block; font-size:9px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); }
+.battle-metrics strong { font-size:22px; font-variant-numeric:tabular-nums; }
+.battle-metrics>div:first-child strong { color:var(--brass); }
+.battle-pause { pointer-events:auto; min-height:44px; padding:10px 15px; font-size:13px; }
+.battle-hint { text-align:center; font-size:11px; color:#e0eee9; margin:10px auto; text-shadow:0 2px 4px #000; }
+.time-critical strong { color:#ff886d; }
+.desktop-battery { position:absolute; bottom:20px; left:50%; transform:translateX(-50%); display:flex; gap:20px; padding:11px 18px 25px; }
+.battery-cell { width:110px; display:grid; grid-template-columns:1fr auto; gap:4px; align-items:center; font-size:11px; }
+.battery-cell kbd { font-size:10px; }.battery-cell small { font-size:9px; color:var(--muted); }
+.battery-track { background:#ffffff20; height:3px; }.battery-track i { display:block; height:100%; background:#ddb46c; }
+.steering-reminder { position:absolute; bottom:6px; left:0; right:0; text-align:center; font-size:9px; color:var(--muted); }
+.touch-helm { display:none; position:absolute; inset:auto 16px 18px; justify-content:space-between; align-items:end; gap:12px; pointer-events:none; }
+.helm-movement,.helm-weapons { display:flex; flex-direction:column; align-items:center; gap:6px; }
+.helm-movement>div,.helm-weapons>div { display:flex; gap:6px; }
+.helm-label { font-size:9px; text-transform:uppercase; color:var(--muted); letter-spacing:2px; }
+.helm-control { pointer-events:auto; touch-action:none; user-select:none; position:relative; overflow:hidden; width:58px; height:56px; background:#0c2d39ed; border:1px solid #ddb46c99; border-radius:10px; box-shadow:0 4px 12px #0004; display:flex; flex-direction:column; justify-content:center; align-items:center; font-size:24px; }
+.helm-control span,.helm-control small { position:relative; }
+.helm-weapons .helm-control { font-size:11px; font-weight:700; width:62px; }
+.helm-control small { font-size:8px; font-weight:400; color:var(--muted); margin-top:4px; }
+.helm-control::before { content:''; position:absolute; bottom:0; left:0; width:var(--charge,100%); height:3px; background:var(--brass); }
+.helm-movement .helm-control::before { display:none; }
+.helm-control.is-held { background:#386364; border-color:#baf6dd; }
+.helm-control.is-reloading { border-color:#7e8e85; }
+@media (max-width:767px), (any-pointer:coarse) { .touch-helm { display:flex; } .desktop-battery { display:none; } }
+@media (max-width:600px) {
+  .harbor-screen { padding:16px 12px 52px; }.harbor-shell { padding:22px 22px 16px; }.harbor-heading h1 { font-size:39px; }.harbor-heading p { margin-bottom:14px; font-size:11px; }
+  .harbor-navigation { gap:18px; }.harbor-navigation button { font-size:11px; }
+  .harbor-content { padding-top:18px; }.voyage-layout { grid-template-columns:1fr; gap:24px; }.voyage-brief h2 { font-size:31px; }.voyage-brief h2 br { display:none; }.voyage-brief h2 br::after { content:' '; }.voyage-brief h2 em { display:block; }
+  .voyage-brief>p { font-size:12px; }.voyage-settings { margin:14px 0; }.captains-chart { border-left:0; border-top:1px solid #b5c7be26; padding:17px 0 0; }.cannon-diagram { height:150px; }.cannon-diagram img { height:94px; }.diagram-port,.diagram-starboard { top:78px; }.chart-tip { margin:10px 0; }.harbor-footer { font-size:9px; }
+  .battle-hud { padding:10px; }.battle-top { gap:7px; }.hull-panel { width:140px; padding:9px; }.hull-caption { gap:5px; }.hull-caption>span { font-size:8px; letter-spacing:0; }.hull-caption strong { font-size:12px; }.hull-caption small { display:none; }.battle-metrics { gap:12px; padding:6px 10px; }.battle-metrics strong { font-size:18px; }.battle-metrics small { font-size:8px; letter-spacing:0; }.battle-pause { padding:7px 12px; }.battle-pause span { display:none; }.battle-hint { font-size:10px; }
+}
+@media (max-height:500px) and (min-width:601px) { .harbor-screen { padding:14px 24px 44px; }.harbor-shell { padding:18px 30px; }.harbor-heading h1 { font-size:32px; }.harbor-heading p { margin:4px 0 8px; }.voyage-brief h2 { font-size:24px; }.voyage-brief h2 br { display:none; }.voyage-layout { gap:30px; }.harbor-content { padding-top:14px; }.cannon-diagram { height:130px; }.cannon-diagram img { height:86px; }.diagram-port,.diagram-starboard { top:65px; }.harbor-footer { margin-top:10px; padding-top:10px; }.battle-hint { display:none; }.helm-control { height:44px; width:50px; }.helm-weapons .helm-control { width:58px; }.touch-helm { bottom:10px; } }
+@media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; } }
+.voyage-brief h2>span,.voyage-brief h2>em { display:block; }
+@media (max-width:600px), (max-height:500px) { .voyage-brief h2>span { display:inline; } }
+@media (min-width:601px) and (min-height:501px) { .harbor-shell { padding-top:24px; padding-bottom:18px; }.harbor-content { padding-top:20px; }.cannon-diagram { height:160px; }.harbor-heading p { margin-bottom:14px; }.voyage-brief h2 { font-size:36px; } }
+@media (max-width:600px) and (orientation:portrait) { .battle-hint::after { content:'Landscape gives you a wider view.'; display:block; color:#aac1c2; font-size:9px; margin-top:8px; } }

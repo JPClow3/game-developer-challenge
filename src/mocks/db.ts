@@ -1,0 +1,199 @@
+import type {
+  MatchRecord,
+  RankingItem,
+  PaginatedResponse,
+  RankingQueryParams,
+  MatchHistoryQueryParams,
+  SubmitMatchRequest,
+  SubmitMatchResponse,
+} from '../types/api';
+import { INITIAL_LEADERBOARD_FIXTURES } from './fixtures';
+
+const STORAGE_KEY_MATCHES = 'pirate_battle_mock_matches_v1';
+const STORAGE_KEY_LEADERBOARD = 'pirate_battle_mock_leaderboard_v1';
+
+export class MockDatabase {
+  private static instance: MockDatabase | null = null;
+  private matches: MatchRecord[] = [];
+  private rankingItems: Omit<RankingItem, 'rank'>[] = [];
+
+  private constructor() {
+    this.loadFromStorage();
+  }
+
+  public static getInstance(): MockDatabase {
+    if (!MockDatabase.instance) {
+      MockDatabase.instance = new MockDatabase();
+    }
+    return MockDatabase.instance;
+  }
+
+  private loadFromStorage(): void {
+    if (typeof window === 'undefined') {
+      this.initDefaults();
+      return;
+    }
+
+    try {
+      const storedMatches = localStorage.getItem(STORAGE_KEY_MATCHES);
+      const storedRanking = localStorage.getItem(STORAGE_KEY_LEADERBOARD);
+
+      if (storedMatches) {
+        this.matches = JSON.parse(storedMatches);
+      }
+      if (storedRanking) {
+        this.rankingItems = JSON.parse(storedRanking);
+      } else {
+        this.rankingItems = [...INITIAL_LEADERBOARD_FIXTURES];
+      }
+    } catch {
+      this.initDefaults();
+    }
+  }
+
+  private initDefaults(): void {
+    this.matches = [];
+    this.rankingItems = [...INITIAL_LEADERBOARD_FIXTURES];
+  }
+
+  private saveToStorage(): void {
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.setItem(STORAGE_KEY_MATCHES, JSON.stringify(this.matches));
+      localStorage.setItem(STORAGE_KEY_LEADERBOARD, JSON.stringify(this.rankingItems));
+    } catch (e) {
+      console.warn('Failed to save mock database to localStorage', e);
+    }
+  }
+
+  public reset(): void {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(STORAGE_KEY_MATCHES);
+      localStorage.removeItem(STORAGE_KEY_LEADERBOARD);
+    }
+    this.initDefaults();
+  }
+
+  public insertMatch(req: SubmitMatchRequest): SubmitMatchResponse {
+    // 1. Idempotency Check: if match id already exists, return existing
+    const existingMatch = this.matches.find((m) => m.id === req.id);
+    if (existingMatch) {
+      const rank = this.computeRank(existingMatch.score);
+      return {
+        match: existingMatch,
+        rankingPosition: rank,
+        isDuplicate: true,
+      };
+    }
+
+    // 2. Create new record
+    const newRecord: MatchRecord = {
+      id: req.id,
+      playerId: req.playerId,
+      playerName: req.playerName,
+      score: req.score,
+      durationSeconds: Math.floor(req.durationSeconds),
+      endReason: req.endReason,
+      sessionDurationSeconds: req.config.sessionDurationSeconds,
+      enemySpawnIntervalSeconds: req.config.enemySpawnIntervalSeconds,
+      playedAt: req.playedAt,
+      createdAt: new Date().toISOString(),
+    };
+
+    this.matches.unshift(newRecord);
+
+    // 3. Add to ranking entries
+    const rankingEntry: Omit<RankingItem, 'rank'> = {
+      matchId: req.id,
+      playerId: req.playerId,
+      playerName: req.playerName || 'Captain Player',
+      score: req.score,
+      durationSeconds: Math.floor(req.durationSeconds),
+      sessionDurationSeconds: req.config.sessionDurationSeconds,
+      enemySpawnIntervalSeconds: req.config.enemySpawnIntervalSeconds,
+      playedAt: req.playedAt,
+      isCurrentPlayer: true,
+    };
+
+    this.rankingItems.push(rankingEntry);
+    this.saveToStorage();
+
+    const rank = this.computeRank(req.score);
+    return {
+      match: newRecord,
+      rankingPosition: rank,
+      isDuplicate: false,
+    };
+  }
+
+  private computeRank(score: number): number {
+    const higher = this.rankingItems.filter((item) => item.score > score).length;
+    return higher + 1;
+  }
+
+  public getRanking(params: RankingQueryParams = {}): PaginatedResponse<RankingItem> {
+    const page = Math.max(1, params.page || 1);
+    const pageSize = Math.max(1, Math.min(50, params.pageSize || 10));
+
+    let filtered = [...this.rankingItems];
+
+    if (params.sessionDuration !== undefined) {
+      filtered = filtered.filter((i) => i.sessionDurationSeconds === params.sessionDuration);
+    }
+    if (params.spawnInterval !== undefined) {
+      filtered = filtered.filter((i) => i.enemySpawnIntervalSeconds === params.spawnInterval);
+    }
+
+    // Deterministic sorting: Score DESC, duration ASC, playedAt ASC
+    filtered.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      if (a.durationSeconds !== b.durationSeconds) return a.durationSeconds - b.durationSeconds;
+      return new Date(a.playedAt).getTime() - new Date(b.playedAt).getTime();
+    });
+
+    const totalItems = filtered.length;
+    const totalPages = Math.ceil(totalItems / pageSize) || 1;
+    const offset = (page - 1) * pageSize;
+    const slice = filtered.slice(offset, offset + pageSize);
+
+    const items: RankingItem[] = slice.map((item, idx) => ({
+      ...item,
+      rank: offset + idx + 1,
+    }));
+
+    return {
+      items,
+      totalItems,
+      page,
+      pageSize,
+      totalPages,
+    };
+  }
+
+  public getHistory(params: MatchHistoryQueryParams = {}): PaginatedResponse<MatchRecord> {
+    const page = Math.max(1, params.page || 1);
+    const pageSize = Math.max(1, Math.min(50, params.pageSize || 10));
+
+    let filtered = [...this.matches];
+
+    if (params.playerId) {
+      filtered = filtered.filter((m) => m.playerId === params.playerId);
+    }
+
+    // Sort by playedAt DESC
+    filtered.sort((a, b) => new Date(b.playedAt).getTime() - new Date(a.playedAt).getTime());
+
+    const totalItems = filtered.length;
+    const totalPages = Math.ceil(totalItems / pageSize) || 1;
+    const offset = (page - 1) * pageSize;
+    const items = filtered.slice(offset, offset + pageSize);
+
+    return {
+      items,
+      totalItems,
+      page,
+      pageSize,
+      totalPages,
+    };
+  }
+}
