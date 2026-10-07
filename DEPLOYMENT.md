@@ -23,9 +23,11 @@ npm.cmd run deploy
 
 Repository: https://github.com/JPClow3/game-developer-challenge (private).
 
-`.github/workflows/deploy.yml` validates pushes and pull requests. Pushes to `main` deploy to this existing Pages project once `CLOUDFLARE_DEPLOY_ENABLED=true` is set as a repository variable. Manual runs are available through Actions.
+`.github/workflows/deploy.yml` validates pushes and pull requests. Automatic deployment is enabled with the repository variable `CLOUDFLARE_DEPLOY_ENABLED=true`: validated pushes to `main` deploy to this existing Pages project. Manual runs are available through Actions.
 
 Deployment requires repository secrets `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN`. The token needs Cloudflare Pages Edit permission on the deployment account. The Neon connection remains a Pages secret; GitHub does not need database credentials. Schema migrations remain a separate, deliberate operation.
+
+The dedicated account token `game-developer-challenge-github-deploy` has Pages Write permission and expires October 7, 2027. Renew it and update the Actions secret before expiration to keep automatic deployments working.
 
 This Pages project uses Direct Upload. GitHub Actions supplies automatic deployment without replacing the project or changing its public URL. The original `junglegaming/game-developer-challenge` remote is preserved as `upstream`; `origin` points to this private repository.
 
@@ -49,7 +51,7 @@ The game currently uses a browser-local player identity and client-submitted sco
 
 ## Verification on October 7, 2026
 
-Production deployment ID: `8ec55950-ef45-4234-b2d4-297b80d8aba3`.
+Verified manual deployment ID: `8ec55950-ef45-4234-b2d4-297b80d8aba3`. Subsequent GitHub deployments can be inspected in the repository's Actions and Deployments views.
 
 Frontend and Functions typechecks, production build, and 212 unit tests passed. Live desktop and mobile Chromium checks covered asset loading, the menu, ranking, rendered combat, match submission, and history. Automation ended the test matches through the simulation harness; this was not a complete natural-duration playthrough or a physical-device test.
 
