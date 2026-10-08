@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { captainTitle, loadCaptainLog, recordPersonalBattle, voyageKey } from '../../../src/game/CaptainLog';
-import { battleReport } from '../../../src/core/simulation/BattleReport';
+import { battleReport, isBattleReport } from '../../../src/core/simulation/BattleReport';
 
 const config={sessionDurationSeconds:120,enemySpawnIntervalSeconds:3,voyage:{difficulty:'open',map:'archipelago'}} as const;
 const report=battleReport({shotsFired:20,hits:10,chasersSunk:3,shootersSunk:2,damageTaken:0,repairsCollected:1,healthRestored:20},5,100,100,true);
@@ -14,6 +14,9 @@ describe('captain progress',()=>{
     expect(captainTitle(log)).toBe('Admiral');expect(log.bests[voyageKey(config)]?.score).toBe(5);
     expect(log.bests[voyageKey({...config,voyage:{difficulty:'storm',map:'archipelago'}})]).toBeUndefined();
     recordPersonalBattle({...match,id:'two',score:1});expect(loadCaptainLog().bests[voyageKey(config)]?.score).toBe(5);
+  });
+  it('rejects incomplete combat reports from storage',()=>{
+    expect(isBattleReport(report)).toBe(true);expect(isBattleReport({...report,stats:[]})).toBe(false);expect(isBattleReport({...report,accuracy:101})).toBe(false);
   });
   it('recovers from damaged storage',()=>{
     localStorage.setItem('pirate_battle_captain_log_v1','{');expect(loadCaptainLog().ids).toEqual([]);

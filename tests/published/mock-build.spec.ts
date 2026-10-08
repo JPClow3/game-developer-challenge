@@ -7,6 +7,8 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('published ranking uses fixtures and scenario selection refreshes the visible board', async ({ page }) => {
+  // Seeded fixture captains belong to the Classic leaderboard.
+  await page.getByLabel('Voyage difficulty').selectOption('classic');
   await page.getByRole('tab', { name: /ranking/i }).click();
   await expect(page.getByText('Edward Teach (Blackbeard)', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Toggle network simulation scenarios panel' }).click();
@@ -66,7 +68,7 @@ test('mock submission persists in history across reload', async ({ page }) => {
   await expect(page.getByText('7 pts', { exact: true })).toBeVisible();
 });
 
-test('production plays Classic without a private session or debug globals', async ({ page }) => {
+test('production plays the selected voyage without a private session or debug globals', async ({ page }) => {
   const requests: string[] = [];
   page.on('request', request => requests.push(new URL(request.url()).pathname));
   await page.getByTestId('btn-set-sail').click();
