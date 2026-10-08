@@ -1,0 +1,506 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Users\\lives\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe",
+      "<checkout>\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "04_weapons_firing_and_scoring",
+      "--repeat-each=5",
+      "--output=test-results/scoring-followup",
+      "--reporter=list,json"
+    ],
+    "configFile": "<checkout>\\playwright.config.ts",
+    "rootDir": "<checkout>/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "<checkout>/test-results/scoring-followup",
+        "repeatEach": 5,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "<checkout>/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      },
+      {
+        "outputDir": "<checkout>/test-results/scoring-followup",
+        "repeatEach": 5,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "mobile-chromium",
+        "name": "mobile-chromium",
+        "testDir": "<checkout>/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list"
+      ],
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": {
+      "command": "\"C:\\Users\\lives\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\node\\bin\\node.exe\" node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5191 --strictPort",
+      "url": "http://127.0.0.1:5191",
+      "reuseExistingServer": true,
+      "timeout": 120000
+    }
+  },
+  "suites": [
+    {
+      "title": "04_weapons_firing_and_scoring.spec.ts",
+      "file": "04_weapons_firing_and_scoring.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "keyboard weapons discharge full salvos, start cooldowns and score projectile kills",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4908,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-08T04:59:00.899Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<checkout>\\test-results\\scoring-followup\\04_weapons_firing_and_scor-fa940--and-score-projectile-kills-chromium\\test-finished-1.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "be7e388f103ecd6816cf-bc2b5e3c618e01009eee",
+          "file": "04_weapons_firing_and_scoring.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "keyboard weapons discharge full salvos, start cooldowns and score projectile kills",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4011,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-08T04:59:06.466Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<checkout>\\test-results\\scoring-followup\\04_weapons_firing_and_scor-fa940--and-score-projectile-kills-chromium-repeat1\\test-finished-1.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "be7e388f103ecd6816cf-7081aa8f2bbc034a6d72",
+          "file": "04_weapons_firing_and_scoring.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "keyboard weapons discharge full salvos, start cooldowns and score projectile kills",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4073,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-08T04:59:11.139Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<checkout>\\test-results\\scoring-followup\\04_weapons_firing_and_scor-fa940--and-score-projectile-kills-chromium-repeat2\\test-finished-1.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "be7e388f103ecd6816cf-67f2c5bd30151380dc9d",
+          "file": "04_weapons_firing_and_scoring.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "keyboard weapons discharge full salvos, start cooldowns and score projectile kills",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3889,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-08T04:59:15.832Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<checkout>\\test-results\\scoring-followup\\04_weapons_firing_and_scor-fa940--and-score-projectile-kills-chromium-repeat3\\test-finished-1.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "be7e388f103ecd6816cf-d60a49b56a779e0584f1",
+          "file": "04_weapons_firing_and_scoring.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "keyboard weapons discharge full salvos, start cooldowns and score projectile kills",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3676,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-08T04:59:20.327Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<checkout>\\test-results\\scoring-followup\\04_weapons_firing_and_scor-fa940--and-score-projectile-kills-chromium-repeat4\\test-finished-1.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "be7e388f103ecd6816cf-4eea7e6f4a78b30afdbf",
+          "file": "04_weapons_firing_and_scoring.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "keyboard weapons discharge full salvos, start cooldowns and score projectile kills",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-chromium",
+              "projectName": "mobile-chromium",
+              "results": [
+                {
+                  "workerIndex": 5,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4768,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-08T04:59:24.575Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<checkout>\\test-results\\scoring-followup\\04_weapons_firing_and_scor-fa940--and-score-projectile-kills-mobile-chromium\\test-finished-1.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "be7e388f103ecd6816cf-7a84091c0f6192e7f04c",
+          "file": "04_weapons_firing_and_scoring.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "keyboard weapons discharge full salvos, start cooldowns and score projectile kills",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-chromium",
+              "projectName": "mobile-chromium",
+              "results": [
+                {
+                  "workerIndex": 6,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4607,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-08T04:59:29.989Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<checkout>\\test-results\\scoring-followup\\04_weapons_firing_and_scor-fa940--and-score-projectile-kills-mobile-chromium-repeat1\\test-finished-1.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "be7e388f103ecd6816cf-78a1dccbf51ae1856c1e",
+          "file": "04_weapons_firing_and_scoring.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "keyboard weapons discharge full salvos, start cooldowns and score projectile kills",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-chromium",
+              "projectName": "mobile-chromium",
+              "results": [
+                {
+                  "workerIndex": 7,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 5044,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-08T04:59:35.199Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<checkout>\\test-results\\scoring-followup\\04_weapons_firing_and_scor-fa940--and-score-projectile-kills-mobile-chromium-repeat2\\test-finished-1.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "be7e388f103ecd6816cf-b3ea05b0d40725e9bf85",
+          "file": "04_weapons_firing_and_scoring.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "keyboard weapons discharge full salvos, start cooldowns and score projectile kills",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-chromium",
+              "projectName": "mobile-chromium",
+              "results": [
+                {
+                  "workerIndex": 8,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4781,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-08T04:59:40.852Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<checkout>\\test-results\\scoring-followup\\04_weapons_firing_and_scor-fa940--and-score-projectile-kills-mobile-chromium-repeat3\\test-finished-1.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "be7e388f103ecd6816cf-b959b8dea6ad1912e5dc",
+          "file": "04_weapons_firing_and_scoring.spec.ts",
+          "line": 3,
+          "column": 1
+        },
+        {
+          "title": "keyboard weapons discharge full salvos, start cooldowns and score projectile kills",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "mobile-chromium",
+              "projectName": "mobile-chromium",
+              "results": [
+                {
+                  "workerIndex": 9,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4707,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-08T04:59:46.253Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "<checkout>\\test-results\\scoring-followup\\04_weapons_firing_and_scor-fa940--and-score-projectile-kills-mobile-chromium-repeat4\\test-finished-1.png"
+                    }
+                  ]
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "be7e388f103ecd6816cf-1c4bb11764775f4d9736",
+          "file": "04_weapons_firing_and_scoring.spec.ts",
+          "line": 3,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-08T04:58:59.371Z",
+    "duration": 52056.733,
+    "expected": 10,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

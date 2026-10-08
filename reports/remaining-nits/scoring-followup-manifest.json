@@ -1,0 +1,16 @@
+{
+  "recordedAt": "2026-10-08T05:00:42.344Z",
+  "sourceCommit": "231c0c7e632adfbdb3161879a42b35db1cbbb45f",
+  "testFile": "tests/e2e/04_weapons_firing_and_scoring.spec.ts",
+  "testFileDigest": "e7564287620fd63c2ba5358002e5af2f7ab35ed766e72ec2f2650cface67404c",
+  "scope": "Five repetitions per desktop/mobile project on local Windows; zero test retries",
+  "stats": {
+    "startTime": "2026-10-08T04:58:59.371Z",
+    "duration": 52056.733,
+    "expected": 10,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "reason": "Linux CI on c9d05b8 scored during earlier live keyboard salvos; the absolute score assertion expected 1 but observed 2. The controlled kill now measures an exact increment and freezes unrelated combat."
+}

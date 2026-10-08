@@ -24,6 +24,12 @@ The [manifest](remaining-nits/manifest.json) records source provenance and count
 
 One exploratory browser run was interrupted by a Vite reload when the queue type guard was edited during execution. It is not the acceptance run above. The complete suite was restarted after source changes stopped; its final report has no failures or flaky cases.
 
+## CI scoring follow-up
+
+The first [Linux CI run](https://github.com/JPClow3/game-developer-challenge/actions/runs/37728962997), on `c9d05b8`, passed 104 gameplay cases and skipped the five desktop touch/portrait cases. Its weapons case failed because earlier real keyboard salvos had already earned a point: the controlled kill reached 2 while the test assumed an absolute total of 1. This was a test timing assumption, not a renderer baseline mismatch.
+
+Source `231c0c7` freezes live ticks for the controlled scoring phase, clears unrelated combat and resets the spawn cooldown. It asserts that the target is destroyed, the score increases by exactly one, and the HUD displays the resulting total. [Ten local repetitions](remaining-nits/scoring-followup.json), five per desktop/mobile project, passed with zero failures, flaky results or retries. The [follow-up manifest](remaining-nits/scoring-followup-manifest.json) records that source and test-file digest. These supplement the earlier full local snapshot; the next complete CI run remains a separate gate.
+
 These are local Windows results. CI checks on Windows and the pinned Linux Playwright image, deployment identity and live public-browser checks are separate release gates. No physical-phone performance claim is made.
 
 Reproduce with `npm ci`, `npm test`, `npm run lint`, `npm run build`, `npm run test:e2e`, `npm run test:leaderboard` and `npm run test:published`. Open the retained fixture-build report with `npx playwright show-report reports/remaining-nits/published`.
