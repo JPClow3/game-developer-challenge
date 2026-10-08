@@ -36,14 +36,17 @@ test.describe('Flow 03: Combat Kinematics, Steering & Obstacle Collisions', () =
 
     // 4. Steer with D (turn right)
     await page.keyboard.down('KeyD');
-    await page.waitForTimeout(400);
-    await page.keyboard.up('KeyD');
-
-    const turnedPos = await page.evaluate(() => {
-      const sim = (window as any).__PIRATE_SIMULATION__;
-      return sim.player.kinematic.rotation;
-    });
-    expect(turnedPos).toBeGreaterThan(initialPos.rot);
+    try {
+      // Slow renderers can keep the key held long enough to cross +/-pi.
+      // Check actual clockwise movement over the latest fixed simulation tick.
+      await expect.poll(() => page.evaluate(() => {
+        const state = (window as any).__PIRATE_SIMULATION__.player.kinematic;
+        const delta = state.rotation - state.prevRotation;
+        return state.angularVelocity > 0 ? Math.atan2(Math.sin(delta), Math.cos(delta)) : 0;
+      })).toBeGreaterThan(0);
+    } finally {
+      await page.keyboard.up('KeyD');
+    }
 
     // 5. Test island collision invariant: position cannot penetrate island center closer than radius
     const collisionCheck = await page.evaluate(() => {
