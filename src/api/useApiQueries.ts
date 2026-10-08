@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchRanking, fetchMatchHistory, submitMatch } from './rankingApi';
+import { fetchRanking, fetchMatchHistory } from './rankingApi';
 import { PendingSubmissionQueue } from './pendingQueue';
+import { isRetryableApiError } from './client';
 import type {
   RankingQueryParams,
   MatchHistoryQueryParams,
@@ -16,9 +17,9 @@ export const QUERY_KEYS = {
 export function useRankingQuery(params: RankingQueryParams) {
   return useQuery({
     queryKey: QUERY_KEYS.ranking(params),
-    queryFn: () => fetchRanking(params),
+    queryFn: ({ signal }) => fetchRanking(params, signal),
     staleTime: 5000,
-    retry: 2,
+    retry: (count, error) => count < 2 && isRetryableApiError(error),
     placeholderData: (prev) => prev,
   });
 }
@@ -26,9 +27,9 @@ export function useRankingQuery(params: RankingQueryParams) {
 export function useMatchHistoryQuery(params: MatchHistoryQueryParams) {
   return useQuery({
     queryKey: QUERY_KEYS.history(params),
-    queryFn: () => fetchMatchHistory(params),
+    queryFn: ({ signal }) => fetchMatchHistory(params, signal),
     staleTime: 5000,
-    retry: 2,
+    retry: (count, error) => count < 2 && isRetryableApiError(error),
     placeholderData: (prev) => prev,
   });
 }
@@ -39,16 +40,7 @@ export function useSubmitMatchMutation() {
 
   return useMutation({
     mutationFn: async (req: SubmitMatchRequest): Promise<SubmitMatchResponse> => {
-      try {
-        const res = await submitMatch(req);
-        // If it succeeded, ensure it's removed from pending
-        queue.remove(req.id);
-        return res;
-      } catch (error) {
-        // Enqueue to persistent storage for retry
-        queue.enqueue(req, error instanceof Error ? error.message : String(error));
-        throw error;
-      }
+      return queue.submit(req);
     },
     onSuccess: () => {
       // Invalidate both ranking and history queries to refetch fresh data

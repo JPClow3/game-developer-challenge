@@ -1,8 +1,9 @@
 import { useDialogFocus } from './useDialogFocus';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { GameplayConfig } from '../types/config';
-import { validateGameplayConfig, saveUserConfigToStorage } from '../types/config';
+import { validateGameplayConfig, saveUserConfigToStorage, MIN_SPAWN_INTERVAL, MAX_SPAWN_INTERVAL } from '../types/config';
 import { AudioManager } from '../audio/AudioManager';
+import { loadHelmSettings, saveHelmSettings } from '../game/HelmSettings';
 
 interface OptionsModalProps {
   currentConfig: GameplayConfig;
@@ -22,6 +23,15 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
     currentConfig.spawner.spawnIntervalSeconds
   );
   const [error, setError] = useState<string | null>(null);
+  const [helm,setHelm]=useState(loadHelmSettings);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    setDuration(currentConfig.sessionDurationSeconds);
+    setSpawnInterval(Math.round(currentConfig.spawner.spawnIntervalSeconds));
+    setError(null);
+    setHelm(loadHelmSettings());
+  }, [isOpen, currentConfig]);
 
   const dialogRef = useDialogFocus(isOpen);
   if (!isOpen) return null;
@@ -44,20 +54,23 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
     }
 
     saveUserConfigToStorage(result.validatedConfig);
+    saveHelmSettings(helm);
+    AudioManager.getInstance().setMuted(helm.muted);
+    AudioManager.getInstance().setMasterVolume(helm.volume);
     onSave(result.validatedConfig);
     onClose();
   };
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/70 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 backdrop-blur-sm p-4"
       ref={dialogRef}
       tabIndex={-1}
       role="dialog"
       aria-modal="true"
       aria-labelledby="options-title"
     >
-      <div className="w-full max-w-md pirate-wood-panel p-6 text-amber-100 flex flex-col space-y-5 animate-in fade-in zoom-in-95 duration-150">
+      <div className="w-full max-w-md my-auto shrink-0 pirate-wood-panel p-6 text-amber-100 flex flex-col space-y-5 animate-in fade-in zoom-in-95 duration-150">
         <div className="flex items-center justify-between border-b border-amber-900/60 pb-3">
           <h2 id="options-title" className="text-2xl font-bold pirate-gold-text uppercase tracking-wide">
             Game Options
@@ -116,9 +129,9 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
             <input
               id="spawn-interval"
               type="range"
-              min={1}
-              max={10}
-              step={0.5}
+              min={MIN_SPAWN_INTERVAL}
+              max={MAX_SPAWN_INTERVAL}
+              step={1}
               value={spawnInterval}
               onChange={(e) => {
                 setSpawnInterval(Number(e.target.value));
@@ -128,10 +141,19 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
               aria-describedby="spawn-help"
             />
             <span id="spawn-help" className="text-xs text-amber-200/60">
-              Interval between new enemy waves (1.0s to 10.0s).
+              Interval between new enemies (1 to 15 seconds, in whole seconds).
             </span>
           </div>
 
+          <fieldset className="helm-options">
+            <legend>Helm & sound</legend>
+            <label><input type="checkbox" checked={helm.toggleFire} onChange={event=>setHelm({...helm,toggleFire:event.target.checked})} /> Tap to toggle cannon fire</label>
+            <small>Press a cannon key or touch button once to keep firing, again to stop. Pausing clears firing.</small>
+            <label><input type="checkbox" checked={helm.swapped} onChange={event=>setHelm({...helm,swapped:event.target.checked})} /> Swap touch helm and cannons</label>
+            <label><input type="checkbox" checked={helm.muted} onChange={event=>setHelm({...helm,muted:event.target.checked})} /> Mute sound</label>
+            <label htmlFor="master-volume">Sound volume: {Math.round(helm.volume*100)}%</label>
+            <input id="master-volume" type="range" min="0" max="1" step="0.05" value={helm.volume} onChange={event=>setHelm({...helm,volume:Number(event.target.value)})} />
+          </fieldset>
           {/* Buttons */}
           <div className="flex justify-end space-x-3 pt-3 border-t border-amber-900/60">
             <button

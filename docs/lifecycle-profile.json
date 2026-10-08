@@ -1,0 +1,151 @@
+{
+  "note": "Local headless runtime evidence. No demonstrated speed improvement or zero-leak claim. Before and after use different profiler instrumentation for instance indices and final idle.",
+  "runs": [
+    {
+      "recordedAt": "2026-10-07T19:31:25.168Z",
+      "platform": "win32",
+      "cpu": "AMD Ryzen 5 3600 6-Core Processor              ",
+      "browser": "154.0.8037.98",
+      "baseURL": "http://127.0.0.1:4186",
+      "viewport": {
+        "width": 1280,
+        "height": 720,
+        "dpr": 1
+      },
+      "configuration": {
+        "sessionSeconds": 180,
+        "spawnSeconds": 1,
+        "seed": 1337
+      },
+      "method": "Headless optimized build. Local diagnostic session ticket, no ranked backend traffic. 60-second measurement. Scripted movement and all batteries held. Diagnostic hull protection. rAF sampling, first 120 frames excluded. 20 10-second play/abandon cycles with forced GC. Weak references track retired simulation, game, application and canvas objects.",
+      "combat": {
+        "wallSeconds": 60.006399999982115,
+        "activeSeconds": 60.16666666666453,
+        "frames": 8639,
+        "fps": 143.95041576475884,
+        "p95FrameMs": 7.099999999998545,
+        "peakEnemies": 10,
+        "peakProjectiles": 11,
+        "reason": null,
+        "isPaused": false
+      },
+      "firstExit": {
+        "cycle": 1,
+        "heapBytes": 7208624,
+        "documents": 2,
+        "nodes": 262,
+        "jsEventListeners": 195,
+        "canvasCount": 0,
+        "pixiAttached": false,
+        "simulationAttached": false,
+        "retained": {
+          "simulation": 1,
+          "game": 0,
+          "application": 0,
+          "canvas": 0
+        }
+      },
+      "lastExit": {
+        "cycle": 20,
+        "heapBytes": 8373780,
+        "documents": 2,
+        "nodes": 262,
+        "jsEventListeners": 195,
+        "canvasCount": 0,
+        "pixiAttached": false,
+        "simulationAttached": false,
+        "retained": {
+          "simulation": 1,
+          "game": 0,
+          "application": 0,
+          "canvas": 0
+        }
+      },
+      "afterIdle": null,
+      "errors": []
+    },
+    {
+      "recordedAt": "2026-10-07T19:37:49.498Z",
+      "platform": "win32",
+      "cpu": "AMD Ryzen 5 3600 6-Core Processor              ",
+      "browser": "154.0.8037.98",
+      "baseURL": "http://127.0.0.1:4186",
+      "viewport": {
+        "width": 1280,
+        "height": 720,
+        "dpr": 1
+      },
+      "configuration": {
+        "sessionSeconds": 180,
+        "spawnSeconds": 1,
+        "seed": 1337
+      },
+      "method": "Headless optimized build. Local diagnostic session ticket, no ranked backend traffic. 60-second measurement. Scripted movement and all batteries held. Diagnostic hull protection. rAF sampling, first 120 frames excluded. 20 10-second play/abandon cycles with forced GC, then 10 seconds idle. Weak references track retired simulation, game, application and canvas objects. Simulation indices identify whether retention accumulates or replaces an earlier instance.",
+      "combat": {
+        "wallSeconds": 60.00140000001788,
+        "activeSeconds": 60.14999999999787,
+        "frames": 8639,
+        "fps": 143.96720136818675,
+        "p95FrameMs": 7.099999999998545,
+        "peakEnemies": 10,
+        "peakProjectiles": 10,
+        "reason": null,
+        "isPaused": false
+      },
+      "firstExit": {
+        "cycle": 1,
+        "heapBytes": 7176388,
+        "documents": 2,
+        "nodes": 262,
+        "jsEventListeners": 195,
+        "canvasCount": 0,
+        "pixiAttached": false,
+        "simulationAttached": false,
+        "retained": {
+          "simulation": 1,
+          "game": 0,
+          "application": 0,
+          "canvas": 0,
+          "simulationIndices": [
+            1
+          ]
+        }
+      },
+      "lastExit": {
+        "cycle": 20,
+        "heapBytes": 8376812,
+        "documents": 2,
+        "nodes": 262,
+        "jsEventListeners": 195,
+        "canvasCount": 0,
+        "pixiAttached": false,
+        "simulationAttached": false,
+        "retained": {
+          "simulation": 1,
+          "game": 0,
+          "application": 0,
+          "canvas": 0,
+          "simulationIndices": [
+            20
+          ]
+        }
+      },
+      "afterIdle": {
+        "heapBytes": 8374516,
+        "documents": 2,
+        "nodes": 262,
+        "jsEventListeners": 190,
+        "retained": {
+          "simulation": 1,
+          "game": 0,
+          "application": 0,
+          "canvas": 0,
+          "simulationIndices": [
+            20
+          ]
+        }
+      },
+      "errors": []
+    }
+  ]
+}

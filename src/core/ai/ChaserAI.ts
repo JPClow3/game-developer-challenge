@@ -66,7 +66,7 @@ export class ChaserAI {
     playerKinematic: KinematicState,
     obstacles: IslandObstacle[],
     dt: number,
-    arena?: ArenaBounds
+    arena?: ArenaBounds,
   ): void {
     if (chaser.isDestroyed || dt <= 0) return;
 
@@ -103,9 +103,37 @@ export class ChaserAI {
     const headingError = wrapAngle(desiredHeading - chaser.kinematic.rotation);
 
     // 4. Steering input: proportional steering clamped to [-1, 1]
-    const steer = Math.max(-1, Math.min(1, headingError * 2.5));
+    let steer = Math.max(-1, Math.min(1, headingError * 2.5));
     // Relentless forward throttle
-    const throttle = 1.0;
+    let throttle = 1.0;
+    if (!chaser.chargeStage && distToPlayer < 300) {
+      chaser.chargeStage = 'loading';
+      chaser.chargeSeconds = 0;
+    }
+    if (chaser.chargeStage) {
+      chaser.chargeSeconds = (chaser.chargeSeconds ?? 0) + dt;
+      if (chaser.chargeStage === 'loading') {
+        throttle = 0.08;
+        if (chaser.chargeSeconds >= 0.55) {
+          chaser.chargeStage = 'charging';
+          chaser.chargeSeconds = 0;
+          chaser.chargeHeading = chaser.kinematic.rotation;
+        }
+      } else {
+        // Commit to a bearing so the player can dodge the advertised charge.
+        steer = Math.max(
+          -1,
+          Math.min(
+            1,
+            wrapAngle((chaser.chargeHeading ?? desiredHeading) - chaser.kinematic.rotation) * 2.5,
+          ),
+        );
+        if (chaser.chargeSeconds >= 1.1) {
+          chaser.chargeStage = undefined;
+          chaser.chargeSeconds = 0;
+        }
+      }
+    }
 
     // 5. Kinematic integration
     ShipKinematics.step(
@@ -113,7 +141,7 @@ export class ChaserAI {
       { throttle, steer },
       DEFAULT_CHASER_CONFIG.movement,
       dt,
-      arena
+      arena,
     );
 
     // 6. Update damage tier

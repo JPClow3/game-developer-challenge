@@ -27,6 +27,7 @@ export interface CollisionEventResults {
   enemiesDestroyed: string[];
   chaserSuicideRams: string[];
   despawnedProjectileIds: number[];
+  splashes?: {x:number;y:number}[];
 }
 
 /**
@@ -284,6 +285,7 @@ export class CollisionSystem {
           proj.isDead = true;
           results.despawnedProjectileIds.push(proj.id);
           hitObstacle = true;
+          (results.splashes ??= []).push({x:proj.x,y:proj.y});
           break;
         }
       }

@@ -131,6 +131,8 @@ describe('Enemy AI Subsystem', () => {
       shooter.cooldownFront = 0; // Ready to fire
       const player = createKinematicState(500, 220, 0);
 
+      for (let tick=0;tick<26;tick++) expect(ShooterAI.update(shooter, player, [], 1 / 60, DEFAULT_ARENA_CONFIG)).toBeNull();
+      expect(shooter.attackWindup).toBeGreaterThan(.4);
       const shot = ShooterAI.update(shooter, player, [], 1 / 60, DEFAULT_ARENA_CONFIG);
       expect(shot).not.toBeNull();
       expect(shot!.owner).toBe('enemy');

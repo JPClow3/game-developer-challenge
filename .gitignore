@@ -23,3 +23,20 @@ dist/
 # Test Artifacts
 playwright-report/
 test-results/
+# Local playtest evidence
+artifacts/
+.claude/
+artifacts/game-evaluation/
+artifacts/player-value/
+artifacts/replay-transport/
+artifacts/raid-readability/
+artifacts/flagship-warnings/
+artifacts/lifecycle/
+artifacts/pickup-feedback/
+artifacts/renderer-recovery/
+artifacts/refit-preview/
+artifacts/sailing-balance/
+artifacts/tactical-combat/
+artifacts/score-feedback/
+/playwright-published-report/
+/playwright-leaderboard-report/

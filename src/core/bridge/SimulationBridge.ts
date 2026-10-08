@@ -6,6 +6,7 @@ import type {
   SimulationHarness,
 } from '../../types';
 import { GameSimulation } from '../simulation/GameSimulation';
+import { exposeTestHarness } from '../debug';
 
 export type MatchEventListener = (event: MatchEvent) => void;
 
@@ -21,7 +22,7 @@ export interface FullSimulationHarness extends SimulationHarness {
 }
 
 /**
- * SimulationBridge: Decoupled synchronization bridge between PixiJS GameSimulation and React UI.
+ * SimulationBridge: Decoupled synchronization bridge between the TypeScript simulation and React UI.
  * Throttles continuous 60 FPS state into discrete events and 1Hz timer ticks, preventing React re-render thrashing.
  * Exposes window.__GAME_SIMULATION__ harness for deterministic Playwright and Vitest testing.
  */
@@ -186,7 +187,7 @@ export class SimulationBridge {
    * Attaches test harness to window.__GAME_SIMULATION__.
    */
   private attachWindowHarness(): void {
-    if (typeof window === 'undefined') return;
+    if (!exposeTestHarness || typeof window === 'undefined') return;
 
     const harness: FullSimulationHarness = {
       isTestMode: true,

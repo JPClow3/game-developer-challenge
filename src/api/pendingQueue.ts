@@ -1,5 +1,5 @@
 import type { SubmitMatchRequest, PendingSubmission, SubmitMatchResponse } from '../types/api';
-import { apiClient } from './client';
+import { apiClient, isRetryableApiError } from './client';
 
 const PENDING_STORAGE_KEY = 'pirate_battle_pending_submissions_v1';
 
@@ -8,6 +8,8 @@ export class PendingSubmissionQueue {
   private queue: PendingSubmission[] = [];
   private isProcessing = false;
   private listeners: Set<() => void> = new Set();
+  private inFlight = new Map<string, Promise<SubmitMatchResponse>>();
+  private onSynced: (() => Promise<unknown>) | undefined;
 
   private constructor() {
     this.loadFromStorage();
@@ -71,11 +73,45 @@ export class PendingSubmissionQueue {
     return this.queue.length;
   }
 
+  /** Called after the mock worker or live API is ready, once per application boot. */
+  public startAutoSync(onSynced: () => Promise<unknown>): void {
+    this.onSynced = onSynced;
+    if (typeof navigator === 'undefined' || navigator.onLine) {
+      void this.processQueue().catch((error) => console.warn('Failed startup sync', error));
+    }
+  }
+
+  public submit(request: SubmitMatchRequest): Promise<SubmitMatchResponse> {
+    const existing = this.inFlight.get(request.id);
+    if (existing) return existing;
+    // Persist before dispatch, so a tab closing during the request cannot lose the result.
+    this.enqueue(request);
+    const operation = this.send(request).finally(() => this.inFlight.delete(request.id));
+    this.inFlight.set(request.id, operation);
+    return operation;
+  }
+
+  private async send(request: SubmitMatchRequest): Promise<SubmitMatchResponse> {
+    try {
+      const response = await apiClient.post<SubmitMatchResponse>('/match', request);
+      this.remove(request.id);
+      // Cache refresh must not turn an acknowledged write into a failed submission.
+      await this.onSynced?.().catch((error) => console.warn('Failed refreshing synced queries', error));
+      return response.data;
+    } catch (error) {
+      if (isRetryableApiError(error)) {
+        this.enqueue(request, error instanceof Error ? error.message : String(error));
+      } else {
+        this.remove(request.id);
+      }
+      throw error;
+    }
+  }
+
   public enqueue(request: SubmitMatchRequest, errorMsg?: string): void {
     const existing = this.queue.find((item) => item.id === request.id);
     if (existing) {
-      existing.retryCount++;
-      if (errorMsg) existing.lastError = errorMsg;
+      if (errorMsg) { existing.retryCount++; existing.lastError = errorMsg; }
     } else {
       this.queue.push({
         id: request.id,
@@ -101,18 +137,9 @@ export class PendingSubmissionQueue {
       const pendingSnapshot = [...this.queue];
       for (const item of pendingSnapshot) {
         try {
-          const res = await apiClient.post<SubmitMatchResponse>('/match', item.request);
-          if (res.status === 200 || res.status === 201) {
-            this.remove(item.id);
-          }
-        } catch (err) {
-          // Update retry count and error message
-          const target = this.queue.find((p) => p.id === item.id);
-          if (target) {
-            target.retryCount++;
-            target.lastError = err instanceof Error ? err.message : String(err);
-            this.saveToStorage();
-          }
+          await this.submit(item.request);
+        } catch {
+          // submit retains transient failures and removes permanent rejections.
         }
       }
     } finally {

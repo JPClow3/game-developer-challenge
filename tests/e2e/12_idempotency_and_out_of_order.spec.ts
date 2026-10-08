@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('Flow 12: Idempotent Resubmission & Network Out-of-Order Handling', () => {
   test('submitting same match payload twice must return existing record and never duplicate ranking entry', async ({ page }) => {

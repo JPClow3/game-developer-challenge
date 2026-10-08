@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('Flow 02: Asset Loading, Error Handling & Retry', () => {
   test('should display progress bar, handle failure with retry button, and succeed on retry', async ({ page }) => {

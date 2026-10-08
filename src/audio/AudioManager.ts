@@ -29,6 +29,7 @@ export class AudioManager {
 
   private bufferCache = new Map<SoundId, AudioBuffer>();
   private activeLoops = new Map<string, { source: AudioBufferSourceNode; gain: GainNode }>();
+  private pendingLoops = new Map<string, { volumeScale: number }>();
   private activeSfxVoiceCount = new Map<SoundId, number>();
 
   private settings: AudioSettings = { ...DEFAULT_AUDIO_SETTINGS };
@@ -267,12 +268,17 @@ export class AudioManager {
    * Start looping ambient sound (e.g. ocean ambience or sailing loop)
    */
   public startLoop(id: 'ocean_ambience_loop' | 'ship_sailing_loop', volumeScale = 1.0): void {
-    if (this.activeLoops.has(id) || !this.ctx || !this.musicGain) return;
+    if (this.activeLoops.has(id) || this.pendingLoops.has(id) || !this.ctx || !this.musicGain) return;
 
     const buffer = this.bufferCache.get(id);
     if (!buffer) {
+      const request = { volumeScale };
+      this.pendingLoops.set(id, request);
       this.loadSound(id).then((loaded) => {
-        if (loaded) this.startLoop(id, volumeScale);
+        // Match exit or a newer voyage can invalidate this asynchronous start.
+        if (this.pendingLoops.get(id) !== request) return;
+        this.pendingLoops.delete(id);
+        if (loaded) this.startLoop(id, request.volumeScale);
       });
       return;
     }
@@ -300,6 +306,7 @@ export class AudioManager {
    * Stop loop
    */
   public stopLoop(id: string): void {
+    this.pendingLoops.delete(id);
     const loop = this.activeLoops.get(id);
     if (loop) {
       try {
@@ -313,6 +320,7 @@ export class AudioManager {
   }
 
   public stopAllLoops(): void {
+    this.pendingLoops.clear();
     for (const [id] of this.activeLoops) {
       this.stopLoop(id);
     }
@@ -320,6 +328,8 @@ export class AudioManager {
 
   public setLoopVolume(id: string, volumeScale: number): void {
     if (typeof volumeScale !== 'number' || !Number.isFinite(volumeScale)) return;
+    const pending = this.pendingLoops.get(id);
+    if (pending) pending.volumeScale = volumeScale;
     const loop = this.activeLoops.get(id);
     if (loop && this.ctx) {
       const manifest = SOUND_MANIFEST[id as SoundId];

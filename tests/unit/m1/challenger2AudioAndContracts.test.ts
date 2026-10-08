@@ -8,6 +8,7 @@ import type {
   PaginatedResponse,
 } from '@/types/api';
 import type { MatchEndReason } from '@/types/game';
+import { compareRankedMatches } from '@/core/ranking';
 
 describe('Challenger M1-2: Empirical Audio & Contracts Stress Tests', () => {
   // =========================================================================
@@ -307,16 +308,8 @@ describe('Challenger M1-2: Empirical Audio & Contracts Stress Tests', () => {
         },
       ];
 
-      // Deterministic tiebreaker function matching README §5
-      // 1. score DESC
-      // 2. playedAt ASC (earlier match achieved first)
-      // 3. id ASC (lexicographical UUID deterministic tiebreaker)
-      const sortedRecords = [...records].sort((a, b) => {
-        if (b.score !== a.score) return b.score - a.score;
-        const timeDiff = new Date(a.playedAt).getTime() - new Date(b.playedAt).getTime();
-        if (timeDiff !== 0) return timeDiff;
-        return a.id.localeCompare(b.id);
-      });
+      const sortedRecords = [...records].sort((a, b) => compareRankedMatches(
+        { ...a, matchId: a.id }, { ...b, matchId: b.id }));
 
       // Map to RankingItem with rank numbers (1-based)
       const ranking: RankingItem[] = sortedRecords.map((rec, index) => ({
@@ -333,16 +326,16 @@ describe('Challenger M1-2: Empirical Audio & Contracts Stress Tests', () => {
       }));
 
       // Verifications:
-      expect(ranking[0]?.matchId).toBe('c3333333-3333-4333-8333-333333333333'); // Rank 1: score 25, earlier date
-      expect(ranking[1]?.matchId).toBe('d4444444-4444-4444-8444-444444444444'); // Rank 2: score 25, same date, id c < d
-      expect(ranking[2]?.matchId).toBe('a1111111-1111-4111-8111-111111111111'); // Rank 3: score 25, later date
+      expect(ranking[0]?.matchId).toBe('a1111111-1111-4111-8111-111111111111'); // Shorter time wins a tied score.
+      expect(ranking[1]?.matchId).toBe('c3333333-3333-4333-8333-333333333333');
+      expect(ranking[2]?.matchId).toBe('d4444444-4444-4444-8444-444444444444'); // Same score/time/date: ID decides.
       expect(ranking[3]?.matchId).toBe('b2222222-2222-4222-8222-222222222222'); // Rank 4: score 15
 
       expect(ranking[0]?.rank).toBe(1);
       expect(ranking[1]?.rank).toBe(2);
       expect(ranking[2]?.rank).toBe(3);
       expect(ranking[3]?.rank).toBe(4);
-      expect(ranking[2]?.isCurrentPlayer).toBe(true);
+      expect(ranking[0]?.isCurrentPlayer).toBe(true);
     });
 
     it('verifies pagination slicing contract with PaginatedResponse', () => {

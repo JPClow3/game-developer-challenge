@@ -262,7 +262,16 @@ export function loadUserConfigFromStorage(): GameplayConfig | null {
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     const res = validateGameplayConfig(parsed);
-    return res.isValid ? res.validatedConfig : null;
+    if (!res.isValid) return null;
+    // Stored menu options must match the whole-second score/database contract.
+    // Keep the simulation validator unchanged so older fractional replays work.
+    return {
+      ...res.validatedConfig,
+      spawner: {
+        ...res.validatedConfig.spawner,
+        spawnIntervalSeconds: Math.round(res.validatedConfig.spawner.spawnIntervalSeconds),
+      },
+    };
   } catch {
     return null;
   }

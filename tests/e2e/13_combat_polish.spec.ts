@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 async function start(page: import('@playwright/test').Page) {
   await page.goto('/');
@@ -50,25 +50,36 @@ test('menu tabs and dialogs support keyboard navigation and focus restoration', 
   await expect(page.getByTestId('btn-options')).toBeFocused();
 });
 
-test('harbor, stable battle, and result visual baselines', async ({page}) => {
+test('harbor, stable battle, and result visual baselines', async ({page},testInfo) => {
+  const capture=async (id:string,name:string,mask: import('@playwright/test').Locator[] = []) => {
+    const element=page.getByTestId(id);
+    // Linux baselines are generated in the pinned Playwright Docker image.
+    // macOS uses those same baselines through npm run test:visual:docker.
+    await expect(element).toHaveScreenshot(name,{animations:'disabled',mask});
+    await testInfo.attach(name,{body:await element.screenshot({animations:'disabled',mask}),contentType:'image/png'});
+  };
   const errors: string[]=[];page.on('pageerror',error=>errors.push(error.message));
   await page.goto('/');await page.getByTestId('main-menu').waitFor();
-  await expect(page.getByTestId('main-menu')).toHaveScreenshot('harbor.png',{animations:'disabled',mask:[page.getByTestId('msw-scenario-widget')]});
+  await capture('main-menu','harbor.png',[page.getByTestId('msw-scenario-widget')]);
   await page.getByTestId('btn-set-sail').click();
   await page.waitForFunction(() => (window as any).__PIXI_GAME__?.isRunning);
   await page.evaluate(() => {
     const game=(window as any).__PIXI_GAME__,sim=(window as any).__PIRATE_SIMULATION__;
     game.app.ticker.stop();sim.spawner.setSeed(123);sim.elapsedSeconds=0;sim.remainingSeconds=sim.durationSeconds;
-    sim.player.kinematic.x=800;sim.player.kinematic.y=800;sim.player.kinematic.velocityX=sim.player.kinematic.velocityY=0;
+    sim.player.kinematic.x=sim.player.kinematic.prevX=800;sim.player.kinematic.y=sim.player.kinematic.prevY=800;sim.player.kinematic.velocityX=sim.player.kinematic.velocityY=0;
+    sim.alpha=1;
     sim.enemies=[];sim.projectiles=[];
     const enemy=sim.spawner.forceSpawn('shooter',1200,350);enemy.kinematic.rotation=0;sim.enemies.push(enemy);
     game.renderFrame();game.app.render();
   });
   await page.waitForTimeout(200);
-  await expect(page.getByTestId('game-active-arena')).toHaveScreenshot('battle.png',{animations:'disabled'});
+  await capture('game-active-arena','battle.png');
   await page.evaluate(() => (window as any).__PIRATE_SIMULATION__.endMatch('time_expired'));
   await page.getByTestId('result-screen').waitFor();
-  await expect(page.getByTestId('result-screen')).toHaveScreenshot('result.png',{animations:'disabled',mask:[page.getByTestId('msw-scenario-widget')]});
+  const registration=page.getByText('Confirmed in Leaderboard',{exact:false});
+  await expect(registration).toBeVisible();
+  // Rank varies with seeded mock rows. Verify the status, then mask its dynamic banner.
+  await capture('result-screen','result.png',[page.getByTestId('msw-scenario-widget'),registration.locator('..')]);
   expect(errors).toEqual([]);
 });
 

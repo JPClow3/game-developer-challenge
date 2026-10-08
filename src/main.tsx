@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App';
 import { useMockApi } from './api/environment';
+import { PendingSubmissionQueue } from './api/pendingQueue';
 import './index.css';
 
 const queryClient = new QueryClient({
@@ -27,6 +28,10 @@ async function prepare() {
       )
     ).map((registration) => registration.unregister()));
   }
+  PendingSubmissionQueue.getInstance().startAutoSync(() => Promise.all([
+    queryClient.invalidateQueries({ queryKey: ['ranking'] }),
+    queryClient.invalidateQueries({ queryKey: ['history'] }),
+  ]));
 }
 
 prepare().finally(() => {

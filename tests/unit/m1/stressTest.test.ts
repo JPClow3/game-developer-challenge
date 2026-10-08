@@ -81,6 +81,8 @@ describe('Milestone 1 Empirical Stress Tests', () => {
       expect(loader.isReady()).toBe(true);
       // Tiles must be populated and intact
       expect(loader.getTileTexture(OPEN_WATER_TILE_ID)).toBeDefined();
+      expect(progressUpdatesMount2).toContain(0.35);
+      expect(progressUpdatesMount2.at(-1)).toBe(1);
     });
 
     it('recovers cleanly when loading fails, allowing subsequent retry', async () => {

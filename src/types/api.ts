@@ -3,6 +3,7 @@
  */
 
 import type { MatchEndReason } from './game';
+import type { BattleReplay } from '../core/simulation/Replay';
 
 export interface MatchConfigSnapshot {
   sessionDurationSeconds: number;
@@ -18,6 +19,14 @@ export interface SubmitMatchRequest {
   endReason: Exclude<MatchEndReason, 'abandoned'>;
   config: MatchConfigSnapshot;
   playedAt: string; // ISO 8601
+  replay?: BattleReplay; // Required by the live API. Legacy mock fixtures may omit it.
+}
+
+export interface MatchTicket {
+  id: string;
+  playerId: string;
+  seed: number;
+  config: MatchConfigSnapshot;
 }
 
 export interface MatchRecord {
@@ -90,6 +99,8 @@ export type MswScenarioId =
   | 'error_500'
   | 'timeout'
   | 'idempotency_recovery'
+  | 'ranking_fails'
+  | 'history_fails'
   | 'server_offline';
 
 export interface MswScenarioOption {
@@ -102,11 +113,13 @@ export const MSW_SCENARIOS: readonly MswScenarioOption[] = [
   { id: 'success', name: 'Normal (Success)', description: 'Standard API behavior with fast responses' },
   { id: 'empty', name: 'Empty Data', description: 'Returns 0 items for ranking and match history' },
   { id: 'slow_network', name: 'High Latency', description: 'Simulates 2500ms network delay on all requests' },
-  { id: 'out_of_order', name: 'Out of Order', description: 'Simulates pagination race conditions and delayed responses' },
+  { id: 'out_of_order', name: 'Out of Order', description: 'Seeded delays alternate slow/fast responses for ranking and history' },
   { id: 'error_400', name: 'Client Error (400)', description: 'Simulates Bad Request schema validation failures' },
   { id: 'error_500', name: 'Server Error (500)', description: 'Simulates internal server error with retry capability' },
-  { id: 'timeout', name: 'Network Timeout', description: 'Simulates connection timeouts triggering retry/offline queue' },
+  { id: 'timeout', name: 'Timeout After Saving', description: 'Saves the match, loses the first response after 6000ms, then deduplicates retries' },
   { id: 'idempotency_recovery', name: 'Idempotency Test', description: 'Tests deduplication and replay safety' },
+  { id: 'ranking_fails', name: 'Ranking Fails', description: 'Ranking returns 500 while history and submission work' },
+  { id: 'history_fails', name: 'History Fails', description: 'History returns 500 while ranking and submission work' },
   { id: 'server_offline', name: 'Offline Mode', description: 'Simulates complete lack of internet connectivity' },
 ] as const;
 

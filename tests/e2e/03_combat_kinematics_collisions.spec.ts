@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('Flow 03: Combat Kinematics, Steering & Obstacle Collisions', () => {
   test.beforeEach(async ({ page }) => {
@@ -10,7 +10,7 @@ test.describe('Flow 03: Combat Kinematics, Steering & Obstacle Collisions', () =
 
   test('should set sail, respond to keyboard steering and throttle, and respect collision boundaries', async ({ page }) => {
     // 1. Start match
-    await page.getByRole('button', { name: /set sail/i }).click();
+    await page.getByRole('button', { name: /^Play$/i }).click();
     await expect(page.getByTestId('game-active-arena')).toBeVisible();
     await expect(page.getByTestId('combat-canvas')).toBeVisible();
 

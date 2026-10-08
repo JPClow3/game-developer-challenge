@@ -1,58 +1,52 @@
-# Cloudflare Pages and Neon
+# Published challenge build
 
-Live game: https://game-developer-challenge.pages.dev
+[Play the game](https://game-developer-challenge.pages.dev) · [Public delivery repository](https://github.com/JPClow3/game-developer-challenge)
 
-Cloudflare Pages project: `game-developer-challenge`, production branch `main`.
-Neon project: `crimson-fog-19762627`, branch `main` (`br-orange-wildflower-b5a8ydci`), PostgreSQL 17 in `aws-us-east-2`.
+The delivered frontend uses **MSW fixtures by default in development and production**. Ranking opponents come from `src/mocks/fixtures.ts`; matches and history persist in browser storage. No database, account, API key or private service is required to evaluate the game.
 
-The frontend is served from `dist`. Pages Functions serve `/api/match`, `/api/ranking`, and `/api/history`. Only `/api/*` invokes Functions. `DATABASE_URL` is an encrypted production Pages secret with the pooled Neon connection. It is never embedded in the frontend.
+Open the bottom-right **Network Lab** panel in the harbor or results screen to select an MSW network scenario. Reset Mock DB restores the initial board and success scenario. The widget stays out of the combat controls while playing.
 
-## Deploy an update
-
-From the project directory, using the authenticated Cloudflare account:
+## Build and evaluate locally
 
 ```powershell
 npm.cmd ci
 npm.cmd test
-npm.cmd run deploy
+npm.cmd run build
+npm.cmd run preview
 ```
 
-`deploy` typechecks the frontend and Functions, builds the production frontend, and uploads assets and Functions with Wrangler. It publishes the current local files to the `main` production branch.
+An existing `.env.local` can override defaults. Remove an old `VITE_USE_MSW=false` setting or set `$env:VITE_USE_MSW='true'` before building the challenge. The checked-in `.env.example` documents the fixture default. Serve `dist` over HTTPS or localhost so the mock service worker can start.
 
-## GitHub Actions
+`npm.cmd run test:published` builds with `VITE_USE_MSW=true`, serves the optimized bundle, and checks fixture ranking, scenario selection, simulated network responses and local match persistence on desktop/mobile Chromium. It needs no backend. Install the locked browser with `npx.cmd playwright install chromium` first.
 
-Repository: https://github.com/JPClow3/game-developer-challenge (private).
+## Deliver a release through CI
 
-`.github/workflows/deploy.yml` validates pushes and pull requests. Automatic deployment is enabled with the repository variable `CLOUDFLARE_DEPLOY_ENABLED=true`: validated pushes to `main` deploy to this existing Pages project. Manual runs are available through Actions.
+Commit and push to `origin/main`. `.github/workflows/deploy.yml` runs validation and browser jobs on Ubuntu and Windows, including the built fixture frontend and the optional backend against isolated PostgreSQL. Deployment waits for those gates and builds with `VITE_USE_MSW: 'true'` explicitly.
 
-Deployment requires repository secrets `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN`. The token needs Cloudflare Pages Edit permission on the deployment account. The Neon connection remains a Pages secret; GitHub does not need database credentials. Schema migrations remain a separate, deliberate operation.
+The workflow uploads that checkout to the existing Cloudflare Pages project `game-developer-challenge`, branch `main`, and then runs the published browser checks against the public URL. Wrangler records the Git commit with `--commit-dirty=false`.
 
-The dedicated account token `game-developer-challenge-github-deploy` has Pages Write permission and expires October 7, 2027. Renew it and update the Actions secret before expiration to keep automatic deployments working.
+Repository variable `CLOUDFLARE_DEPLOY_ENABLED=true` enables deployment. Repository secrets `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` authorize the upload; they are deployment credentials, not evaluator prerequisites. The token needs Pages Edit permission. Renew the configured deployment token before its October 7, 2027 expiration.
 
-This Pages project uses Direct Upload. GitHub Actions supplies automatic deployment without replacing the project or changing its public URL. The original `junglegaming/game-developer-challenge` remote is preserved as `upstream`; `origin` points to this private repository.
+Pages uses Direct Upload with GitHub Actions supplying continuous deployment. `origin` is the public delivered fork; the original `junglegaming/game-developer-challenge` remains `upstream` for provenance. This account has read-only upstream access.
 
-## Database migrations
+For a deliberate manual release, `npm.cmd run deploy` refuses an uncommitted tree, builds with mocks, and uploads the committed checkout. CI is the normal delivery path.
 
-The versioned Drizzle migration in `drizzle/` initializes the matches table and indexes. It has been applied to the live database. Generate additional migrations after changing `src/db/schema.ts`:
+## Durable reports
+
+See [reports/README.md](reports/README.md) for committed test, browser and profiling snapshots, their scope and reproduction commands. Disposable `playwright-report/`, `test-results/` and `artifacts/` remain ignored. CI artifacts complement the committed evidence; the submission does not depend on their retention period.
+
+## Optional Neon backend
+
+Neon and Pages Functions are an optional extension, **off in the default frontend**. To exercise it, explicitly build with `VITE_USE_MSW=false`, configure the server-only `DATABASE_URL`, apply all versioned migrations in `drizzle/`, and run Pages Functions. Never give database credentials a `VITE_` prefix.
 
 ```powershell
-npm.cmd run db:generate
+$env:VITE_USE_MSW='false'
+npm.cmd run build
+npm.cmd run dev:cloudflare
 ```
 
-Load `DATABASE_URL_UNPOOLED` from the gitignored `.env.local` into the shell before running `npm.cmd run db:migrate`. Drizzle prefers that direct connection for migrations. Do not expose either database URL with a `VITE_` prefix or commit credentials.
+Use a separate database for local writes. Wrangler reads the ignored `.dev.vars`; inspect which environment it targets before testing. Drizzle migrations prefer the direct `DATABASE_URL_UNPOOLED` connection. Generate migrations with `npm.cmd run db:generate` and apply them with `npm.cmd run db:migrate` after loading the intended connection into the shell.
 
-## Local development
+Classic backend ranking uses a server-issued voyage and anonymous HttpOnly browser session. `/api/match` reruns a bounded replay with canonical rules, validates its ending, score, duration and elapsed time, and supplies the timestamp. Migration `0001_vengeful_reavers.sql` adds sessions, tickets and verified results. Legacy rows remain in history but are excluded from competitive ranking. Replay reproducibility does not establish that a human played.
 
-`npm.cmd run dev` uses mock API responses unless `VITE_USE_MSW=false`. Production builds use the real API unless explicitly built with `VITE_USE_MSW=true`. The mock scenario widget is hidden in live builds.
-
-To exercise Pages Functions locally, build the production frontend and run `npm.cmd run dev:cloudflare`. Wrangler loads the ignored `.dev.vars` file. The existing local file targets the live Neon database, so local API writes persist there.
-
-The game currently uses a browser-local player identity and client-submitted scores. The deployment preserves that challenge architecture.
-
-## Verification on October 7, 2026
-
-Verified manual deployment ID: `8ec55950-ef45-4234-b2d4-297b80d8aba3`. Subsequent GitHub deployments can be inspected in the repository's Actions and Deployments views.
-
-Frontend and Functions typechecks, production build, and 212 unit tests passed. Live desktop and mobile Chromium checks covered asset loading, the menu, ranking, rendered combat, match submission, and history. Automation ended the test matches through the simulation harness; this was not a complete natural-duration playthrough or a physical-device test.
-
-Neon SQL reads confirmed the browser submissions were stored. Four concurrent submissions of one match returned one creation and three duplicate responses, with exactly one stored row. Invalid JSON shapes returned HTTP 400. Test records were removed after verification. Production dependency audit reported zero vulnerabilities.
+The isolated PostgreSQL tests execute production endpoint code and migrations without Neon credentials. Hosted Neon acceptance and physical-device performance are separate from the default fixture build checks. Direct requests made outside an MSW-controlled browser, such as curl to `/api/ranking`, address the optional Functions backend and do not represent the fixture board shown to evaluators.

@@ -12,6 +12,17 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    watch: {
+      ignored: [
+        '**/playwright-report/**',
+        '**/playwright-*-report/**',
+        '**/test-results/**',
+        '**/artifacts/**',
+        '**/reports/**',
+        '**/dist/**',
+        '**/.git/**',
+      ],
+    },
   },
   preview: {
     port: 5173,

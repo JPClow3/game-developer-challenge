@@ -54,7 +54,8 @@ export class EnemySpawner {
   private readonly config: SpawnerConfig;
 
   constructor(config?: Partial<SpawnerConfig>, seed: number = 1337) {
-    const baseInterval = config?.spawnIntervalSeconds ?? DEFAULT_SPAWNER_CONFIG.spawnIntervalSeconds;
+    const baseInterval =
+      config?.spawnIntervalSeconds ?? DEFAULT_SPAWNER_CONFIG.spawnIntervalSeconds;
     this.config = {
       ...DEFAULT_SPAWNER_CONFIG,
       ...config,
@@ -81,7 +82,7 @@ export class EnemySpawner {
     playerKinematic: KinematicState,
     currentEnemies: EnemyShipState[],
     obstacles: IslandObstacle[],
-    arena: ArenaBounds
+    arena: ArenaBounds,
   ): EnemyShipState | null {
     if (dt <= 0) return null;
 
@@ -125,7 +126,7 @@ export class EnemySpawner {
     y?: number,
     playerKinematic?: KinematicState,
     obstacles?: IslandObstacle[],
-    arena?: ArenaBounds
+    arena?: ArenaBounds,
   ): EnemyShipState {
     let spawnX = x;
     let spawnY = y;
@@ -178,7 +179,7 @@ export class EnemySpawner {
   public findSafeSpawnPosition(
     playerKinematic: KinematicState,
     obstacles: IslandObstacle[],
-    arena: ArenaBounds
+    arena: ArenaBounds,
   ): Vector2D | null {
     const minMargin = 80;
     const minX = minMargin;
@@ -224,7 +225,7 @@ export class EnemySpawner {
     y: number,
     playerKinematic: KinematicState,
     obstacles: IslandObstacle[],
-    safePlayerDistSq: number
+    safePlayerDistSq: number,
   ): boolean {
     // 1. Player safe distance check
     const dx = x - playerKinematic.x;

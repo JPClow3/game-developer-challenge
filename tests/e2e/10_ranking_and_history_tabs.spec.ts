@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('Flow 10: Ranking & History Query, Pagination, Empty & Error States', () => {
   test.beforeEach(async ({ page }) => {
@@ -21,7 +21,7 @@ test.describe('Flow 10: Ranking & History Query, Pagination, Empty & Error State
     }
   });
 
-  test('should handle empty state and error state gracefully with retry', async ({ page }) => {
+  test('should handle empty state and error state gracefully with retry', async ({ page, expectNetworkFailure }) => {
     // 1. Switch MSW scenario to 'empty'
     await page.evaluate(() => {
       sessionStorage.setItem('pirate_battle_msw_scenario', 'empty');
@@ -32,6 +32,7 @@ test.describe('Flow 10: Ranking & History Query, Pagination, Empty & Error State
     await expect(page.locator('text=No matches recorded for this configuration yet')).toBeVisible();
 
     // 2. Switch MSW scenario to 'error_500'
+    expectNetworkFailure('/api/history','Failed to load resource: the server responded with a status of 500 (Internal Server Error)',3);
     await page.evaluate(() => {
       sessionStorage.setItem('pirate_battle_msw_scenario', 'error_500');
     });

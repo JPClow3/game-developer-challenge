@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('Flow 01: Options Navigation, Validation & Persistence', () => {
   test.beforeEach(async ({ page }) => {

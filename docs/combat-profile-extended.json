@@ -1,0 +1,218 @@
+{
+  "recordedAt": "2026-10-07T12:19:17.166Z",
+  "platform": "win32",
+  "cpu": "AMD Ryzen 5 3600 6-Core Processor              ",
+  "totalMemoryGB": 23.92669677734375,
+  "browser": "154.0.8037.97",
+  "baseURL": "http://127.0.0.1:4173",
+  "viewport": {
+    "width": 1280,
+    "height": 720,
+    "dpr": 1
+  },
+  "configuration": {
+    "sessionSeconds": 180,
+    "spawnSeconds": 1
+  },
+  "method": "Headless optimized build. 15-second measurement. Scripted movement and all batteries held. Diagnostic hull protection. rAF sampling, first 120 frames excluded. 20 2.2-second play/abandon cycles with forced GC.",
+  "baseline": {
+    "heapBytes": 5969640,
+    "documents": 1,
+    "nodes": 136,
+    "jsEventListeners": 188
+  },
+  "combat": {
+    "wallSeconds": 15.0051,
+    "activeSeconds": 15.183333333333668,
+    "frames": 2161,
+    "fps": 143.98284339661302,
+    "p95FrameMs": 7,
+    "peakEnemies": 10,
+    "peakProjectiles": 10,
+    "reason": null,
+    "isPaused": false
+  },
+  "cycles": [
+    {
+      "cycle": 1,
+      "heapBytes": 6678012,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 179,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 2,
+      "heapBytes": 6912560,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 179,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 3,
+      "heapBytes": 6966152,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 179,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 4,
+      "heapBytes": 7079284,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 179,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 5,
+      "heapBytes": 7098824,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 179,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 6,
+      "heapBytes": 7125000,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 179,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 7,
+      "heapBytes": 7181408,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 179,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 8,
+      "heapBytes": 7459640,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 179,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 9,
+      "heapBytes": 7483692,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 179,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 10,
+      "heapBytes": 7527036,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 179,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 11,
+      "heapBytes": 7552092,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 179,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 12,
+      "heapBytes": 7571096,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 179,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 13,
+      "heapBytes": 7624116,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 179,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 14,
+      "heapBytes": 7668392,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 179,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 15,
+      "heapBytes": 7751528,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 179,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 16,
+      "heapBytes": 7777776,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 179,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 17,
+      "heapBytes": 7805088,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 179,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 18,
+      "heapBytes": 7824904,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 179,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 19,
+      "heapBytes": 7832604,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 179,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 20,
+      "heapBytes": 7859656,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 179,
+      "canvasCount": 0,
+      "pixiAttached": false
+    }
+  ],
+  "errors": []
+}

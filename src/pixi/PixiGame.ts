@@ -6,11 +6,16 @@ import {
   Assets,
   Texture,
   TilingSprite,
+  Text,
 } from 'pixi.js';
 import { GameSimulation } from '../core/simulation/GameSimulation';
+import { DebugOverlay } from './DebugOverlay';
 import { AssetLoader } from '../assets/AssetLoader';
 import { AudioManager } from '../audio/AudioManager';
-import type { Projectile } from '../types/game';
+import type { Projectile, ShipState } from '../types/game';
+import { ImpactFeedback } from './ImpactFeedback';
+import { combatCamera, edgeIndicator, interpolateTransform } from './Camera';
+import { placeBearings, type Bearing, type PlacedBearing } from './Bearings';
 
 interface ShipVisual {
   container: Container;
@@ -30,6 +35,11 @@ interface ExplosionVisual {
 }
 
 export class PixiGame {
+  public debugOverlay?: DebugOverlay;
+  public readonly impact = new ImpactFeedback(typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
+  private splashes: {x:number;y:number;age:number}[] = [];
+  private sinking: {container:Container;age:number;rotation:number}[] = [];
+  public get feedbackState() {return {sinking:this.sinking.length,splashes:this.splashes.length,freeze:this.impact.freezeSeconds,recoil:Math.hypot(this.impact.recoilX,this.impact.recoilY),shake:this.impact.shakeStrength};}
   public readonly app: Application;
   public readonly simulation: GameSimulation;
   private readonly audio = AudioManager.getInstance();
@@ -44,6 +54,11 @@ export class PixiGame {
   private waterGraphics!: Graphics;
   private wakesGraphics!: Graphics;
   private guideGraphics!: Graphics;
+  private intentGraphics!: Graphics;
+  private indicatorGraphics!: Graphics;
+  private indicatorLabels = new Map<string, Text>();
+  public camera = {scale:1,x:0,y:0,portrait:false};
+  public visibleIndicators: (PlacedBearing & {type:string})[] = [];
 
   private playerVisual!: ShipVisual;
   private enemyVisuals: Map<string, ShipVisual> = new Map();
@@ -51,6 +66,7 @@ export class PixiGame {
 
   private isRunning = false;
   private isDestroyed = false;
+  public get isReady(): boolean { return this.isRunning && !this.isDestroyed; }
   private unsubSimulation: (() => void) | null = null;
 
   constructor(simulation: GameSimulation) {
@@ -93,7 +109,7 @@ export class PixiGame {
     this.handleResize();
 
     // Start background ocean ambience
-    this.audio.play('ocean_ambience_loop');
+    this.audio.play('ocean_ambience_loop', this.simulation.isPaused ? 0 : 1);
 
     this.isRunning = true;
     if (this.app?.ticker) {
@@ -124,6 +140,16 @@ export class PixiGame {
     this.worldContainer.addChild(this.projectilesGraphics);
     this.worldContainer.addChild(this.healthBarsGraphics);
     this.worldContainer.addChild(this.vfxGraphics);
+    this.intentGraphics = new Graphics();
+    this.worldContainer.addChild(this.intentGraphics);
+    if (new URLSearchParams(window.location.search).has('debug')) {
+      this.debugOverlay = new DebugOverlay();
+      this.worldContainer.addChild(this.debugOverlay);
+      const legend=new Text({text:'DEBUG · green: hull disks · gold: islands / spawn safety · pink: Shooter range · white: projectile lifetime',style:{fontFamily:'monospace',fontSize:11,fill:0xffffff,wordWrap:true,wordWrapWidth:Math.min(this.app.screen.width-24,600),stroke:{color:0x062432,width:3}}});
+      legend.position.set(12,90);this.app.stage.addChild(legend);
+    }
+    this.indicatorGraphics = new Graphics();
+    this.app.stage.addChild(this.indicatorGraphics);
   }
 
   private drawBackground(): void {
@@ -223,6 +249,10 @@ export class PixiGame {
   private setupEventAudio(): void {
     this.unsubSimulation = this.simulation.addListener((event) => {
       switch (event.type) {
+        case 'broadside_fired': this.impact.broadside(event.payload.side,event.payload.rotation); break;
+        case 'ship_sunk': if (event.payload) this.sinkShip(event.payload); break;
+        case 'shot_splash':
+        case 'hard_turn': this.splashes.push({...event.payload,age:0}); break;
         case 'projectile_spawned': {
           const p = event.payload as Projectile;
           this.spawnExplosion(p.x, p.y, 12, 0xffdfa0);
@@ -238,6 +268,7 @@ export class PixiGame {
           break;
         }
         case 'health_changed': {
+          this.impact.hit();
           const pct = event.payload?.percentage ?? 100;
           if (pct < 30) {
             this.audio.play('health_low');
@@ -277,27 +308,33 @@ export class PixiGame {
     const dt = this.app.ticker.deltaMS / 1000;
     this.simulation.update(dt);
 
-    this.renderFrame(this.simulation.isPaused || this.simulation.isEnded ? 0 : dt);
+    this.renderFrame(this.simulation.isPaused ? 0 : dt);
   }
 
   /** Render a frame independently of the simulation clock for stable visual QA. */
   public renderFrame(dt = 0): void {
     if (!this.isRunning || this.isDestroyed) return;
+    if (this.impact.advance(Math.min(dt,.05))) return;
     this.renderWaterAndGuides();
     this.renderPlayer();
     this.renderEnemies();
     this.renderProjectiles();
     this.renderHealthBars();
+    this.renderIntentions();
+    this.updateCamera();
     this.renderVfx(dt);
+    this.renderSinking(dt);
+    this.debugOverlay?.update(this.simulation);
   }
 
   private renderPlayer(): void {
     const player = this.simulation.player;
     const { container, sprite } = this.playerVisual;
 
-    container.x = player.kinematic.x;
-    container.y = player.kinematic.y;
-    container.rotation = player.kinematic.rotation;
+    const pose = this.pose(player.kinematic);
+    container.visible = !player.isDestroyed;
+    container.position.set(pose.x + this.impact.recoilX, pose.y + this.impact.recoilY);
+    container.rotation = pose.rotation;
 
     this.updateHitFlash(this.playerVisual, player.health);
     if (this.playerVisual.lastDamageTier !== player.damageTier) {
@@ -315,6 +352,7 @@ export class PixiGame {
     const activeEnemyIds = new Set<string>();
 
     for (const enemy of this.simulation.enemies) {
+      if (enemy.isDestroyed) continue;
       activeEnemyIds.add(enemy.id);
       let visual = this.enemyVisuals.get(enemy.id);
 
@@ -344,9 +382,9 @@ export class PixiGame {
         this.enemyVisuals.set(enemy.id, visual);
       }
 
-      visual.container.x = enemy.kinematic.x;
-      visual.container.y = enemy.kinematic.y;
-      visual.container.rotation = enemy.kinematic.rotation;
+      const pose = this.pose(enemy.kinematic);
+      visual.container.position.set(pose.x, pose.y);
+      visual.container.rotation = pose.rotation;
 
       this.updateHitFlash(visual, enemy.health);
       if (visual.lastDamageTier !== enemy.damageTier) {
@@ -363,12 +401,35 @@ export class PixiGame {
     // Clean up removed enemy visuals
     for (const [id, visual] of this.enemyVisuals.entries()) {
       if (!activeEnemyIds.has(id)) {
-        this.spawnExplosion(visual.container.x, visual.container.y, 45, 0xff5400);
-        this.audio.play('ship_explosion_1');
         this.shipsLayer.removeChild(visual.container);
         visual.container.destroy({ children: true });
         this.enemyVisuals.delete(id);
       }
+    }
+  }
+
+  private sinkShip(ship: ShipState): void {
+    const existing = ship.type === 'player' ? this.playerVisual : this.enemyVisuals.get(ship.id);
+    // A ship can spawn and sink between rendered frames. Its final pose is still available.
+    const container = new Container();
+    const sprite = new Sprite(existing?.sprite.texture ?? this.getShipTexture(ship.series,3));
+    sprite.anchor.set(.5);sprite.width=ship.type==='player'?38:34;sprite.height=ship.type==='player'?70:64;
+    container.addChild(sprite);container.position.set(ship.kinematic.x,ship.kinematic.y);container.rotation=ship.kinematic.rotation;
+    this.shipsLayer.addChild(container);
+    this.sinking.push({container,age:0,rotation:container.rotation});
+    this.impact.sink();this.spawnExplosion(container.x,container.y,42,0xffad67);
+    this.splashes.push({x:container.x,y:container.y,age:0});
+    this.audio.play('ship_explosion_1');
+  }
+
+  private renderSinking(dt: number): void {
+    for(let i=this.sinking.length-1;i>=0;i--) {
+      const wreck=this.sinking[i]!;wreck.age+=dt;
+      const t=Math.min(1,wreck.age/.65);
+      wreck.container.alpha=1-t;
+      wreck.container.scale.set(1-t*.4,1-t*.7);
+      if(!this.impact.reducedMotion) wreck.container.rotation=wreck.rotation+t*.3;
+      if(t>=1) {wreck.container.destroy({children:true});this.sinking.splice(i,1);}
     }
   }
 
@@ -393,7 +454,7 @@ export class PixiGame {
     }
     this.wakesGraphics.clear();
     for (const ship of [this.simulation.player,...this.simulation.enemies]) {
-      const k=ship.kinematic;
+      const k={...ship.kinematic,...this.pose(ship.kinematic)};
       const speed=Math.hypot(k.velocityX,k.velocityY);
       if (speed<12 || ship.isDestroyed) continue;
       const fx=Math.sin(k.rotation), fy=-Math.cos(k.rotation);
@@ -405,7 +466,7 @@ export class PixiGame {
           .stroke({width:3,color:0xb6f0e6,alpha:.22});
       }
     }
-    const k=this.simulation.player.kinematic;
+    const k=this.pose(this.simulation.player.kinematic);
     this.guideGraphics.clear();
     this.guideGraphics.circle(k.x,k.y,39).stroke({width:1.5,color:0x9af0d6,alpha:.5});
     const front=this.simulation.config.weaponFront;
@@ -426,12 +487,14 @@ export class PixiGame {
   private renderProjectiles(): void {
     this.projectilesGraphics.clear();
     for (const p of this.simulation.projectiles) {
+      const alpha = this.renderAlpha;
+      const x = p.prevX + (p.x - p.prevX) * alpha, y = p.prevY + (p.y - p.prevY) * alpha;
       const color=p.owner==='player'?0xffdda1:0xff8f77;
       const speed=Math.hypot(p.vx,p.vy)||1;
-      this.projectilesGraphics.moveTo(p.x-p.vx/speed*22,p.y-p.vy/speed*22).lineTo(p.x,p.y)
+      this.projectilesGraphics.moveTo(x-p.vx/speed*22,y-p.vy/speed*22).lineTo(x,y)
         .stroke({width:p.radius*1.2,color,alpha:.45});
-      this.projectilesGraphics.circle(p.x,p.y,p.radius+1).fill({color,alpha:.95});
-      this.projectilesGraphics.circle(p.x,p.y,p.radius*.45).fill(0xffffff);
+      this.projectilesGraphics.circle(x,y,p.radius+1).fill({color,alpha:.95});
+      this.projectilesGraphics.circle(x,y,p.radius*.45).fill(0xffffff);
     }
   }
 
@@ -442,8 +505,9 @@ export class PixiGame {
     const player = this.simulation.player;
     const barWidth = 44;
     const barHeight = 5;
-    const px = player.kinematic.x - barWidth / 2;
-    const py = player.kinematic.y - 48;
+    const pose = this.pose(player.kinematic);
+    const px = pose.x - barWidth / 2;
+    const py = pose.y - 48;
 
     this.healthBarsGraphics.rect(px, py, barWidth, barHeight);
     this.healthBarsGraphics.fill({ color: 0x000000, alpha: 0.6 });
@@ -458,12 +522,13 @@ export class PixiGame {
       if (enemy.isDestroyed) continue;
       const eWidth = 36;
       const eHeight = 4;
-      const ex = enemy.kinematic.x - eWidth / 2;
-      const ey = enemy.kinematic.y - 40;
+      const pose = this.pose(enemy.kinematic);
+      const ex = pose.x - eWidth / 2;
+      const ey = pose.y - 40;
       if (enemy.type === 'chaser') {
-        this.healthBarsGraphics.circle(enemy.kinematic.x, ey - 8, 3).fill(0xff886d);
+        this.healthBarsGraphics.circle(pose.x, ey - 10, 7).fill(0xff886d).stroke({width:2,color:0xffeddb});
       } else {
-        this.healthBarsGraphics.poly([enemy.kinematic.x,ey-12,enemy.kinematic.x+4,ey-8,enemy.kinematic.x,ey-4,enemy.kinematic.x-4,ey-8]).fill(0xefc475);
+        this.healthBarsGraphics.poly([pose.x,ey-18,pose.x+8,ey-10,pose.x,ey-2,pose.x-8,ey-10]).fill(0xefc475).stroke({width:2,color:0xffeddb});
       }
 
       this.healthBarsGraphics.rect(ex, ey, eWidth, eHeight);
@@ -474,6 +539,69 @@ export class PixiGame {
       this.healthBarsGraphics.rect(ex, ey, eWidth * eRatio, eHeight);
       this.healthBarsGraphics.fill({ color: eColor, alpha: 0.9 });
     }
+  }
+
+  private get renderAlpha(): number { return this.simulation.isPaused || this.simulation.isEnded ? 1 : this.simulation.alpha; }
+  private pose(k: import('../types').KinematicState) { return interpolateTransform(k, this.renderAlpha); }
+
+  private renderIntentions(): void {
+    const g = this.intentGraphics.clear();
+    for (const enemy of this.simulation.enemies) {
+      const k = this.pose(enemy.kinematic);
+      if (this.simulation.mode === 'training') {
+        g.circle(k.x,k.y,48).stroke({width:3,color:0xffdda1});
+        continue;
+      }
+      const loading = enemy.type === 'shooter' ? (enemy.attackWindup ?? 0) > 0 : enemy.chargeStage === 'loading';
+      const charging = enemy.type === 'chaser' && enemy.chargeStage === 'charging';
+      if (!loading && !charging) continue;
+      const color = enemy.type === 'shooter' ? 0xffdda1 : 0xff886d;
+      const progress = enemy.type === 'shooter' ? (enemy.attackWindup ?? 0) / .45 : (enemy.chargeSeconds ?? 0) / .55;
+      g.circle(k.x,k.y,44).stroke({width:3,color,alpha:.85});
+      if (loading) g.moveTo(k.x,k.y-49).arc(k.x,k.y,49,-Math.PI/2,-Math.PI/2+Math.PI*2*Math.min(1,progress)).stroke({width:5,color});
+      const heading = k.rotation;
+      const fx=Math.sin(heading),fy=-Math.cos(heading);
+      const length = enemy.type === 'shooter' ? 140 : 190;
+      g.moveTo(k.x+fx*35,k.y+fy*35).lineTo(k.x+fx*length,k.y+fy*length).stroke({width:charging?5:3,color,alpha:.7});
+      g.circle(k.x+fx*length,k.y+fy*length,7).stroke({width:2,color});
+    }
+  }
+
+  private updateCamera(): void {
+    const width=this.app.screen.width,height=this.app.screen.height;
+    const player=this.pose(this.simulation.player.kinematic);
+    this.camera=combatCamera(width,height,this.simulation.config.arena,player);
+    const c=this.camera;
+    const shake=this.impact.shake;
+    this.worldContainer.scale.set(c.scale); this.worldContainer.position.set(c.x+shake.x,c.y+shake.y);
+    const g=this.indicatorGraphics.clear(); this.visibleIndicators=[];
+    const active=new Set<string>();
+    const bearings:Bearing[]=[];
+    if (c.portrait) for (const enemy of this.simulation.enemies) {
+      const k=this.pose(enemy.kinematic);
+      const marker=edgeIndicator({x:player.x*c.scale+c.x,y:player.y*c.scale+c.y},{x:k.x*c.scale+c.x,y:k.y*c.scale+c.y},width,height);
+      if (!marker) continue;
+      const distance=Math.round(Math.hypot(k.x-player.x,k.y-player.y));
+      bearings.push({id:enemy.id,kind:enemy.type,...marker,distance});
+    }
+    for (const bearing of placeBearings(bearings,width,height)) {
+      const {id,kind,x,y,rotation,distance,count,edge}=bearing;
+      const color = kind === 'chaser' ? 0xff886d : 0xefc475;
+      active.add(id);
+      this.visibleIndicators.push({...bearing,type:kind});
+      const fx=Math.cos(rotation),fy=Math.sin(rotation);
+      g.poly([x+fx*15,y+fy*15,x-fx*7-fy*7,y-fy*7+fx*7,x-fx*7+fy*7,y-fy*7-fx*7]).fill(color);
+      const sx=x-fx*16,sy=y-fy*16;
+      if (kind==='chaser') g.circle(sx,sy,5).fill(color);
+      else g.poly([sx,sy-6,sx+6,sy,sx,sy+6,sx-6,sy]).fill(color);
+      let label=this.indicatorLabels.get(id);
+      if (!label) { label=new Text({text:'',style:{fontFamily:'Arial',fontSize:11,fill:0xfff0cf,stroke:{color:0x08232e,width:3}}}); this.indicatorLabels.set(id,label);this.app.stage.addChild(label); }
+      label.text = count > 1 ? `×${count} · ${distance}` : String(distance);
+      label.anchor.set(.5);
+      const margin=label.width/2+8;
+      label.position.set(Math.max(margin,Math.min(width-margin,x-fx*25)),edge==='bottom'?y-38:y+19);
+    }
+    for (const [id,label] of this.indicatorLabels) if (!active.has(id)) {label.destroy();this.indicatorLabels.delete(id);}
   }
 
   public spawnExplosion(x: number, y: number, maxRadius = 40, color = 0xffa500): void {
@@ -489,7 +617,16 @@ export class PixiGame {
 
   private renderVfx(dt: number): void {
     this.vfxGraphics.clear();
-    if (this.explosions.length === 0) return;
+    for(let i=this.splashes.length-1;i>=0;i--) {
+      const splash=this.splashes[i]!;splash.age+=dt;
+      const t=splash.age/.5;
+      if(t>=1) {this.splashes.splice(i,1);continue;}
+      this.vfxGraphics.ellipse(splash.x,splash.y,6+t*27,3+t*14).stroke({width:2,color:0xb9f5ee,alpha:1-t});
+      for(let n=0;n<5;n++) {
+        const angle=n*Math.PI*2/5;
+        this.vfxGraphics.circle(splash.x+Math.cos(angle)*t*22,splash.y+Math.sin(angle)*t*12-Math.sin(t*Math.PI)*16,2*(1-t)+1).fill({color:0xe5fffa,alpha:1-t});
+      }
+    }
 
     for (let i = this.explosions.length - 1; i >= 0; i--) {
       const exp = this.explosions[i];
@@ -516,7 +653,7 @@ export class PixiGame {
   }
 
   public handleResize(): void {
-    if (!this.app.renderer || !this.worldContainer) return;
+    if (this.isDestroyed || !this.app.renderer || !this.worldContainer) return;
     const canvas = this.app.canvas as HTMLCanvasElement;
     const parent = canvas.parentElement;
     const screenWidth = parent?.clientWidth || window.innerWidth;
@@ -524,19 +661,14 @@ export class PixiGame {
 
     this.app.renderer.resize(screenWidth, screenHeight);
 
-    const arenaW = this.simulation.config.arena.width;
-    const arenaH = this.simulation.config.arena.height;
-
-    const scaleX = screenWidth / arenaW;
-    const scaleY = screenHeight / arenaH;
-    const scale = Math.min(scaleX, scaleY);
-
-    this.worldContainer.scale.set(scale);
-    this.worldContainer.x = (screenWidth - arenaW * scale) / 2;
-    this.worldContainer.y = (screenHeight - arenaH * scale) / 2;
+    this.updateCamera();
+    // Resizing clears the WebGL drawing buffer. Repaint even between ticks.
+    this.renderFrame();
+    this.app.render();
   }
 
   public destroy(): void {
+    if (this.isDestroyed) return;
     this.isDestroyed = true;
     this.isRunning = false;
 
@@ -556,7 +688,9 @@ export class PixiGame {
       }
     }
     this.enemyVisuals.clear();
+    this.indicatorLabels.clear();
     this.explosions = [];
+    this.sinking=[];this.splashes=[];
 
     if (this.app?.renderer) {
       try {

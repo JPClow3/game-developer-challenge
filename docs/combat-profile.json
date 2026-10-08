@@ -1,0 +1,83 @@
+{
+  "recordedAt": "2026-10-07T12:16:54.376Z",
+  "platform": "win32",
+  "cpu": "AMD Ryzen 5 3600 6-Core Processor              ",
+  "totalMemoryGB": 23.92669677734375,
+  "browser": "154.0.8037.97",
+  "baseURL": "http://127.0.0.1:4173",
+  "viewport": {
+    "width": 1280,
+    "height": 720,
+    "dpr": 1
+  },
+  "configuration": {
+    "sessionSeconds": 180,
+    "spawnSeconds": 1
+  },
+  "method": "Headless optimized build. Scripted movement and all batteries held. Diagnostic hull protection. rAF sampling, first 120 frames excluded. Five 2.2-second play/abandon cycles with forced GC.",
+  "baseline": {
+    "heapBytes": 5983004,
+    "documents": 1,
+    "nodes": 136,
+    "jsEventListeners": 188
+  },
+  "combat": {
+    "wallSeconds": 179.82700000000597,
+    "activeSeconds": 180.00000000003539,
+    "frames": 25891,
+    "fps": 143.97271049257023,
+    "p95FrameMs": 7,
+    "peakEnemies": 10,
+    "peakProjectiles": 16,
+    "reason": "time_expired",
+    "isPaused": false
+  },
+  "cycles": [
+    {
+      "cycle": 1,
+      "heapBytes": 6902528,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 179,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 2,
+      "heapBytes": 7135728,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 180,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 3,
+      "heapBytes": 7249640,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 180,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 4,
+      "heapBytes": 7346560,
+      "documents": 1,
+      "nodes": 148,
+      "jsEventListeners": 180,
+      "canvasCount": 0,
+      "pixiAttached": false
+    },
+    {
+      "cycle": 5,
+      "heapBytes": 7382420,
+      "documents": 2,
+      "nodes": 153,
+      "jsEventListeners": 180,
+      "canvasCount": 0,
+      "pixiAttached": false
+    }
+  ],
+  "errors": []
+}

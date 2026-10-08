@@ -1,10 +1,10 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('Flow 11: Match Registration, Tab Updates & Pending Recovery', () => {
   test('should register match and update both ranking and history tabs', async ({ page }) => {
     await page.goto('/');
     await expect(page.getByTestId('main-menu')).toBeVisible({ timeout: 15000 });
-    await page.getByRole('button', { name: /set sail/i }).click();
+    await page.getByRole('button', { name: /^Play$/i }).click();
     await expect(page.getByTestId('game-active-arena')).toBeVisible();
     await expect(page.getByTestId('combat-canvas')).toBeVisible();
 
@@ -31,17 +31,25 @@ test.describe('Flow 11: Match Registration, Tab Updates & Pending Recovery', () 
     await expect(page.locator('text=29 pts')).toBeVisible();
   });
 
-  test('should recover and sync pending submissions across page refresh', async ({ page }) => {
+  test('should recover and sync pending submissions across page refresh', async ({ page, expectNetworkFailure }) => {
+    expectNetworkFailure('/api/match','Failed to load resource: net::ERR_FAILED',3);
+    expectNetworkFailure('/api/history','Failed to load resource: net::ERR_FAILED',3);
     await page.goto('/');
     await expect(page.getByTestId('main-menu')).toBeVisible({ timeout: 15000 });
 
+    // Keep the queued submission offline until the automatic restart recovery.
+    await page.goto('/?scenario=server_offline');
     // Inject a pending submission directly into localStorage
     await page.evaluate(() => {
+      if (!localStorage.getItem('pirate_battle_player_id_v1')) {
+        localStorage.setItem('pirate_battle_player_id_v1', 'test_player');
+      }
+      const id = 'test_pending_uuid_' + Date.now();
       const pending = [
         {
-          id: 'test_pending_uuid_' + Date.now(),
+          id,
           request: {
-            id: 'test_pending_uuid_' + Date.now(),
+            id,
             playerId: localStorage.getItem('pirate_battle_player_id_v1') || 'test_player',
             playerName: 'Pending Captain',
             score: 33,
@@ -69,10 +77,16 @@ test.describe('Flow 11: Match Registration, Tab Updates & Pending Recovery', () 
     await expect(page.locator('text=1 match record(s) pending online sync')).toBeVisible();
     await expect(page.getByRole('button', { name: /retry sync/i })).toBeVisible();
 
-    // Click Retry Sync
-    await page.getByRole('button', { name: /retry sync/i }).click();
+    // A healthy restart drains the queue without visiting History or pressing Retry.
+    await page.goto('/?scenario=success');
+    await expect(page.getByTestId('main-menu')).toBeVisible();
+    await expect.poll(() => page.evaluate(() =>
+      JSON.parse(localStorage.getItem('pirate_battle_pending_submissions_v1') || '[]').length
+    )).toBe(0);
+    await page.getByRole('tab', { name: /match history/i }).click();
 
     // Banner should disappear upon successful sync
     await expect(page.locator('text=pending online sync')).not.toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('33 pts', { exact: true })).toBeVisible();
   });
 });

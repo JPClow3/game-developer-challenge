@@ -7,10 +7,18 @@ import type {
   MatchRecord,
   SubmitMatchRequest,
   SubmitMatchResponse,
+  MatchConfigSnapshot,
+  MatchTicket,
 } from '../types/api';
 
-export async function fetchRanking(params: RankingQueryParams = {}): Promise<PaginatedResponse<RankingItem>> {
+export async function startRankedMatch(config: MatchConfigSnapshot): Promise<MatchTicket> {
+  const response = await apiClient.post<MatchTicket>('/session', config);
+  return response.data;
+}
+
+export async function fetchRanking(params: RankingQueryParams = {}, signal?: AbortSignal): Promise<PaginatedResponse<RankingItem>> {
   const response = await apiClient.get<PaginatedResponse<RankingItem>>('/ranking', {
+    signal,
     params: {
       page: params.page ?? 1,
       pageSize: params.pageSize ?? 10,
@@ -22,9 +30,10 @@ export async function fetchRanking(params: RankingQueryParams = {}): Promise<Pag
 }
 
 export async function fetchMatchHistory(
-  params: MatchHistoryQueryParams = {}
+  params: MatchHistoryQueryParams = {}, signal?: AbortSignal
 ): Promise<PaginatedResponse<MatchRecord>> {
   const response = await apiClient.get<PaginatedResponse<MatchRecord>>('/history', {
+    signal,
     params: {
       playerId: params.playerId,
       page: params.page ?? 1,

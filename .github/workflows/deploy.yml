@@ -5,6 +5,11 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+    inputs:
+      refresh_linux_baselines:
+        description: Generate candidate Linux visual evidence for review (never deploys)
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -15,6 +20,7 @@ concurrency:
 
 jobs:
   validate:
+    if: ${{ !inputs.refresh_linux_baselines }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -25,11 +31,88 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm test
+      - run: npm run lint
       - run: npm run build
+        env:
+          VITE_USE_MSW: 'true'
+
+  browser:
+    if: ${{ !inputs.refresh_linux_baselines }}
+    needs: validate
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+        if: runner.os == 'Windows'
+      - name: Install locked Playwright Chromium and system dependencies
+        if: runner.os == 'Windows'
+        run: npx playwright install --with-deps chromium
+      - name: Browser gameplay and visual checks
+        if: runner.os == 'Windows'
+        run: npm run test:e2e
+      - name: Verified leaderboard flows against isolated PostgreSQL
+        if: runner.os == 'Windows'
+        run: npm run test:leaderboard
+      - name: Published fixture build and scenario selector
+        if: runner.os == 'Windows'
+        run: npm run test:published
+      - name: Linux browser checks in the canonical Playwright image
+        if: runner.os == 'Linux'
+        run: >-
+          docker run --rm --ipc=host
+          --mount type=bind,source="$PWD",target=/work
+          --mount type=volume,target=/work/node_modules
+          -e CI=true -e VITE_USE_MSW=true -w /work
+          mcr.microsoft.com/playwright:v1.63.0-noble
+          bash -lc 'npm ci && npm run test:e2e && npm run test:leaderboard && npm run test:published'
+      - name: Upload screenshots, HTML report, failure videos and traces
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v5
+        with:
+          name: browser-evidence-${{ matrix.os }}
+          path: |
+            playwright-report/
+            playwright-published-report/
+            playwright-leaderboard-report/
+            test-results/
+          retention-days: 14
+
+  linux-baseline-candidate:
+    if: github.event_name == 'workflow_dispatch' && inputs.refresh_linux_baselines
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - name: Capture Linux baselines in the canonical Playwright image
+        run: >-
+          docker run --rm --ipc=host
+          --mount type=bind,source="$PWD",target=/work
+          --mount type=volume,target=/work/node_modules
+          -e CI=true -e VITE_USE_MSW=true -w /work
+          mcr.microsoft.com/playwright:v1.63.0-noble
+          bash -lc 'npm ci && npm run test:visual -- --update-snapshots'
+      - name: Retain candidate baselines and their browser report for review
+        uses: actions/upload-artifact@v5
+        with:
+          name: linux-baseline-candidate
+          path: |
+            tests/e2e/13_combat_polish.spec.ts-snapshots/*linux.png
+            playwright-report/
+            test-results/
+          retention-days: 14
 
   deploy:
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && vars.CLOUDFLARE_DEPLOY_ENABLED == 'true'
-    needs: validate
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && !inputs.refresh_linux_baselines && vars.CLOUDFLARE_DEPLOY_ENABLED == 'true'
+    needs: [validate, browser]
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -47,17 +130,18 @@ jobs:
       - run: npm ci
       - run: npm run build
         env:
-          VITE_USE_MSW: 'false'
+          VITE_USE_MSW: 'true'
       - name: Deploy to existing Cloudflare Pages project
         uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           wranglerVersion: '4.148.0'
-          command: pages deploy dist --project-name game-developer-challenge --branch main
+          command: pages deploy dist --project-name game-developer-challenge --branch main --commit-dirty=false
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-      - name: Verify public endpoints
-        run: |
-          curl --fail --silent --show-error --retry 5 --retry-all-errors --retry-delay 3 https://game-developer-challenge.pages.dev/ > /dev/null
-          curl --fail --silent --show-error --retry 5 --retry-all-errors --retry-delay 3 https://game-developer-challenge.pages.dev/api/ranking > /dev/null
-          curl --fail --silent --show-error --retry 5 --retry-all-errors --retry-delay 3 'https://game-developer-challenge.pages.dev/api/history?playerId=ci-smoke' > /dev/null
+      - name: Install Chromium for public browser verification
+        run: npx playwright install --with-deps chromium
+      - name: Verify published fixtures, scenarios and local match persistence
+        run: npm run test:published
+        env:
+          PUBLISHED_URL: https://game-developer-challenge.pages.dev

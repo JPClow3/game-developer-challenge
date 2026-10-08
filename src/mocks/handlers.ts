@@ -2,6 +2,7 @@ import { http, HttpResponse, delay } from 'msw';
 import { MockDatabase } from './db';
 import { ScenarioManager } from './scenarios';
 import type { SubmitMatchRequest } from '../types/api';
+import { queryParams, RequestError } from '../../functions/lib/http';
 
 const db = MockDatabase.getInstance();
 const scenarios = ScenarioManager.getInstance();
@@ -10,12 +11,13 @@ export const handlers = [
   // 1. GET /api/ranking
   http.get('/api/ranking', async ({ request }) => {
     const scenario = scenarios.getScenario();
+    if (scenarios.latency) await delay(scenarios.latency);
 
     // Check scenario behaviors
     if (scenario === 'server_offline') {
       return HttpResponse.error();
     }
-    if (scenario === 'error_500') {
+    if (scenario === 'error_500' || scenario === 'ranking_fails') {
       return HttpResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
     if (scenario === 'error_400') {
@@ -27,9 +29,7 @@ export const handlers = [
       await delay(6000);
       return HttpResponse.error();
     } else if (scenario === 'out_of_order') {
-      // Simulate variable latency
-      const randomDelay = Math.floor(Math.random() * 800) + 200;
-      await delay(randomDelay);
+      await delay(scenarios.nextDelay('ranking'));
     }
 
     if (scenario === 'empty') {
@@ -38,32 +38,25 @@ export const handlers = [
         totalItems: 0,
         page: 1,
         pageSize: 10,
-        totalPages: 0,
+        totalPages: 1,
       });
     }
 
     const url = new URL(request.url);
-    const page = parseInt(url.searchParams.get('page') || '1', 10);
-    const pageSize = parseInt(url.searchParams.get('pageSize') || '10', 10);
-    const sessionDuration = url.searchParams.get('sessionDuration')
-      ? parseInt(url.searchParams.get('sessionDuration')!, 10)
-      : undefined;
-    const spawnInterval = url.searchParams.get('spawnInterval')
-      ? parseInt(url.searchParams.get('spawnInterval')!, 10)
-      : undefined;
-
-    const data = db.getRanking({ page, pageSize, sessionDuration, spawnInterval });
-    return HttpResponse.json(data);
+    try { return HttpResponse.json(db.getRanking(queryParams(url))); }
+    catch (error) { return HttpResponse.json({ error: error instanceof Error ? error.message : 'Invalid query' },
+      { status: error instanceof RequestError ? error.status : 400 }); }
   }),
 
   // 2. GET /api/history
   http.get('/api/history', async ({ request }) => {
     const scenario = scenarios.getScenario();
+    if (scenarios.latency) await delay(scenarios.latency);
 
     if (scenario === 'server_offline') {
       return HttpResponse.error();
     }
-    if (scenario === 'error_500') {
+    if (scenario === 'error_500' || scenario === 'history_fails') {
       return HttpResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
     if (scenario === 'error_400') {
@@ -74,6 +67,8 @@ export const handlers = [
     } else if (scenario === 'timeout') {
       await delay(6000);
       return HttpResponse.error();
+    } else if (scenario === 'out_of_order') {
+      await delay(scenarios.nextDelay('history'));
     }
 
     if (scenario === 'empty') {
@@ -82,22 +77,21 @@ export const handlers = [
         totalItems: 0,
         page: 1,
         pageSize: 10,
-        totalPages: 0,
+        totalPages: 1,
       });
     }
 
     const url = new URL(request.url);
     const playerId = url.searchParams.get('playerId') || undefined;
-    const page = parseInt(url.searchParams.get('page') || '1', 10);
-    const pageSize = parseInt(url.searchParams.get('pageSize') || '10', 10);
-
-    const data = db.getHistory({ playerId, page, pageSize });
-    return HttpResponse.json(data);
+    try { return HttpResponse.json(db.getHistory({ ...queryParams(url), playerId })); }
+    catch (error) { return HttpResponse.json({ error: error instanceof Error ? error.message : 'Invalid query' },
+      { status: error instanceof RequestError ? error.status : 400 }); }
   }),
 
   // 3. POST /api/match
   http.post('/api/match', async ({ request }) => {
     const scenario = scenarios.getScenario();
+    if (scenarios.latency) await delay(scenarios.latency);
 
     if (scenario === 'server_offline') {
       return HttpResponse.error();
@@ -110,9 +104,6 @@ export const handlers = [
     }
     if (scenario === 'slow_network') {
       await delay(2500);
-    } else if (scenario === 'timeout') {
-      await delay(6000);
-      return HttpResponse.error();
     }
 
     let payload: SubmitMatchRequest;
@@ -126,7 +117,15 @@ export const handlers = [
       return HttpResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    const result = db.insertMatch(payload);
-    return HttpResponse.json(result, { status: result.isDuplicate ? 200 : 201 });
+    try {
+      const result = db.insertMatch(payload);
+      // Commit before the client times out. The same ID acknowledges immediately on retry,
+      // including after a reload because the mock database persists the accepted record.
+      if ((scenario === 'timeout' || scenario === 'idempotency_recovery') && !result.isDuplicate) {
+        await delay(6000);
+        return HttpResponse.error();
+      }
+      return HttpResponse.json(result, { status: result.isDuplicate ? 200 : 201 });
+    } catch (error) { return HttpResponse.json({ error: error instanceof Error ? error.message : 'Match conflict' }, { status: 409 }); }
   }),
 ];

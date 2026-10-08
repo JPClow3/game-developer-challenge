@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useRankingQuery } from '../api/useApiQueries';
 import { AudioManager } from '../audio/AudioManager';
+import { getOrCreatePlayerId } from '../api/player';
 
 interface RankingTabProps {
   sessionDurationFilter?: number;
@@ -13,6 +14,7 @@ export const RankingTab: React.FC<RankingTabProps> = ({
 }) => {
   const [page, setPage] = useState<number>(1);
   const pageSize = 8;
+  const playerId = getOrCreatePlayerId();
 
   const { data, isLoading, isError, error, refetch, isFetching } = useRankingQuery({
     page,
@@ -29,7 +31,8 @@ export const RankingTab: React.FC<RankingTabProps> = ({
   return (
     <div className="w-full flex flex-col space-y-4" data-testid="ranking-container">
       <div className="flex justify-between items-center">
-        <h3 className="text-xl font-bold pirate-gold-text">Global Leaderboard</h3>
+        <div><h3 className="text-xl font-bold pirate-gold-text">Classic Leaderboard</h3>
+          <p className="text-xs text-amber-200/70">{sessionDurationFilter ?? 'All'}s voyages · {spawnIntervalFilter ?? 'All'}s between enemies. Score, fastest time, then first recorded.</p></div>
         {isFetching && (
           <span className="text-xs text-amber-300 animate-pulse font-mono" role="status">
             Updating...
@@ -84,7 +87,7 @@ export const RankingTab: React.FC<RankingTabProps> = ({
                 <tr
                   key={item.matchId}
                   className={`hover:bg-amber-900/20 transition-colors ${
-                    item.isCurrentPlayer ? 'bg-amber-800/30 font-bold border-l-4 border-amber-400' : ''
+                    item.playerId === playerId ? 'bg-amber-800/30 font-bold border-l-4 border-amber-400' : ''
                   }`}
                 >
                   <td className="px-3 py-2 text-center font-mono font-bold text-amber-300">
@@ -92,7 +95,7 @@ export const RankingTab: React.FC<RankingTabProps> = ({
                   </td>
                   <td className="px-3 py-2 truncate max-w-[140px] sm:max-w-xs">
                     {item.playerName || 'Anonymous Pirate'}
-                    {item.isCurrentPlayer && (
+                    {item.playerId === playerId && (
                       <span className="ml-1 text-[10px] text-yellow-300 uppercase px-1 rounded bg-yellow-900/60">
                         You
                       </span>

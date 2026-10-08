@@ -1,0 +1,92 @@
+{
+  "recordedAt": "2026-10-07T13:02:06.508Z",
+  "avd": "PirateBattle_Pixel5_API35",
+  "serial": "emulator-5554",
+  "model": "sdk_gphone64_x86_64",
+  "android": "15",
+  "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36",
+  "method": "Android Studio AVD, Chrome for Android, real OS orientation and coarse-pointer viewport. Three simultaneous browser touch pointers via CDP; individual release, cancel and pause/resume. Virtual device, not physical-phone evidence.",
+  "observations": [
+    {
+      "orientation": "portrait",
+      "before": {
+        "tick": 10,
+        "shots": 0
+      },
+      "held": {
+        "input": {
+          "throttle": 1,
+          "steer": 1,
+          "fireFront": true,
+          "fireBroadsideLeft": false,
+          "fireBroadsideRight": false
+        },
+        "speed": 36.49266141557588,
+        "rotation": 0.6066666666666667,
+        "tick": 39,
+        "paused": false,
+        "shots": 1,
+        "camera": {
+          "scale": 0.722,
+          "portrait": true,
+          "x": -381.8684580685407,
+          "y": -175
+        },
+        "viewport": {
+          "width": 393,
+          "height": 722,
+          "dpr": 2.75
+        },
+        "pointer": true
+      },
+      "partial": {
+        "throttle": 1,
+        "steer": 1,
+        "fireFront": false,
+        "fireBroadsideLeft": false,
+        "fireBroadsideRight": false
+      }
+    },
+    {
+      "orientation": "landscape",
+      "before": {
+        "tick": 350,
+        "shots": 6
+      },
+      "held": {
+        "input": {
+          "throttle": 1,
+          "steer": 1,
+          "fireFront": true,
+          "fireBroadsideLeft": false,
+          "fireBroadsideRight": false
+        },
+        "speed": 39.59084951114292,
+        "rotation": -2.5997039476924906,
+        "tick": 443,
+        "paused": false,
+        "shots": 7,
+        "camera": {
+          "scale": 0.289,
+          "portrait": false,
+          "x": 169.8,
+          "y": 0
+        },
+        "viewport": {
+          "width": 802,
+          "height": 289,
+          "dpr": 2.75
+        },
+        "pointer": true
+      },
+      "partial": {
+        "throttle": 1,
+        "steer": 1,
+        "fireFront": false,
+        "fireBroadsideLeft": false,
+        "fireBroadsideRight": false
+      }
+    }
+  ],
+  "errors": []
+}

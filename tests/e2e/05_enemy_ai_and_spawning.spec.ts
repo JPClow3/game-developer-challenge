@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('Flow 05: Enemy AI Behaviors & Safe Spawning', () => {
   test.beforeEach(async ({ page }) => {
@@ -9,7 +9,7 @@ test.describe('Flow 05: Enemy AI Behaviors & Safe Spawning', () => {
   });
 
   test('should verify Chaser ramming damages player without awarding score, and Shooter fires at distance', async ({ page }) => {
-    await page.getByRole('button', { name: /set sail/i }).click();
+    await page.getByRole('button', { name: /^Play$/i }).click();
     await expect(page.getByTestId('game-active-arena')).toBeVisible();
     await expect(page.getByTestId('combat-canvas')).toBeVisible();
     await page.waitForFunction(() => (window as any).__PIXI_GAME__?.isRunning);
@@ -47,7 +47,7 @@ test.describe('Flow 05: Enemy AI Behaviors & Safe Spawning', () => {
       sim.enemies.push(shooter);
 
       const initialProjCount = sim.projectiles.length;
-      sim.step(1 / 60);
+      for (let tick=0;tick<27;tick++) sim.step(1 / 60);
 
       return {
         shooterFired: sim.projectiles.length > initialProjCount,

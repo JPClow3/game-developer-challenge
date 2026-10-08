@@ -1,3 +1,3 @@
-// Development keeps the fault-injection tools; production uses the real API.
-export const useMockApi = import.meta.env.VITE_USE_MSW === 'true' ||
-  (import.meta.env.DEV && import.meta.env.VITE_USE_MSW !== 'false');
+// The challenge runs entirely from fixtures, including published builds.
+// The optional Neon backend requires an explicit opt-in at build time.
+export const useMockApi = import.meta.env.VITE_USE_MSW !== 'false';

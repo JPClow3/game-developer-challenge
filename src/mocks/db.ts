@@ -8,6 +8,7 @@ import type {
   SubmitMatchResponse,
 } from '../types/api';
 import { INITIAL_LEADERBOARD_FIXTURES } from './fixtures';
+import { compareRankedMatches } from '../core/ranking';
 
 const STORAGE_KEY_MATCHES = 'pirate_battle_mock_matches_v1';
 const STORAGE_KEY_LEADERBOARD = 'pirate_battle_mock_leaderboard_v1';
@@ -78,7 +79,12 @@ export class MockDatabase {
     // 1. Idempotency Check: if match id already exists, return existing
     const existingMatch = this.matches.find((m) => m.id === req.id);
     if (existingMatch) {
-      const rank = this.computeRank(existingMatch.score);
+      if (existingMatch.playerId !== req.playerId || existingMatch.score !== req.score ||
+        existingMatch.durationSeconds !== Math.floor(req.durationSeconds) || existingMatch.endReason !== req.endReason ||
+        existingMatch.sessionDurationSeconds !== req.config.sessionDurationSeconds ||
+        existingMatch.enemySpawnIntervalSeconds !== req.config.enemySpawnIntervalSeconds)
+        throw new Error('Match ID already has a different result');
+      const rank = this.computeRank(existingMatch);
       return {
         match: existingMatch,
         rankingPosition: rank,
@@ -118,7 +124,7 @@ export class MockDatabase {
     this.rankingItems.push(rankingEntry);
     this.saveToStorage();
 
-    const rank = this.computeRank(req.score);
+    const rank = this.computeRank(newRecord);
     return {
       match: newRecord,
       rankingPosition: rank,
@@ -126,9 +132,10 @@ export class MockDatabase {
     };
   }
 
-  private computeRank(score: number): number {
-    const higher = this.rankingItems.filter((item) => item.score > score).length;
-    return higher + 1;
+  private computeRank(match: MatchRecord): number {
+    const entry = { ...match, matchId: match.id };
+    return this.rankingItems.filter(item => item.sessionDurationSeconds === match.sessionDurationSeconds &&
+      item.enemySpawnIntervalSeconds === match.enemySpawnIntervalSeconds && compareRankedMatches(item, entry) < 0).length + 1;
   }
 
   public getRanking(params: RankingQueryParams = {}): PaginatedResponse<RankingItem> {
@@ -144,12 +151,7 @@ export class MockDatabase {
       filtered = filtered.filter((i) => i.enemySpawnIntervalSeconds === params.spawnInterval);
     }
 
-    // Deterministic sorting: Score DESC, duration ASC, playedAt ASC
-    filtered.sort((a, b) => {
-      if (b.score !== a.score) return b.score - a.score;
-      if (a.durationSeconds !== b.durationSeconds) return a.durationSeconds - b.durationSeconds;
-      return new Date(a.playedAt).getTime() - new Date(b.playedAt).getTime();
-    });
+    filtered.sort(compareRankedMatches);
 
     const totalItems = filtered.length;
     const totalPages = Math.ceil(totalItems / pageSize) || 1;

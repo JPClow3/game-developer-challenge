@@ -79,6 +79,9 @@ export interface ChaserEnemyState extends ShipState {
   type: 'chaser';
   aiType: 'chaser';
   phase: ChaserAIPhase;
+  chargeStage?: 'loading' | 'charging';
+  chargeSeconds?: number;
+  chargeHeading?: number;
 }
 
 export interface ShooterEnemyState extends ShipState {
@@ -86,6 +89,7 @@ export interface ShooterEnemyState extends ShipState {
   aiType: 'shooter';
   phase: ShooterAIPhase;
   cooldownFront: number;
+  attackWindup?: number;
 }
 
 export type EnemyShipState = ChaserEnemyState | ShooterEnemyState;

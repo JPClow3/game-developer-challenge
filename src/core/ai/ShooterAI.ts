@@ -37,6 +37,7 @@ export class ShooterAI {
       isDestroyed: false,
       damageTier: 1,
       cooldownFront: 1.0, // initial 1s grace cooldown before first salvo
+      attackWindup: 0,
       kinematic: {
         x,
         y,
@@ -60,7 +61,7 @@ export class ShooterAI {
     playerKinematic: KinematicState,
     obstacles: IslandObstacle[],
     dt: number,
-    arena?: ArenaBounds
+    arena?: ArenaBounds,
   ): Projectile | null {
     if (shooter.isDestroyed || dt <= 0) return null;
 
@@ -126,13 +127,7 @@ export class ShooterAI {
     const steer = Math.max(-1, Math.min(1, headingError * 2.0));
 
     // 6. Kinematic integration
-    ShipKinematics.step(
-      shooter.kinematic,
-      { throttle, steer },
-      config.movement,
-      dt,
-      arena
-    );
+    ShipKinematics.step(shooter.kinematic, { throttle, steer }, config.movement, dt, arena);
 
     // 7. Update damage tier
     shooter.damageTier = computeDamageTier(shooter.health, shooter.maxHealth);
@@ -146,11 +141,14 @@ export class ShooterAI {
 
     // Check if facing player within 12 degrees (|deltaTheta| < config.aimToleranceRadians)
     // and within reasonable firing range
-    if (
-      aimDeltaTheta <= config.aimToleranceRadians &&
-      distToPlayer <= maxEngage + 80 &&
-      shooter.cooldownFront <= 0
-    ) {
+    const canAim = aimDeltaTheta <= config.aimToleranceRadians && distToPlayer <= maxEngage + 80;
+    if (canAim && shooter.cooldownFront <= 0) {
+      shooter.attackWindup = (shooter.attackWindup ?? 0) + dt;
+    } else {
+      shooter.attackWindup = 0;
+    }
+    if ((shooter.attackWindup ?? 0) >= 0.45 - 1e-8) {
+      shooter.attackWindup = 0;
       shooter.cooldownFront = config.cannon.cooldownSeconds; // 2.0s
 
       const f = getForwardVector(shooter.kinematic.rotation);

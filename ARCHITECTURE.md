@@ -1,165 +1,83 @@
-# Pirate Battle — Architecture & Technical Design Document
+# Pirate Battle architecture
 
-This document outlines the technical design, architectural patterns, simulation dynamics, rendering pipeline, network data layer, and persistence mechanisms of the **Pirate Battle** application.
+## Boundaries and ownership
 
----
+`src/core` is a pure TypeScript simulation: kinematics, collision, spawning, weapons, AI, scoring and replay run without React or PixiJS. The same rules support browser tests and optional server replay verification. `src/pixi` owns textures, sprites, interpolation, camera, rendering and recovery. `src/ui` owns semantic DOM menus, HUD, dialogs, tables and touch controls. `src/api` owns HTTP, query caching and durable submissions; `src/mocks` supplies the default fixture API.
 
-## 1. High-Level Architecture Overview
+React owns simulation lifetime and screen transitions. Pixi's ticker advances physics and draws snapshots; component state does not drive the physics loop. Discrete events carry health, score, pause and completion changes. The bridge emits whole-second timer transitions; the HUD samples at 100 ms for visual updates. `SimulationBridge` is also exercised independently by unit tests.
 
-Pirate Battle is architected with a strict decoupling between:
-1. **PixiJS Combat Simulation Engine (`src/core/`):** Runs a deterministic, fixed-timestep physics loop (`dt = 1/60s`) managing kinematics, obstacle collisions, AI state machines, and weapon salvos.
-2. **Visual Rendering Layer (`src/pixi/`):** Canvas-based hardware-accelerated rendering using PixiJS v8, interpolating entity transforms and displaying health bars, damage deterioration, projectiles, and particle VFX.
-3. **React Interface & Navigation (`src/ui/`):** Declarative UI layer managing menus, options modals, HUD overlay, pause dialogues, and result screens.
-4. **Data Layer & Cloud Deployment (`src/api/`, `src/db/`, `functions/api/`):** Axios and TanStack Query client layer with offline persistence (`localStorage`), simulated through MSW in dev/test, and backed in production by **Cloudflare Pages Functions** and **Neon Serverless PostgreSQL** via Drizzle ORM.
+## Simulation and input
 
-```
-+-------------------------------------------------------------------------+
-|                              React UI Layer                             |
-|  (MainMenu, OptionsModal, MatchHUD, PauseModal, ResultScreen, MSW UI)   |
-+------------------------------------+------------------------------------+
-                                     | Event Subscriptions (10 Hz)
-+------------------------------------v------------------------------------+
-|                         SimulationBridge / Hooks                        |
-+------------------------------------+------------------------------------+
-                                     |
-+------------------------------------v------------------------------------+
-|                 PixiJS Rendering Viewport (PixiGame)                   |
-|   (Ocean background, Islands, Ships with damage tiers, Cannonballs, VFX) |
-+------------------------------------+------------------------------------+
-                                     | Runs Ticker (60 FPS)
-+------------------------------------v------------------------------------+
-|                     GameSimulation (Core Engine)                        |
-|  - Fixed timestep accumulator (dt = 1/60s, maxSubSteps = 5)             |
-|  - ShipKinematics (hydrodynamic keel drag, bilateral steering)          |
-|  - WeaponSystem (frontal 1-shot & lateral 3-shot broadside salvos)      |
-|  - AI Subsystems (Chaser pursuit & detonation, Shooter standoff fire)   |
-|  - CollisionSystem (dual-disk capsule vs island polygons & arena bounds)|
-|  - Spawner (safe perimeter distance, island clearance)                  |
-+------------------------------------+------------------------------------+
-                                     | Completed Match
-+------------------------------------v------------------------------------+
-|                      Data & Persistence Layer                           |
-|  - PendingSubmissionQueue (localStorage persistent queue & deduplication)|
-|  - Axios + TanStack React Query (cache, background revalidation)        |
-|  - MSW Service Worker (offline mocks & fault-injection scenarios)       |
-|  - Cloudflare Pages Functions (/api/*) + Neon Serverless PostgreSQL    |
-+-------------------------------------------------------------------------+
-```
+The world is a 1600 × 1000 logical arena. Physics advances in fixed 1/60-second steps with an accumulator and bounded catch-up work. Rendering interpolates previous/current positions and shortest-arc rotation. Movement and weapon clocks remain independent of refresh rate; catch-up stays bounded after stalls.
 
----
+Movement separates forward and sideways drag for momentum and keel resistance. Collision resolves arena/island overlap and removes inward velocity while allowing sliding. Front and side batteries have independent cooldowns. Seeded spawning checks player distance, island clearance and density.
 
-## 2. PixiJS & Simulation Loop Design
+Keyboard and touch are independent input sources merged into commands. Pointer capture preserves release outside a button. Pause, blur, visibility loss, abandonment and completion clear held input. Practice/replay are unscored. Replay stores seed, full config, engine version, tick-indexed input transitions and periodic state checks. Incompatible or divergent recordings fail visibly.
 
-### 2.1 Fixed-Timestep Accumulator Pattern
-To eliminate frame-rate dependencies across diverse client refresh rates (60 Hz, 120 Hz, 144 Hz) and mobile screens:
-- Real delta time is accumulated into `accumulator`.
-- Clamped with `maxAccumulator = 0.25s` to prevent the spiral of death during background tab throttling.
-- Physics executes in exact discrete slices:
-  $$\Delta t = \frac{1}{60} \approx 0.01667 \text{ s}$$
-- Up to `maxSubSteps = 5` iterations are processed per animation frame.
-- An alpha factor $\alpha = \frac{\text{accumulator}}{\Delta t}$ is computed to support smooth sub-frame interpolation.
+## Camera, resize and DPR
 
-### 2.2 Decoupled React Bridge
-Updating React components at 60 frames per second causes severe DOM reconciler overhead and frame drops.
-- **Solution:** The simulation runs independently on the Pixi ticker.
-- A throttled subscriber (`MatchHUD`) queries snapshot metrics at 10 Hz (every 100ms) or upon discrete state transitions (`match_ended`, `match_paused`).
-- The React component tree remains idle while PixiJS handles the GPU render loop.
+Logical arena size is not a fixed canvas viewport. `Camera.ts` fits the arena on desktop/landscape with centered margins. Narrow portrait uses a closer player-following camera, clamped at world edges with vertical space for HUD/touch controls. Typed bearings show offscreen enemies.
 
----
+Pixi initializes with auto-density and resolution capped at `min(devicePixelRatio, 2)` to bound GPU memory. Assets choose retina variants above DPR 1.25. Resize reads parent CSS dimensions, resizes the renderer, recomputes the camera and repaints immediately, including between ticks. DOM menus use viewport height and scrolling on short screens. Resolution and asset density are selected at initialization; moving between screens with different DPR does not reload every texture automatically.
 
-## 3. Kinematics, Weapons & Collision Physics
+## Texture failures and renderer recovery
 
-### 3.1 Hydrodynamic Kinematics (`ShipKinematics.ts`)
-Naval vessels simulate hydrodynamic resistance:
-- **Longitudinal Drag ($d_L = 0.95 \text{ s}^{-1}$):** Resistance against forward thrust.
-- **Lateral Keel Damping ($d_T = 5.5 \text{ s}^{-1}$):** High sideways resistance representing the ship's keel cutting through water, eliminating unrealistic drift while enabling authentic drift turns.
-- Bilateral rudder steering with angular velocity dampening.
-- Forward propulsion and steering execute concurrently with all weapon discharges.
+`AssetLoader` shares a cached preload promise and progress listeners. Required ship/tile failures reject preload and show Retry. A rejection clears the promise so retry can succeed. A failed retina UI atlas retries the 1x atlas. Optional background/harbor decoration may fail without blocking combat. Shared textures are reused across matches.
 
-### 3.2 Weapon Systems (`WeaponSystem.ts`)
-- **Frontal Cannon:** 1 cannonball fired along vessel heading; cooldown $0.60\text{s}$, damage 25 HP.
-- **Port & Starboard Broadsides:** 3 parallel cannonballs spaced along hull beam; cooldown $1.80\text{s}$, damage 20 HP each.
-- Cooldowns are maintained independently on distinct clocks.
+Renderer states expose loading, ready and failure. Slow assets show recovery controls. Pixi initialization has a 20-second watchdog. WebGL context loss pauses the battle/stops the ticker; restoration redraws before enabling resume. Failed renderers can be recreated while preserving the simulation. Browser recovery tests exercise the visible failure/retry flow.
 
-### 3.3 Collision Detection (`CollisionSystem.ts`)
-- **Ship Hitboxes:** Dual-disk capsule collider modeling vessel bow and stern circles, avoiding expensive arbitrary polygon checks while accurately capturing long hull geometry.
-- **Island Obstacles:** Circle-circle and disk-line projection with tangent sliding vectors, allowing ships to slide smoothly along shorelines without getting caught.
-- **Arena Perimeter:** Boundary clamping with margin padding.
-- **Single-Hit Projectile Guarantee:** Projectiles apply damage to the first target intersected and terminate immediately.
+## Strict Mode and disposal
 
----
+The root uses React Strict Mode. Repeated preload effects share one promise; an attempt counter prevents stale callbacks changing the screen after cleanup. PixiCanvas creates one canvas/application per effect, tracks cancellation, and destroys late initialization results belonging to retired effects.
 
-## 4. Artificial Intelligence Subsystems
+Cleanup removes resize/context/visibility/input listeners, animation callbacks, subscriptions, canvases and Pixi applications. Audio loops stop or duck on exit/pause. Shared textures remain cached. React owns simulation teardown; PixiCanvas owns renderer teardown. Idempotent disposal tests cover restart, completion and abandonment; they do not prove the absence of every GPU/browser-driver leak.
 
-### 4.1 Chaser AI (`ChaserAI.ts`)
-- Targets player location using direct vector pursuit.
-- Steering steers toward the player with maximum turn rate.
-- **Detonation Rule:** Ramming into player hull detonates ship, applying 35 HP damage to player.
-- **Scoring Invariant:** Suicide collision awards **0 points** to the player. Player must destroy the Chaser with cannon projectiles to claim 1 point.
+## API, cache and invalidation
 
-### 4.2 Shooter AI (`ShooterAI.ts`)
-- Maintains standoff engagement distance between 240px and 360px.
-- Navigates into firing arcs, aligns heading, and discharges cannon attacks within aim tolerance.
-- Reversing and flanking logic when the player closes in.
+| Endpoint | Behavior |
+| --- | --- |
+| `GET /api/ranking` | Paginated scores filtered by duration/spawn interval. Sort: score DESC, duration ASC, playedAt ASC, ID as final tie-breaker. |
+| `GET /api/history` | Paginated player battle history. |
+| `POST /api/match` | One insert per ID. Identical retry returns the stored match with `isDuplicate: true`; conflicting reuse is rejected. |
+| `POST /api/session` | Optional live backend only: issue a bounded ranked-session ticket before play. |
 
-### 4.3 Safe Spawner (`EnemySpawner.ts`)
-- Spawns enemy ships at configured intervals (default 3s).
-- Validates spawn coordinates against:
-  1. Minimum safe distance from player ($\ge 380\text{px}$) to prevent cheap unavoidable damage.
-  2. Island obstacle clearances ($\ge 40\text{px}$).
-  3. Arena perimeter padding.
+TanStack Query keys contain all request parameters, separating players, pages and filters. Data stays fresh five seconds and previous data remains visible during page transitions. Queries retry twice and do not refetch on focus. Separate keys prevent delayed earlier pages replacing the newer page cache. Network Lab cancels/resets relevant queries when scenarios change.
 
----
+All acknowledged submissions, including duplicates recovered in background, invalidate `ranking` and `history` key prefixes. Mounted queries refetch; inactive queries become stale for their next visit. Cache refresh failure cannot undo an accepted write or requeue it.
 
-## 5. Network Architecture, MSW & Cloud Deployment
+## Durable submission queue
 
-### 5.1 REST API Contracts
-| Endpoint | Method | Description |
-|---|---|---|
-| `/api/ranking` | GET | Paginated leaderboard sorted by score DESC, duration ASC, playedAt ASC |
-| `/api/history` | GET | Paginated match history filtered by player ID |
-| `/api/match` | POST | Idempotent match registration with deduplication |
+The queue saves the complete request under `pirate_battle_pending_submissions_v1` before dispatch. HTTP 200/201 acknowledgement removes it. Requests share an in-flight promise by ID so foreground submission and background drain avoid concurrent duplicate work in one tab. Server idempotency remains authoritative across tabs/restarts.
 
-### 5.2 Idempotency & Deduplication
-Every completed match generates a client UUID v4 idempotency token (`id`).
-- When sending `POST /api/match`, if the match ID already exists in the database, the backend returns HTTP 200 with the existing record and `isDuplicate: true`.
-- Repeated button clicks or retried requests never produce duplicate leaderboard entries.
+Startup begins sync after fixture-worker/live-API preparation, when the browser reports online. Reconnect and History's Retry Sync also drain restored records. Each drain processes a bounded snapshot; new results use their own foreground submission. Transport errors, 408, 429 and 5xx retain requests with error metadata. Permanent rejections are removed because retry cannot repair them. Notifications refresh History's pending count.
 
-### 5.3 Offline Persistence & Pending Queue (`PendingSubmissionQueue.ts`)
-- Completed matches are immediately persisted in `localStorage`.
-- If a submission fails (network loss, 500 error, timeout), it is enqueued into `pirate_battle_pending_submissions_v1`.
-- On application restart or network reconnection, the queue automatically attempts background sync.
-- Players can start a new match immediately without waiting for pending sync.
+Storage is best effort when localStorage is blocked/full. There is no background sync after the page closes and no continuously scheduled retry loop: persistent outages need a healthy restart, reconnect or manual retry. Separate tabs do not transactionally coordinate localStorage writes. Replay payloads also consume browser storage. These are limitations of browser-local challenge persistence.
 
-### 5.4 MSW Fault-Injection Scenarios (`src/mocks/`)
-Accessible via the in-game MSW scenario controller:
-- `success`: Standard fast API responses.
-- `empty`: Returns 0 records for empty-state UI validation.
-- `slow_network`: Injects 2500ms latency.
-- `out_of_order`: Simulates variable random latency to verify race-condition protection.
-- `error_400`: Simulates client validation errors.
-- `error_500`: Simulates internal server error with retry UI.
-- `timeout`: Simulates 6000ms network timeout.
-- `server_offline`: Simulates complete offline disconnect.
+## Fixtures and controlled failures
 
-### 5.5 Cloudflare Pages & Neon PostgreSQL Deployment
-- **Cloudflare Pages Functions (`functions/api/`):** Serverless edge endpoints handling `/api/ranking`, `/api/history`, and `/api/match`.
-- **Neon PostgreSQL (`src/db/`):** Serverless PostgreSQL database managed via Drizzle ORM (`@neondatabase/serverless`).
-- **Connection Configuration:** Configured via `DATABASE_URL` secret. In environments without `DATABASE_URL`, the application seamlessly routes through client-side MSW mock persistence.
+Published/local builds default to MSW. `VITE_USE_MSW=false` selects the optional live backend. Missing database secrets never silently activate fixtures in Functions.
 
----
+`ScenarioManager` validates `?scenario=...`, gives it startup priority over session state, and writes panel selections to the URL. `?scenarioSeed=42` controls jitter. Ranking/history have independent request counters. Alternating slow/fast ranges guarantee reversed completion for overlapping pairs, with repeatable jitter.
 
-## 6. Accessibility & Responsiveness
+Timeout inserts the match before delaying the first response beyond the client's five-second timeout. Retrying its persisted ID immediately acknowledges the duplicate. `idempotency_recovery` has the same write behavior with healthy reads. `ranking_fails`/`history_fails` isolate each tab's 500 failure. Success, empty, slow network, global 400/500 and offline complete the inventory. [README](README.md) explains each failure's URL, steps and recovery.
 
-- **Keyboard Navigation:** Full keyboard support across menus, tab bars, and modals with visible `:focus` styling.
-- **Screen Reader Support:** Semantic HTML headings, ARIA live regions for asset loading, status alerts, and HUD updates.
-- **Mobile Touch Controls:** On-screen virtual helm controls (Forward, Left, Right) and cannon discharge buttons (Front, Port, Starboard) displayed on mobile viewports.
-- **Viewport Scaling:** Canvas auto-scales maintaining fixed 1600x1000 aspect ratio with letterboxing/pillarboxing across all screen sizes.
+## Balancing decisions
 
----
+| Choice | Rationale |
+| --- | --- |
+| Default 120 seconds; options 60–180 | Short repeatable battles with time to learn steering and bounded longer sessions. |
+| Spawn every 3 seconds; maximum 10 enemies | Sustained pressure and predictable simulation/render work. |
+| Spawn at least 380 px from player, 40 px clear of islands | Avoid unavoidable spawn contact and trapped placements. |
+| Front 25 damage / 0.6 seconds; broadside three × 20 / 1.8 seconds | Front fire supports pursuit; slower side volleys reward heading and positioning. |
+| Chaser 35 HP / 35 ram damage; shooter 60 HP / 240–360 px standoff | Distinct close/ranged threats, shapes and attack cues. |
+| One point per cannon kill; no ram-suicide points | Reward aim without encouraging absorbing contact damage. |
 
-## 7. Performance & Memory Management
+Constants live in `src/types/config.ts`. Menu options are validated/persisted for the next match, never applied to an active battle. Ranking filters separate duration/spawn configurations. These are intentional defaults, not statistically proven competitive balance.
 
-- **Target:** 60 FPS in standard combat simulation.
-- **Texture Reuse:** AssetLoader singletons cache WebGL textures and spritesheet frames.
-- **Disposal Pipeline:** Canvas unmount cleans up ticker callbacks, event listeners, Pixi containers, and WebAudio loop nodes without leaking GPU memory across match restarts.
+## Tooling, safety and limitations
+
+ESLint runs separately from TypeScript with recommended TypeScript, React Hooks and JSX accessibility rules. Explicit `any` is allowed for legacy Pixi internals/browser harnesses; unused variables, hook correctness and accessibility still fail lint. Generated reports/bundles are ignored. Vitest tests rules/queue behavior; Playwright covers desktop/mobile input, lifecycle, faults, recovery and screenshots.
+
+Windows uses native visual baselines. Linux images are generated/compared in the locked Playwright Docker image; macOS can use the same Docker runner. Screenshot assertions never skip an OS or silently accept missing images. Candidate baseline updates need review.
+
+All debug globals, including SimulationBridge's health mutator, attach only in development or explicit `--mode test` builds. Optional server verification uses issued sessions/replays rather than trusting browser scores. Fixture scores/storage remain user-editable evaluation data. Practice/replay never submit scores. There is no multiplayer authority. Desktop/emulated-mobile evidence does not establish performance on every physical device, and local tests do not establish deployed/provider acceptance.

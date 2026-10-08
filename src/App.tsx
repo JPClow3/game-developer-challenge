@@ -1,10 +1,13 @@
-import React, { useEffect, useState, useCallback, lazy, Suspense } from 'react';
+import React, { useEffect, useState, useCallback, useRef, lazy, Suspense } from 'react';
 import { AssetLoader } from './assets/AssetLoader';
 import { AudioManager } from './audio/AudioManager';
 import { GameSimulation } from './core/simulation/GameSimulation';
-import { PixiCanvas } from './pixi/PixiCanvas';
+import { PixiCanvas, type RendererState } from './pixi/PixiCanvas';
 import { MainMenu } from './ui/MainMenu';
 import { MatchHUD } from './ui/MatchHUD';
+import { VoyageOverlay } from './ui/VoyageOverlay';
+import { loadHelmSettings } from './game/HelmSettings';
+import { ASSET_SLOW_NOTICE_MS } from './game/StartupRecovery';
 import { PauseModal } from './ui/PauseModal';
 import { ResultScreen, type CompletedMatchData, loadLastMatchResult } from './ui/ResultScreen';
 import { useMockApi } from './api/environment';
@@ -13,17 +16,24 @@ import {
   DEFAULT_GAMEPLAY_CONFIG,
   loadUserConfigFromStorage,
 } from './types/config';
-import { generateUUIDv4 } from './api/player';
+import { generateUUIDv4, getOrCreatePlayerId, adoptServerPlayerId } from './api/player';
+import { startRankedMatch } from './api/rankingApi';
+import { rankedGameplayConfig } from './core/simulation/verifyScore';
 
 type ScreenState = 'loading' | 'menu' | 'playing' | 'result';
 const MswScenarioWidget = useMockApi
-  ? lazy(() => import('./ui/MswScenarioWidget').then((module) => ({ default: module.MswScenarioWidget })))
+  ? lazy(() =>
+      import('./ui/MswScenarioWidget').then((module) => ({ default: module.MswScenarioWidget })),
+    )
   : null;
 
 export const App: React.FC = () => {
   const [screen, setScreen] = useState<ScreenState>('loading');
   const [progress, setProgress] = useState<number>(0);
   const [loadingError, setLoadingError] = useState<string | null>(null);
+  const [loadingSlow, setLoadingSlow] = useState(false);
+  const preloadAttempt = useRef(0);
+  const preloadNotice = useRef<ReturnType<typeof setTimeout>>();
 
   const [config, setConfig] = useState<GameplayConfig>(() => {
     return loadUserConfigFromStorage() || DEFAULT_GAMEPLAY_CONFIG;
@@ -31,24 +41,51 @@ export const App: React.FC = () => {
 
   const [simulation, setSimulation] = useState<GameSimulation | null>(null);
   const [isPaused, setIsPaused] = useState<boolean>(false);
+  const [rendererState, setRendererState] = useState<RendererState>('loading');
+  const [rendererAttempt, setRendererAttempt] = useState(0);
   const [completedMatch, setCompletedMatch] = useState<CompletedMatchData | null>(null);
+  const [replayError, setReplayError] = useState<string | null>(null);
+  const [suppressSubmission, setSuppressSubmission] = useState(false);
+  const [isStarting, setIsStarting] = useState(false);
+  const [startError, setStartError] = useState<string | null>(null);
+  const startingRef = useRef(false);
+  const resultTimer = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => () => clearTimeout(resultTimer.current), []);
+  const [helmSettings, setHelmSettings] = useState(loadHelmSettings);
+  useEffect(() => {
+    const audio = AudioManager.getInstance();
+    audio.setMuted(helmSettings.muted);
+    audio.setMasterVolume(helmSettings.volume);
+  }, [helmSettings]);
 
   // React owns the simulation lifetime, including completion, abandonment, and restart.
   useEffect(() => {
-    return () => simulation?.destroy();
+    return () => {
+      clearTimeout(resultTimer.current);
+      simulation?.destroy();
+    };
   }, [simulation]);
 
   // Asset preloading
   const startPreload = useCallback(async () => {
+    const attempt = ++preloadAttempt.current;
+    const isCurrent = () => attempt === preloadAttempt.current;
+    clearTimeout(preloadNotice.current);
     setScreen('loading');
     setLoadingError(null);
+    setLoadingSlow(false);
     setProgress(0.05);
+    const notice = setTimeout(() => {
+      if (isCurrent()) setLoadingSlow(true);
+    }, ASSET_SLOW_NOTICE_MS);
+    preloadNotice.current = notice;
 
     try {
       const loader = AssetLoader.getInstance();
       await loader.preload((prog) => {
-        setProgress(prog);
+        if (isCurrent()) setProgress(prog);
       });
+      if (!isCurrent()) return;
       setProgress(1.0);
 
       // Check if there was a saved last match result to optionally review
@@ -60,37 +97,44 @@ export const App: React.FC = () => {
         setScreen('menu');
       }
     } catch (err) {
+      if (!isCurrent()) return;
       setLoadingError(
-        err instanceof Error ? err.message : 'Failed to load game assets. Please retry.'
+        err instanceof Error ? err.message : 'Failed to load game assets. Please retry.',
       );
+    } finally {
+      clearTimeout(notice);
     }
   }, []);
 
   useEffect(() => {
-    let mounted = true;
-    const run = async () => {
-      if (mounted) {
-        await startPreload();
-      }
-    };
-    run();
+    startPreload();
     return () => {
-      mounted = false;
+      // This is an async-attempt counter, not a DOM ref: invalidate the latest attempt.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      ++preloadAttempt.current;
+      clearTimeout(preloadNotice.current);
     };
   }, [startPreload]);
 
-  // Audio unlock listener
-  const handleUserInteract = () => {
-    AudioManager.getInstance().unlockAudio();
-  };
+  // Trusted gestures anywhere in the app unlock audio without making the page a tab stop.
+  useEffect(() => {
+    const unlock = () => AudioManager.getInstance().unlockAudio();
+    window.addEventListener('pointerdown', unlock);
+    window.addEventListener('keydown', unlock);
+    return () => {
+      window.removeEventListener('pointerdown', unlock);
+      window.removeEventListener('keydown', unlock);
+    };
+  }, []);
 
   // Keyboard shortcut listener for Pause (P, Escape)
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
-      if (screen !== 'playing' || !simulation) return;
+      if (screen !== 'playing' || !simulation || simulation.isEnded || e.repeat) return;
       if (e.key === 'p' || e.key === 'P' || e.key === 'Escape') {
         e.preventDefault();
         if (simulation.isPaused) {
+          if (rendererState !== 'ready') return;
           simulation.resume();
           setIsPaused(false);
         } else {
@@ -102,68 +146,144 @@ export const App: React.FC = () => {
 
     window.addEventListener('keydown', handleGlobalKeyDown);
     return () => window.removeEventListener('keydown', handleGlobalKeyDown);
-  }, [screen, simulation]);
+  }, [screen, simulation, rendererState]);
 
   // Match lifecycle methods
-  const handleStartGame = useCallback(() => {
-    const freshSimulation = new GameSimulation(config, Date.now());
+  const handleStartGame = useCallback(async () => {
+    if (startingRef.current) return;
+    startingRef.current = true;
+    setIsStarting(true);
+    setStartError(null);
+    try {
+      const ticket = !useMockApi
+        ? await startRankedMatch({
+            sessionDurationSeconds: config.sessionDurationSeconds,
+            enemySpawnIntervalSeconds: config.spawner.spawnIntervalSeconds,
+          })
+        : undefined;
+      if (ticket) adoptServerPlayerId(ticket.playerId);
+      const matchId = ticket?.id ?? generateUUIDv4();
+      const playerId = ticket?.playerId ?? getOrCreatePlayerId();
+      setSuppressSubmission(false);
+      setReplayError(null);
+      setHelmSettings(loadHelmSettings());
+      const freshSimulation = new GameSimulation(
+        ticket ? rankedGameplayConfig(ticket.config) : config,
+        ticket?.seed ?? Date.now(),
+      );
 
-    // Listen for match events
-    freshSimulation.addListener((event) => {
-      if (event.type === 'match_ended') {
-        const payload = event.payload;
-        const matchData: CompletedMatchData = {
-          id: generateUUIDv4(),
-          score: payload.finalScore,
-          durationSeconds: Math.floor(payload.durationSeconds),
-          endReason: payload.reason,
-          config: {
-            sessionDurationSeconds: payload.config.sessionDurationSeconds,
-            enemySpawnIntervalSeconds: payload.config.spawner.spawnIntervalSeconds,
-          },
-          playedAt: new Date().toISOString(),
-        };
+      // Listen for match events
+      freshSimulation.addListener((event) => {
+        if (event.type === 'match_ended') {
+          const payload = event.payload;
+          const replay = freshSimulation.getReplay() ?? undefined;
+          const matchData: CompletedMatchData = {
+            id: matchId,
+            playerId,
+            score: payload.finalScore,
+            durationSeconds: Math.floor(payload.durationSeconds),
+            endReason: payload.reason,
+            config: {
+              sessionDurationSeconds: payload.config.sessionDurationSeconds,
+              enemySpawnIntervalSeconds: payload.config.spawner.spawnIntervalSeconds,
+            },
+            playedAt: new Date().toISOString(),
+            replay,
+          };
 
-        setCompletedMatch(matchData);
-        setSimulation(null);
-        setScreen('result');
-      } else if (event.type === 'match_paused') {
-        setIsPaused(true);
-      } else if (event.type === 'match_resumed') {
-        setIsPaused(false);
-      }
+          setCompletedMatch(matchData);
+          // Let the render-only wreck finish before disposing of the canvas.
+          const showResult = () => {
+            setSimulation(null);
+            setScreen('result');
+          };
+          if (payload.reason === 'player_destroyed')
+            resultTimer.current = setTimeout(showResult, 750);
+          else showResult();
+        } else if (event.type === 'match_paused') {
+          setIsPaused(true);
+        } else if (event.type === 'match_resumed') {
+          setIsPaused(false);
+        }
+      });
+
+      setSimulation(freshSimulation);
+      setIsPaused(false);
+      setScreen('playing');
+    } catch (error) {
+      setStartError(
+        error instanceof Error ? error.message : 'Could not start this voyage. Try again.',
+      );
+    } finally {
+      startingRef.current = false;
+      setIsStarting(false);
+    }
+  }, [config]);
+
+  const handlePractice = useCallback(() => {
+    setStartError(null);
+    setHelmSettings(loadHelmSettings());
+    const sim = new GameSimulation(config, 1337, { mode: 'training' });
+    sim.addListener((event) => {
+      if (event.type === 'match_paused') setIsPaused(true);
+      if (event.type === 'match_resumed') setIsPaused(false);
     });
-
-    setSimulation(freshSimulation);
+    setSimulation(sim);
     setIsPaused(false);
     setScreen('playing');
   }, [config]);
 
+  const handleWatchReplay = useCallback(() => {
+    if (!completedMatch?.replay) return;
+    try {
+      const sim = new GameSimulation(undefined, undefined, { replay: completedMatch.replay });
+      sim.addListener((event) => {
+        if (event.type === 'match_paused') setIsPaused(true);
+        if (event.type === 'match_resumed') setIsPaused(false);
+      });
+      setSimulation(sim);
+      setSuppressSubmission(true);
+      setIsPaused(false);
+      setReplayError(null);
+      setScreen('playing');
+    } catch (error) {
+      setReplayError(error instanceof Error ? error.message : 'Unable to open replay.');
+    }
+  }, [completedMatch]);
+
   const handlePauseToggle = useCallback(() => {
     if (!simulation) return;
     if (simulation.isPaused) {
+      if (rendererState !== 'ready') return;
       simulation.resume();
       setIsPaused(false);
     } else {
       simulation.pause();
       setIsPaused(true);
     }
-  }, [simulation]);
+  }, [simulation, rendererState]);
 
   const handleResumeGame = useCallback(() => {
-    if (simulation) {
+    if (simulation && rendererState === 'ready') {
       simulation.resume();
       setIsPaused(false);
     }
-  }, [simulation]);
+  }, [simulation, rendererState]);
+
+  const handleRestoreView = () => {
+    if (rendererState === 'loading') return;
+    setRendererState('loading');
+    setRendererAttempt((attempt) => attempt + 1);
+  };
 
   const handleAbandonMatch = useCallback(() => {
+    const destination = simulation?.mode === 'replay' ? 'result' : 'menu';
     if (simulation) {
       simulation.abandonMatch();
       setSimulation(null);
     }
     setIsPaused(false);
-    setScreen('menu');
+    setScreen(destination);
   }, [simulation]);
 
   const handlePlayAgain = useCallback(() => {
@@ -176,21 +296,34 @@ export const App: React.FC = () => {
 
   return (
     <div
-      className="relative w-screen h-screen overflow-hidden bg-slate-950 text-slate-100 font-sans"
-      onClick={handleUserInteract}
-      onKeyDown={handleUserInteract}
-      tabIndex={0}
-      role="application"
+      className="relative w-screen h-dvh overflow-hidden bg-slate-950 text-slate-100 font-sans"
+      role="region"
       aria-label="Pirate Battle Naval Shooter"
     >
+      {isStarting && (
+        <div
+          role="status"
+          className="absolute top-4 left-1/2 -translate-x-1/2 z-50 rounded bg-stone-950 p-3 text-sm"
+        >
+          Preparing your voyage...
+        </div>
+      )}
+      {startError && (
+        <div
+          role="alert"
+          className="absolute top-4 left-1/2 -translate-x-1/2 z-50 rounded bg-red-950 p-3 text-sm"
+        >
+          {startError} Try starting again, or practice while offline.
+        </div>
+      )}
       {/* 1. ASSET PRELOAD / ERROR SCREEN */}
       {screen === 'loading' && (
-        <div className="relative w-full h-full flex flex-col items-center justify-center p-4">
+        <div className="relative w-full h-full flex flex-col items-center overflow-y-auto p-4">
           <div
             className="absolute inset-0 bg-cover bg-center opacity-30 pointer-events-none"
             style={{ backgroundImage: "url('/assets/ui_scene_background.png')" }}
           />
-          <main className="relative z-10 w-full max-w-md pirate-wood-panel p-6 sm:p-8 flex flex-col items-center text-center">
+          <main className="relative z-10 w-full max-w-md my-auto shrink-0 pirate-wood-panel p-6 sm:p-8 flex flex-col items-center text-center">
             <h1 className="text-3xl sm:text-4xl font-extrabold pirate-gold-text tracking-wider uppercase mb-2">
               Pirate Battle
             </h1>
@@ -216,7 +349,11 @@ export const App: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <div className="w-full flex flex-col items-center space-y-4" role="status" aria-live="polite">
+              <div
+                className="w-full flex flex-col items-center space-y-4"
+                role="status"
+                aria-live="polite"
+              >
                 <span className="text-amber-100 text-sm font-semibold">
                   Arming Cannons & Hoisting Sails ({Math.round(progress * 100)}%)
                 </span>
@@ -234,6 +371,23 @@ export const App: React.FC = () => {
                 />
               </div>
             )}
+            {loadingSlow && !loadingError && (
+              <div className="w-full mt-5 space-y-3 text-sm text-amber-100">
+                <p role="status">
+                  Loading is taking longer than usual. You can keep waiting or reload the game.
+                </p>
+                <p className="text-xs text-amber-200/80">
+                  Reloading keeps the settings and last battle result saved on this device.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => window.location.reload()}
+                  className="pirate-button px-6 py-2.5 rounded font-bold uppercase tracking-wider text-sm"
+                >
+                  Reload game
+                </button>
+              </div>
+            )}
           </main>
         </div>
       )}
@@ -243,6 +397,8 @@ export const App: React.FC = () => {
         <MainMenu
           currentConfig={config}
           onStartGame={handleStartGame}
+          isStarting={isStarting}
+          onTraining={handlePractice}
           onUpdateConfig={(newCfg) => setConfig(newCfg)}
         />
       )}
@@ -250,12 +406,31 @@ export const App: React.FC = () => {
       {/* 3. IN-GAME COMBAT ARENA */}
       {screen === 'playing' && simulation && (
         <div className="relative w-full h-full" data-testid="game-active-arena">
-          <PixiCanvas simulation={simulation} />
-          <MatchHUD simulation={simulation} onPauseToggle={handlePauseToggle} />
+          <PixiCanvas
+            simulation={simulation}
+            settings={helmSettings}
+            rendererAttempt={rendererAttempt}
+            onRendererStateChange={setRendererState}
+          />
+          <MatchHUD
+            simulation={simulation}
+            settings={helmSettings}
+            onPauseToggle={handlePauseToggle}
+          />
+          {(simulation.mode === 'training' || simulation.mode === 'replay') && (
+            <VoyageOverlay
+              simulation={simulation}
+              onExit={handleAbandonMatch}
+              onBattle={handleStartGame}
+              onRestartReplay={handleWatchReplay}
+            />
+          )}
           <PauseModal
             isOpen={isPaused}
             onResume={handleResumeGame}
             onAbandon={handleAbandonMatch}
+            rendererState={rendererState}
+            onRestoreView={handleRestoreView}
           />
         </div>
       )}
@@ -266,11 +441,17 @@ export const App: React.FC = () => {
           matchData={completedMatch}
           onPlayAgain={handlePlayAgain}
           onMainMenu={handleBackToMenu}
+          onWatchReplay={completedMatch.replay ? handleWatchReplay : undefined}
+          replayError={replayError}
+          suppressSubmission={suppressSubmission}
+          isStarting={isStarting}
         />
       )}
 
       {/* Floating MSW Scenario Controller */}
-      {MswScenarioWidget && <Suspense fallback={null}>{screen !== 'playing' && <MswScenarioWidget />}</Suspense>}
+      {MswScenarioWidget && (
+        <Suspense fallback={null}>{screen !== 'playing' && <MswScenarioWidget />}</Suspense>
+      )}
     </div>
   );
 };

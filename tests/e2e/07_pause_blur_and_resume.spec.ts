@@ -1,10 +1,10 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 
 test.describe('Flow 07: Pause, Window Blur & Resume Without Input Buffering', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await expect(page.getByTestId('main-menu')).toBeVisible({ timeout: 15000 });
-    await page.getByRole('button', { name: /set sail/i }).click();
+    await page.getByRole('button', { name: /^Play$/i }).click();
     await expect(page.getByTestId('game-active-arena')).toBeVisible();
   });
 

@@ -1,3 +1,8 @@
+import { createKinematicState } from '../kinematics/ShipKinematics';
+import { stepCombat } from './CombatStep';
+import { ReplaySession } from './ReplaySession';
+import { TrainingEncounter } from './TrainingEncounter';
+import { exposeTestHarness } from '../debug';
 import type {
   GameplayConfig,
   PlayerShipState,
@@ -7,23 +12,16 @@ import type {
   MatchEndReason,
   MatchSnapshot,
   SimulationDebugState,
-  ChaserEnemyState,
-  ShooterEnemyState,
 } from '../../types';
 import { validateGameplayConfig } from '../../types';
-import { ShipKinematics, createKinematicState } from '../kinematics/ShipKinematics';
 import { WeaponSystem } from '../weapons/WeaponSystem';
 import { EnemySpawner } from '../spawner/EnemySpawner';
-import { ChaserAI, computeDamageTier } from '../ai/ChaserAI';
-import { ShooterAI } from '../ai/ShooterAI';
-import {
-  CollisionSystem,
-  DEFAULT_ISLAND_OBSTACLES,
-} from '../collision/CollisionSystem';
+import { validateReplay, type BattleReplay } from './Replay';
+import { DEFAULT_ISLAND_OBSTACLES } from '../collision/CollisionSystem';
 
 export interface PlayerInputState {
   throttle: number; // 0 to 1
-  steer: number;    // -1 to 1
+  steer: number; // -1 to 1
   fireFront: boolean;
   fireBroadsideLeft: boolean;
   fireBroadsideRight: boolean;
@@ -37,10 +35,7 @@ export const DEFAULT_PLAYER_INPUT: PlayerInputState = {
   fireBroadsideRight: false,
 };
 
-export type SimulationListener = (event: {
-  type: string;
-  payload?: any;
-}) => void;
+export type SimulationListener = (event: { type: string; payload?: any }) => void;
 
 /**
  * GameSimulation: Pure TypeScript combat simulation engine.
@@ -48,7 +43,32 @@ export type SimulationListener = (event: {
  * Session duration timer, deterministic collision, decoupled state sync, anti-input buffering.
  */
 export class GameSimulation {
-  public readonly config: GameplayConfig;
+  public readonly seed: number;
+  public readonly mode: 'match' | 'training' | 'replay';
+  private readonly training = new TrainingEncounter();
+  private readonly replay: ReplaySession;
+  public get trainingStage() {
+    return this.training.stage;
+  }
+  public get replayStatus() {
+    return this.replay.status;
+  }
+  public get replayError() {
+    return this.replay.error;
+  }
+  public get replaySpeed(): number {
+    return this.replay.speed;
+  }
+  public get replayEndTick(): number {
+    return this.replay.playback?.endTick ?? 0;
+  }
+
+  /** Presentation pacing only. Playback executes every original fixed tick. */
+  public setReplaySpeed(speed: number): void {
+    if (this.mode === 'replay' && [0.5, 1, 2, 4].includes(speed)) this.replay.speed = speed;
+  }
+  public entityCounters = { enemy: 0, projectile: 0 };
+  public config: GameplayConfig;
   public readonly fixedTimestep = 1 / 60;
   public readonly maxAccumulator = 0.25;
   public readonly maxSubSteps = 5;
@@ -81,7 +101,15 @@ export class GameSimulation {
   private listeners: Set<SimulationListener> = new Set();
   private cleanupWindowListeners: (() => void) | null = null;
 
-  constructor(customConfig?: Partial<GameplayConfig>, seed: number = 1337) {
+  constructor(
+    customConfig?: Partial<GameplayConfig>,
+    seed: number = 1337,
+    options: { mode?: 'training'; replay?: BattleReplay } = {},
+  ) {
+    if (options.replay) validateReplay(options.replay);
+    this.mode = options.replay ? 'replay' : (options.mode ?? 'match');
+    this.seed = options.replay?.seed ?? seed;
+    customConfig = options.replay?.config ?? customConfig;
     const validated = validateGameplayConfig(customConfig);
     this.config = validated.validatedConfig;
     this.durationSeconds = this.config.sessionDurationSeconds;
@@ -93,17 +121,19 @@ export class GameSimulation {
       broadsideLeft: this.config.weaponBroadsideLeft,
       broadsideRight: this.config.weaponBroadsideRight,
     });
-    this.spawner = new EnemySpawner(this.config.spawner, seed);
+    this.spawner = new EnemySpawner(this.config.spawner, this.seed);
+    this.replay = new ReplaySession(this.seed, this.config, options.replay);
 
-    this.player = this.initPlayerShip();
+    this.player = this.createPlayerShip();
+    if (this.mode === 'training') this.obstacles = [];
     this.setupAutoPauseListeners();
 
-    if (typeof window !== 'undefined') {
+    if (exposeTestHarness && typeof window !== 'undefined') {
       (window as any).__PIRATE_SIMULATION__ = this;
     }
   }
 
-  private initPlayerShip(): PlayerShipState {
+  public createPlayerShip(): PlayerShipState {
     const startX = this.config.arena.width * 0.5;
     const startY = this.config.arena.height * 0.8;
     return {
@@ -129,7 +159,7 @@ export class GameSimulation {
     return () => this.listeners.delete(listener);
   }
 
-  private emit(type: string, payload?: any): void {
+  public emit(type: string, payload?: any): void {
     for (const listener of this.listeners) {
       listener({ type, payload });
     }
@@ -140,13 +170,16 @@ export class GameSimulation {
    * If paused or ended, gameplay control inputs are rejected.
    */
   public setInputs(inputs: Partial<PlayerInputState>, source = 'default'): void {
-    if (this.isPaused || this.isEnded) {
+    if (this.isPaused || this.isEnded || this.mode === 'replay') {
       return;
     }
     if (inputs.fireFront) this.latchedFireFront = true;
     if (inputs.fireBroadsideLeft) this.latchedFireBroadsideLeft = true;
     if (inputs.fireBroadsideRight) this.latchedFireBroadsideRight = true;
-    this.inputSources.set(source, { ...(this.inputSources.get(source) ?? DEFAULT_PLAYER_INPUT), ...inputs });
+    this.inputSources.set(source, {
+      ...(this.inputSources.get(source) ?? DEFAULT_PLAYER_INPUT),
+      ...inputs,
+    });
     const combined = { ...DEFAULT_PLAYER_INPUT };
     for (const state of this.inputSources.values()) {
       combined.throttle = Math.max(combined.throttle, state.throttle);
@@ -178,210 +211,60 @@ export class GameSimulation {
       return;
     }
 
+    if (!Number.isFinite(frameDeltaSeconds) || frameDeltaSeconds <= 0) return;
     let delta = frameDeltaSeconds;
     // Spiral of death prevention
     if (delta > this.maxAccumulator) {
       delta = this.maxAccumulator;
     }
 
-    this.accumulator += delta;
+    const speed = this.mode === 'replay' ? this.replay.speed : 1;
+    this.accumulator += delta * speed;
+    // Allow fast playback on 30 Hz displays while keeping catch-up work bounded.
+    const stepLimit = this.maxSubSteps * Math.max(1, speed);
 
     let subSteps = 0;
-    while (this.accumulator >= this.fixedTimestep && subSteps < this.maxSubSteps) {
+    while (this.accumulator >= this.fixedTimestep && subSteps < stepLimit && !this.isEnded) {
       this.step(this.fixedTimestep);
       this.accumulator -= this.fixedTimestep;
       subSteps++;
     }
 
     // Alpha interpolation factor for smooth rendering
-    this.alpha = this.accumulator / this.fixedTimestep;
+    this.alpha = Math.min(1, this.accumulator / this.fixedTimestep);
   }
 
   /**
    * Single deterministic physics step (dt = 1/60s).
    */
   public step(dt: number): void {
-    if (this.isPaused || this.isEnded || dt <= 0) {
+    if (this.isPaused || this.isEnded || !Number.isFinite(dt) || dt <= 0) {
       return;
     }
-
-    this.tickCount++;
-    this.elapsedSeconds += dt;
-
-    // 1. Session duration countdown
-    this.remainingSeconds -= dt;
-    if (this.remainingSeconds <= 0) {
-      this.remainingSeconds = 0;
-      this.endMatch('time_expired');
-      return;
-    }
-
-    // 2. Decrement weapon cooldowns
-    this.weaponSystem.stepCooldowns(dt);
-    this.player.cooldownFront = this.weaponSystem.cooldownFront;
-    this.player.cooldownLeftBroadside = this.weaponSystem.cooldownLeftBroadside;
-    this.player.cooldownRightBroadside = this.weaponSystem.cooldownRightBroadside;
-
-    // 3. Process player movement kinematics
-    ShipKinematics.step(
-      this.player.kinematic,
+    const input = this.replay.inputForTick(
+      this.tickCount + 1,
       {
-        throttle: this.currentInput.throttle,
-        steer: this.currentInput.steer,
+        ...this.currentInput,
+        fireFront: this.currentInput.fireFront || this.latchedFireFront,
+        fireBroadsideLeft: this.currentInput.fireBroadsideLeft || this.latchedFireBroadsideLeft,
+        fireBroadsideRight: this.currentInput.fireBroadsideRight || this.latchedFireBroadsideRight,
       },
-      this.config.playerMovement,
-      dt,
-      this.config.arena
+      this.mode === 'match',
     );
-
-    // 4. Simultaneous player weapon discharges
-    const shouldFireFront = this.currentInput.fireFront || this.latchedFireFront;
     this.latchedFireFront = false;
-    if (shouldFireFront && this.weaponSystem.canFire('front')) {
-      const spawned = this.weaponSystem.fireFront(this.player.kinematic, 'player');
-      this.projectiles.push(...spawned);
-      for (const p of spawned) this.emit('projectile_spawned', p);
-    }
-
-    const shouldFireLeft = this.currentInput.fireBroadsideLeft || this.latchedFireBroadsideLeft;
     this.latchedFireBroadsideLeft = false;
-    if (shouldFireLeft && this.weaponSystem.canFire('broadside_left')) {
-      const spawned = this.weaponSystem.fireBroadsideLeft(this.player.kinematic, 'player');
-      this.projectiles.push(...spawned);
-      for (const p of spawned) this.emit('projectile_spawned', p);
-    }
-
-    const shouldFireRight = this.currentInput.fireBroadsideRight || this.latchedFireBroadsideRight;
     this.latchedFireBroadsideRight = false;
-    if (shouldFireRight && this.weaponSystem.canFire('broadside_right')) {
-      const spawned = this.weaponSystem.fireBroadsideRight(this.player.kinematic, 'player');
-      this.projectiles.push(...spawned);
-      for (const p of spawned) this.emit('projectile_spawned', p);
-    }
+    stepCombat(this, dt, input);
+    if (this.mode === 'training') this.training.advance(this);
+    this.replay.finishTick(this);
+  }
 
-    // 5. Update enemy AI subsystems
-    for (const enemy of this.enemies) {
-      if (enemy.isDestroyed) continue;
+  public getReplay(): BattleReplay | null {
+    return this.replay.export(this);
+  }
 
-      if (enemy.type === 'chaser') {
-        ChaserAI.update(
-          enemy as ChaserEnemyState,
-          this.player.kinematic,
-          this.obstacles,
-          dt,
-          this.config.arena
-        );
-      } else if (enemy.type === 'shooter') {
-        const shot = ShooterAI.update(
-          enemy as ShooterEnemyState,
-          this.player.kinematic,
-          this.obstacles,
-          dt,
-          this.config.arena
-        );
-        if (shot) {
-          this.projectiles.push(shot);
-          this.emit('projectile_spawned', shot);
-        }
-      }
-    }
-
-    // 6. Enemy Spawner tick
-    const newEnemy = this.spawner.step(
-      dt,
-      this.player.kinematic,
-      this.enemies,
-      this.obstacles,
-      this.config.arena
-    );
-    if (newEnemy) {
-      this.enemies.push(newEnemy);
-      this.emit('enemy_spawned', newEnemy);
-    }
-
-    // 7. Projectile kinematics update
-    this.projectiles = WeaponSystem.stepProjectiles(
-      this.projectiles,
-      dt,
-      this.config.arena
-    );
-
-    // 8. Collision detection & resolution
-    // A. Island Obstacle Collisions (Tangent sliding)
-    CollisionSystem.resolveShipObstacleCollisions(this.player.kinematic, this.obstacles);
-    for (const enemy of this.enemies) {
-      if (!enemy.isDestroyed) {
-        CollisionSystem.resolveShipObstacleCollisions(
-          enemy.kinematic,
-          this.obstacles
-        );
-      }
-    }
-
-    // B. Arena Boundary Collisions (Tangent sliding)
-    CollisionSystem.resolveShipArenaCollisions(this.player.kinematic, this.config.arena);
-    for (const enemy of this.enemies) {
-      if (!enemy.isDestroyed) {
-        CollisionSystem.resolveShipArenaCollisions(
-          enemy.kinematic,
-          this.config.arena
-        );
-      }
-    }
-
-    // C. Ship-to-Ship Ramming & Separation
-    const shipShipResult = CollisionSystem.resolveShipShipCollisions(
-      this.player,
-      this.enemies
-    );
-
-    if (shipShipResult.playerDamaged) {
-      this.player.damageTier = computeDamageTier(this.player.health, this.player.maxHealth);
-      this.emit('health_changed', {
-        current: this.player.health,
-        max: this.player.maxHealth,
-        percentage: (this.player.health / this.player.maxHealth) * 100,
-      });
-      if (this.player.health <= 0) {
-        this.player.isDestroyed = true;
-        this.endMatch('player_destroyed');
-        return;
-      }
-    }
-
-    // D. Projectile Collisions (Single-hit guarantee)
-    const projResult = CollisionSystem.resolveProjectileCollisions(
-      this.projectiles,
-      this.player,
-      this.enemies,
-      this.obstacles
-    );
-
-    if (projResult.scoreAwarded > 0) {
-      this.score += projResult.scoreAwarded;
-      this.emit('score_changed', { score: this.score });
-    }
-
-    if (projResult.playerDamaged) {
-      this.player.damageTier = computeDamageTier(this.player.health, this.player.maxHealth);
-      this.emit('health_changed', {
-        current: this.player.health,
-        max: this.player.maxHealth,
-        percentage: (this.player.health / this.player.maxHealth) * 100,
-      });
-      if (this.player.health <= 0) {
-        this.player.isDestroyed = true;
-        this.endMatch('player_destroyed');
-        return;
-      }
-    }
-
-    // 9. Prune destroyed enemies & dead projectiles
-    this.enemies = this.enemies.filter((e) => !e.isDestroyed);
-    this.projectiles = this.projectiles.filter((p) => !p.isDead);
-
-    // 10. Update player damage tier
-    this.player.damageTier = computeDamageTier(this.player.health, this.player.maxHealth);
+  public resetTrainingLesson(): void {
+    this.training.reset(this);
   }
 
   /**
@@ -414,6 +297,7 @@ export class GameSimulation {
     this.isEnded = true;
     this.endReason = reason;
     this.clearInputs();
+    if (reason === 'player_destroyed') this.emit('ship_sunk', this.player);
     this.emit('match_ended', {
       reason,
       finalScore: this.score,
@@ -440,7 +324,7 @@ export class GameSimulation {
   public restart(customConfig?: Partial<GameplayConfig>): void {
     if (customConfig) {
       const validated = validateGameplayConfig(customConfig);
-      (this as any).config = validated.validatedConfig;
+      this.config = validated.validatedConfig;
     }
     this.durationSeconds = this.config.sessionDurationSeconds;
     this.remainingSeconds = this.durationSeconds;
@@ -455,9 +339,16 @@ export class GameSimulation {
 
     this.enemies = [];
     this.projectiles = [];
-    this.weaponSystem.reset();
-    this.spawner.resetCooldown();
-    this.player = this.initPlayerShip();
+    this.weaponSystem = new WeaponSystem({
+      front: this.config.weaponFront,
+      broadsideLeft: this.config.weaponBroadsideLeft,
+      broadsideRight: this.config.weaponBroadsideRight,
+    });
+    this.spawner = new EnemySpawner(this.config.spawner, this.seed);
+    this.entityCounters = { enemy: 0, projectile: 0 };
+    this.replay.reset(this.seed, this.config);
+    this.training.stage = 'move';
+    this.player = this.createPlayerShip();
     this.clearInputs();
   }
 

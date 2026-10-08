@@ -49,6 +49,24 @@
 
 :root { --sea-ink:#081f2a; --sea-panel:#102e38; --sea-line:#456068; --brass:#ddb46c; --paper:#f4e6c9; --muted:#aac1c2; }
 body { margin:0; }
+ .training-entry { margin-top:14px; min-height:44px; text-align:left; color:var(--paper); font-size:13px; border-bottom:1px solid #ddb46c55; }
+ .training-entry small { display:block; color:var(--muted); font-size:10px; }
+ .voyage-overlay { position:absolute; top:86px; left:50%; transform:translateX(-50%); width:min(660px,calc(100% - 32px)); display:flex; align-items:center; justify-content:space-between; gap:16px; padding:10px 14px; background:#08232ef5; border:1px solid #ddb46c; border-radius:6px; }
+ .voyage-overlay strong { display:block; color:var(--paper); margin-top:3px; font-size:16px; }
+ .voyage-overlay p { color:var(--muted); font-size:12px; margin:4px 0 7px; }
+ .voyage-overlay button { min-height:44px; padding:6px 12px; color:var(--paper); border:1px solid #ddb46c55; border-radius:4px; font-size:12px; white-space:nowrap; }
+ .voyage-overlay-actions { display:flex; justify-content:center; gap:8px; }
+ .voyage-overlay.replay-overlay { top:auto;bottom:max(16px,env(safe-area-inset-bottom));width:min(800px,calc(100% - 32px)); }
+ .replay-overlay .voyage-overlay-actions {flex-wrap:wrap;}
+ .replay-transport {display:flex;align-items:center;justify-content:center;gap:8px;}
+ .replay-progress {color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap;margin-left:8px;}
+ .replay-overlay strong {display:inline-block;}
+ .replay-transport label {color:var(--muted);font-size:12px;white-space:nowrap;}
+ .replay-transport select {min-height:44px;background:var(--sea-panel);color:var(--paper);border:1px solid #ddb46c55;border-radius:4px;padding:4px;}
+ @media (max-width:600px) { .replay-overlay .voyage-overlay-actions {gap:4px;} .replay-overlay button {padding:6px 8px;} .replay-overlay .nautical-eyebrow,.replay-overlay p {display:none;} .replay-overlay strong {font-size:14px;} }
+ .battle-metrics .practice-clock {font-size:16px;white-space:nowrap;}
+ @media (max-width:600px) { .voyage-overlay {flex-direction:column;gap:4px;text-align:center;} .voyage-overlay p {margin-bottom:4px;} }
+ @media (max-height:500px) and (min-width:601px) { .voyage-overlay {top:82px;padding:6px 12px;} .voyage-overlay p {font-size:11px;} .voyage-overlay .nautical-eyebrow {display:none;} }
 button, select, input { font:inherit; }
 button:focus-visible, [role="tab"]:focus-visible, input:focus-visible, select:focus-visible { outline:3px solid #85e3d0; outline-offset:4px; }
 kbd { font-family:inherit; font-size:11px; font-weight:700; color:var(--brass); }
@@ -62,6 +80,21 @@ kbd { font-family:inherit; font-size:11px; font-weight:700; color:var(--brass); 
 .harbor-heading h1 { font:700 clamp(36px,4vw,58px)/1.1 Georgia,serif; letter-spacing:-1.5px; margin:5px 0; }
 .harbor-heading h1 span { color:var(--brass); }
 .harbor-heading p { font-size:13px; color:var(--muted); margin:8px 0 20px; }
+.harbor-heading { position:relative; }
+.harbor-heading>h1,.harbor-heading>p,.harbor-heading>.nautical-eyebrow { position:relative; z-index:1; }
+.harbor-departure { position:absolute; pointer-events:none; width:46%; max-width:440px; right:-8px; top:-18px; }
+.harbor-departure img { display:block; width:100%; height:auto; }
+@media (min-width:601px) and (max-width:900px) {
+  .harbor-heading-voyage h1 { font-size:38px; }
+  .harbor-departure { width:43%; top:-8px; right:-20px; }
+}
+@media (max-width:600px) {
+  .harbor-heading-voyage h1 { font-size:36px; line-height:1; margin-top:12px; }
+  .harbor-heading-voyage h1 span { display:block; }
+  .harbor-heading-voyage>p { max-width:170px; line-height:1.5; }
+  .harbor-departure { width:200px; max-width:62%; right:-16px; top:27px; }
+}
+@media (max-height:500px) and (min-width:601px) { .harbor-departure { display:none; } }
 .nautical-eyebrow { font-size:10px; text-transform:uppercase; letter-spacing:2.5px; color:var(--brass); font-weight:700; }
 .harbor-navigation { display:flex; gap:25px; border-bottom:1px solid #b5c7be33; }
 .harbor-navigation button { min-height:44px; color:var(--muted); font-size:13px; padding:10px 0; border-bottom:2px solid transparent; }
@@ -132,6 +165,11 @@ kbd { font-family:inherit; font-size:11px; font-weight:700; color:var(--brass); 
 .helm-movement .helm-control::before { display:none; }
 .helm-control.is-held { background:#386364; border-color:#baf6dd; }
 .helm-control.is-reloading { border-color:#7e8e85; }
+@media (max-width:360px) {
+  .touch-helm { left:10px; right:10px; gap:6px; }
+  .helm-control { width:44px; height:48px; }
+  .helm-weapons .helm-control { width:48px; font-size:9px; }
+}
 @media (max-width:767px), (any-pointer:coarse) { .touch-helm { display:flex; } .desktop-battery { display:none; } }
 @media (max-width:600px) {
   .harbor-screen { padding:16px 12px 52px; }.harbor-shell { padding:22px 22px 16px; }.harbor-heading h1 { font-size:39px; }.harbor-heading p { margin-bottom:14px; font-size:11px; }
@@ -142,7 +180,36 @@ kbd { font-family:inherit; font-size:11px; font-weight:700; color:var(--brass); 
 }
 @media (max-height:500px) and (min-width:601px) { .harbor-screen { padding:14px 24px 44px; }.harbor-shell { padding:18px 30px; }.harbor-heading h1 { font-size:32px; }.harbor-heading p { margin:4px 0 8px; }.voyage-brief h2 { font-size:24px; }.voyage-brief h2 br { display:none; }.voyage-layout { gap:30px; }.harbor-content { padding-top:14px; }.cannon-diagram { height:130px; }.cannon-diagram img { height:86px; }.diagram-port,.diagram-starboard { top:65px; }.harbor-footer { margin-top:10px; padding-top:10px; }.battle-hint { display:none; }.helm-control { height:44px; width:50px; }.helm-weapons .helm-control { width:58px; }.touch-helm { bottom:10px; } }
 @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; } }
-.voyage-brief h2>span,.voyage-brief h2>em { display:block; }
+.voyage-brief h2>span { display:inline; }
+.voyage-brief h2>em { display:block; }
 @media (max-width:600px), (max-height:500px) { .voyage-brief h2>span { display:inline; } }
 @media (min-width:601px) and (min-height:501px) { .harbor-shell { padding-top:24px; padding-bottom:18px; }.harbor-content { padding-top:20px; }.cannon-diagram { height:160px; }.harbor-heading p { margin-bottom:14px; }.voyage-brief h2 { font-size:36px; } }
 @media (max-width:600px) and (orientation:portrait) { .battle-hint::after { content:'Landscape gives you a wider view.'; display:block; color:#aac1c2; font-size:9px; margin-top:8px; } }
+
+/* Saved control assists. */
+.helm-swapped { flex-direction:row-reverse; }
+.helm-options { border-top:1px solid #b5c7be33; display:flex; flex-direction:column; gap:12px; font-size:12px; }
+.helm-options legend { color:var(--brass); padding:8px 0; font-weight:700; }
+.helm-options label { display:flex; align-items:center; gap:8px; }
+.helm-options input[type=checkbox] { width:18px; height:18px; accent-color:var(--brass); }
+.helm-options input[type=range] { accent-color:var(--brass); }
+.helm-options small { color:var(--muted); font-size:10px; line-height:1.5; }
+
+
+/* Decorative art yields to the departure controls on compact screens. */
+@media (max-width:360px), (max-width:600px) and (max-height:650px) {
+  .harbor-departure { display:none; }
+  .harbor-heading-voyage h1 { font-size:34px; line-height:1.1; margin:5px 0; }
+  .harbor-heading-voyage h1 span { display:inline; }
+  .harbor-heading-voyage>p { max-width:none; }
+  .voyage-brief h2 { font-size:27px; }
+}
+@media (max-height:500px) and (min-width:601px) {
+  .harbor-screen { padding:8px 24px 24px; }
+  .harbor-shell { padding:12px 24px; }
+  .harbor-heading>.nautical-eyebrow,.harbor-heading>p { display:none; }
+  .harbor-heading h1 { margin:0 0 4px; }
+  .voyage-brief h2 { margin:8px 0; }
+  .voyage-brief>p { font-size:12px; line-height:1.5; }
+  .voyage-settings { margin:10px 0; }
+}

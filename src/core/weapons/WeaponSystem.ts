@@ -11,7 +11,8 @@ import {
   DEFAULT_WEAPON_BROADSIDE_LEFT,
   DEFAULT_WEAPON_BROADSIDE_RIGHT,
 } from '../../types';
-import { getForwardVector, getRightVector, getLeftVector } from '../kinematics/ShipKinematics';
+import { getForwardVector } from '../kinematics/ShipKinematics';
+import { broadsideLanes } from './BroadsideGeometry';
 
 export interface WeaponSystemConfig {
   front: WeaponConfig;
@@ -156,23 +157,7 @@ export class WeaponSystem {
       this.cooldownLeftBroadside = cfg.cooldownSeconds;
     }
 
-    const f = getForwardVector(ship.rotation);
-    const l = getLeftVector(ship.rotation);
-    const wHalf = cfg.hullHalfWidth;
-    const spacing = cfg.gunportSpacing;
-
-    const baseFlankX = ship.x + l.x * wHalf;
-    const baseFlankY = ship.y + l.y * wHalf;
-
-    // 3 parallel velocities along port normal
-    const vx = l.x * cfg.projectileSpeed + ship.velocityX * 0.15;
-    const vy = l.y * cfg.projectileSpeed + ship.velocityY * 0.15;
-
-    // 3 distinct gunports: Fore (+spacing), Mid (0), Aft (-spacing)
-    const offsets = [spacing, 0, -spacing];
-    const projectiles: Projectile[] = offsets.map((longOffset) => {
-      const spawnX = baseFlankX + f.x * longOffset;
-      const spawnY = baseFlankY + f.y * longOffset;
+    const projectiles: Projectile[] = broadsideLanes(ship,cfg,'port').map(({x:spawnX,y:spawnY,vx,vy}) => {
       return {
         id: nextProjectileId++,
         owner,
@@ -208,23 +193,7 @@ export class WeaponSystem {
       this.cooldownRightBroadside = cfg.cooldownSeconds;
     }
 
-    const f = getForwardVector(ship.rotation);
-    const r = getRightVector(ship.rotation);
-    const wHalf = cfg.hullHalfWidth;
-    const spacing = cfg.gunportSpacing;
-
-    const baseFlankX = ship.x + r.x * wHalf;
-    const baseFlankY = ship.y + r.y * wHalf;
-
-    // 3 parallel velocities along starboard normal
-    const vx = r.x * cfg.projectileSpeed + ship.velocityX * 0.15;
-    const vy = r.y * cfg.projectileSpeed + ship.velocityY * 0.15;
-
-    // 3 distinct gunports: Fore (+spacing), Mid (0), Aft (-spacing)
-    const offsets = [spacing, 0, -spacing];
-    const projectiles: Projectile[] = offsets.map((longOffset) => {
-      const spawnX = baseFlankX + f.x * longOffset;
-      const spawnY = baseFlankY + f.y * longOffset;
+    const projectiles: Projectile[] = broadsideLanes(ship,cfg,'starboard').map(({x:spawnX,y:spawnY,vx,vy}) => {
       return {
         id: nextProjectileId++,
         owner,

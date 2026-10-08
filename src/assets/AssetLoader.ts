@@ -332,6 +332,8 @@ export class AssetLoader {
   private static instance: AssetLoader | null = null;
   private loadPromise: Promise<void> | null = null;
   private isLoaded = false;
+  private progressListeners = new Set<(progress: number) => void>();
+  private progress = 0.05;
   private tileTextures = new Map<number, Texture>();
 
   private constructor() {}
@@ -407,10 +409,18 @@ export class AssetLoader {
     }
 
     if (this.loadPromise) {
+      if (onProgress) {
+        this.progressListeners.add(onProgress);
+        onProgress(this.progress);
+      }
       return this.loadPromise;
     }
 
-    this.loadPromise = this.executeLoad(onProgress);
+    if (onProgress) this.progressListeners.add(onProgress);
+    this.loadPromise = this.executeLoad(progress => {
+      this.progress = progress;
+      for (const listener of this.progressListeners) listener(progress);
+    });
     return this.loadPromise;
   }
 
@@ -479,9 +489,11 @@ export class AssetLoader {
       this.isLoaded = true;
       console.log('[ASSETS] All assets successfully loaded!');
     } catch (error) {
-      console.error('[ASSETS] Asset loading failed:', error);
+      console.warn('[ASSETS] Asset loading failed; retry is available:', error);
       this.loadPromise = null; // Clear so user can retry
       throw error;
+    } finally {
+      this.progressListeners.clear();
     }
   }
 
@@ -526,6 +538,8 @@ export class AssetLoader {
   public reset(): void {
     this.isLoaded = false;
     this.loadPromise = null;
+    this.progressListeners.clear();
+    this.progress = 0.05;
     this.tileTextures.clear();
     for (const name of Object.keys(KENNEY_SHIP_SUBTEXTURES)) {
       if (Assets.cache.has(name)) {

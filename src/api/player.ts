@@ -26,6 +26,10 @@ export function setPlayerName(name: string): void {
   localStorage.setItem(PLAYER_NAME_KEY, name.trim());
 }
 
+export function adoptServerPlayerId(playerId: string): void {
+  localStorage.setItem(PLAYER_ID_KEY, playerId);
+}
+
 /**
  * Generates an RFC 4122 compliant UUID v4 string for idempotent match submissions.
  */

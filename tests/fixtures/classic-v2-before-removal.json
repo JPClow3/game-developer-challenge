@@ -1,0 +1,451 @@
+{
+  "version": "pirate-battle-2",
+  "seed": 42,
+  "config": {
+    "sessionDurationSeconds": 60,
+    "playerMaxHealth": 5000,
+    "playerMovement": {
+      "maxForwardSpeed": 220,
+      "acceleration": 180,
+      "turnRate": 2.6,
+      "longitudinalDrag": 0.95,
+      "lateralDrag": 5.5,
+      "reverseAllowed": false
+    },
+    "weaponFront": {
+      "cooldownSeconds": 0.6,
+      "projectileDamage": 25,
+      "projectileSpeed": 480,
+      "projectileLifetime": 1.2,
+      "projectileRadius": 4
+    },
+    "weaponBroadsideLeft": {
+      "cooldownSeconds": 1.8,
+      "projectileDamage": 20,
+      "projectileSpeed": 420,
+      "projectileLifetime": 1.1,
+      "projectileRadius": 4,
+      "projectileCount": 3,
+      "gunportSpacing": 18,
+      "hullHalfWidth": 16
+    },
+    "weaponBroadsideRight": {
+      "cooldownSeconds": 1.8,
+      "projectileDamage": 20,
+      "projectileSpeed": 420,
+      "projectileLifetime": 1.1,
+      "projectileRadius": 4,
+      "projectileCount": 3,
+      "gunportSpacing": 18,
+      "hullHalfWidth": 16
+    },
+    "chaser": {
+      "maxHealth": 35,
+      "movement": {
+        "maxForwardSpeed": 165,
+        "acceleration": 150,
+        "turnRate": 2.4,
+        "longitudinalDrag": 0.8,
+        "lateralDrag": 5,
+        "reverseAllowed": false
+      },
+      "rammingDamage": 35,
+      "contactRadius": 36,
+      "scoreAwardedOnKill": 1
+    },
+    "shooter": {
+      "maxHealth": 60,
+      "movement": {
+        "maxForwardSpeed": 130,
+        "acceleration": 110,
+        "turnRate": 1.8,
+        "longitudinalDrag": 0.9,
+        "lateralDrag": 5,
+        "reverseAllowed": true
+      },
+      "engageMinDistance": 240,
+      "engageMaxDistance": 360,
+      "aimToleranceRadians": 0.21,
+      "cannon": {
+        "cooldownSeconds": 2,
+        "projectileDamage": 15,
+        "projectileSpeed": 380,
+        "projectileLifetime": 1.2,
+        "projectileRadius": 4
+      },
+      "scoreAwardedOnKill": 1
+    },
+    "arena": {
+      "width": 1600,
+      "height": 1000,
+      "margin": 40
+    },
+    "spawner": {
+      "spawnIntervalSeconds": 3,
+      "safePlayerDistance": 380,
+      "islandClearance": 40,
+      "maxActiveEnemies": 10,
+      "chaserWeight": 0.5,
+      "shooterWeight": 0.5
+    }
+  },
+  "inputs": [
+    {
+      "tick": 1,
+      "input": {
+        "throttle": 1,
+        "steer": 0.25,
+        "fireFront": true,
+        "fireBroadsideLeft": true,
+        "fireBroadsideRight": true
+      }
+    },
+    {
+      "tick": 181,
+      "input": {
+        "throttle": 1,
+        "steer": -0.25,
+        "fireFront": true,
+        "fireBroadsideLeft": true,
+        "fireBroadsideRight": true
+      }
+    },
+    {
+      "tick": 302,
+      "input": {
+        "throttle": 1,
+        "steer": -0.25,
+        "fireFront": false,
+        "fireBroadsideLeft": true,
+        "fireBroadsideRight": true
+      }
+    },
+    {
+      "tick": 361,
+      "input": {
+        "throttle": 1,
+        "steer": 0.25,
+        "fireFront": true,
+        "fireBroadsideLeft": true,
+        "fireBroadsideRight": true
+      }
+    },
+    {
+      "tick": 541,
+      "input": {
+        "throttle": 1,
+        "steer": -0.25,
+        "fireFront": true,
+        "fireBroadsideLeft": true,
+        "fireBroadsideRight": true
+      }
+    },
+    {
+      "tick": 601,
+      "input": {
+        "throttle": 0,
+        "steer": 0,
+        "fireFront": false,
+        "fireBroadsideLeft": false,
+        "fireBroadsideRight": false
+      }
+    },
+    {
+      "tick": 721,
+      "input": {
+        "throttle": 1,
+        "steer": 0.25,
+        "fireFront": true,
+        "fireBroadsideLeft": true,
+        "fireBroadsideRight": true
+      }
+    },
+    {
+      "tick": 901,
+      "input": {
+        "throttle": 1,
+        "steer": -0.25,
+        "fireFront": true,
+        "fireBroadsideLeft": true,
+        "fireBroadsideRight": true
+      }
+    },
+    {
+      "tick": 1081,
+      "input": {
+        "throttle": 1,
+        "steer": 0.25,
+        "fireFront": true,
+        "fireBroadsideLeft": true,
+        "fireBroadsideRight": true
+      }
+    },
+    {
+      "tick": 1261,
+      "input": {
+        "throttle": 1,
+        "steer": -0.25,
+        "fireFront": true,
+        "fireBroadsideLeft": true,
+        "fireBroadsideRight": true
+      }
+    },
+    {
+      "tick": 1441,
+      "input": {
+        "throttle": 1,
+        "steer": 0.25,
+        "fireFront": true,
+        "fireBroadsideLeft": true,
+        "fireBroadsideRight": true
+      }
+    },
+    {
+      "tick": 1621,
+      "input": {
+        "throttle": 1,
+        "steer": -0.25,
+        "fireFront": true,
+        "fireBroadsideLeft": true,
+        "fireBroadsideRight": true
+      }
+    },
+    {
+      "tick": 1801,
+      "input": {
+        "throttle": 1,
+        "steer": 0.25,
+        "fireFront": true,
+        "fireBroadsideLeft": true,
+        "fireBroadsideRight": true
+      }
+    },
+    {
+      "tick": 1981,
+      "input": {
+        "throttle": 1,
+        "steer": -0.25,
+        "fireFront": true,
+        "fireBroadsideLeft": true,
+        "fireBroadsideRight": true
+      }
+    },
+    {
+      "tick": 2161,
+      "input": {
+        "throttle": 1,
+        "steer": 0.25,
+        "fireFront": true,
+        "fireBroadsideLeft": true,
+        "fireBroadsideRight": true
+      }
+    },
+    {
+      "tick": 2341,
+      "input": {
+        "throttle": 1,
+        "steer": -0.25,
+        "fireFront": true,
+        "fireBroadsideLeft": true,
+        "fireBroadsideRight": true
+      }
+    },
+    {
+      "tick": 2521,
+      "input": {
+        "throttle": 1,
+        "steer": 0.25,
+        "fireFront": true,
+        "fireBroadsideLeft": true,
+        "fireBroadsideRight": true
+      }
+    },
+    {
+      "tick": 2701,
+      "input": {
+        "throttle": 1,
+        "steer": -0.25,
+        "fireFront": true,
+        "fireBroadsideLeft": true,
+        "fireBroadsideRight": true
+      }
+    },
+    {
+      "tick": 2881,
+      "input": {
+        "throttle": 1,
+        "steer": 0.25,
+        "fireFront": true,
+        "fireBroadsideLeft": true,
+        "fireBroadsideRight": true
+      }
+    },
+    {
+      "tick": 3061,
+      "input": {
+        "throttle": 1,
+        "steer": -0.25,
+        "fireFront": true,
+        "fireBroadsideLeft": true,
+        "fireBroadsideRight": true
+      }
+    },
+    {
+      "tick": 3241,
+      "input": {
+        "throttle": 1,
+        "steer": 0.25,
+        "fireFront": true,
+        "fireBroadsideLeft": true,
+        "fireBroadsideRight": true
+      }
+    },
+    {
+      "tick": 3421,
+      "input": {
+        "throttle": 1,
+        "steer": -0.25,
+        "fireFront": true,
+        "fireBroadsideLeft": true,
+        "fireBroadsideRight": true
+      }
+    },
+    {
+      "tick": 3601,
+      "input": {
+        "throttle": 1,
+        "steer": 0.25,
+        "fireFront": true,
+        "fireBroadsideLeft": true,
+        "fireBroadsideRight": true
+      }
+    }
+  ],
+  "checks": [
+    {
+      "tick": 120,
+      "hash": "a6b66524"
+    },
+    {
+      "tick": 240,
+      "hash": "3d940484"
+    },
+    {
+      "tick": 360,
+      "hash": "481103c6"
+    },
+    {
+      "tick": 480,
+      "hash": "efd4c721"
+    },
+    {
+      "tick": 600,
+      "hash": "822e14f6"
+    },
+    {
+      "tick": 720,
+      "hash": "c0a06995"
+    },
+    {
+      "tick": 840,
+      "hash": "6b6aa0d9"
+    },
+    {
+      "tick": 960,
+      "hash": "49eca5ee"
+    },
+    {
+      "tick": 1080,
+      "hash": "c42f80ec"
+    },
+    {
+      "tick": 1200,
+      "hash": "07a9508f"
+    },
+    {
+      "tick": 1320,
+      "hash": "969d3284"
+    },
+    {
+      "tick": 1440,
+      "hash": "1fef88fd"
+    },
+    {
+      "tick": 1560,
+      "hash": "3ad90830"
+    },
+    {
+      "tick": 1680,
+      "hash": "e8285558"
+    },
+    {
+      "tick": 1800,
+      "hash": "2061b7d2"
+    },
+    {
+      "tick": 1920,
+      "hash": "056571c9"
+    },
+    {
+      "tick": 2040,
+      "hash": "d1f31614"
+    },
+    {
+      "tick": 2160,
+      "hash": "70a36363"
+    },
+    {
+      "tick": 2280,
+      "hash": "b19b00fd"
+    },
+    {
+      "tick": 2400,
+      "hash": "f89988bd"
+    },
+    {
+      "tick": 2520,
+      "hash": "847315e8"
+    },
+    {
+      "tick": 2640,
+      "hash": "1c3500e1"
+    },
+    {
+      "tick": 2760,
+      "hash": "8a45d230"
+    },
+    {
+      "tick": 2880,
+      "hash": "e78dcd9f"
+    },
+    {
+      "tick": 3000,
+      "hash": "1f617fc7"
+    },
+    {
+      "tick": 3120,
+      "hash": "7522eb34"
+    },
+    {
+      "tick": 3240,
+      "hash": "8cfec02b"
+    },
+    {
+      "tick": 3360,
+      "hash": "ba94e427"
+    },
+    {
+      "tick": 3480,
+      "hash": "abec7bcc"
+    },
+    {
+      "tick": 3600,
+      "hash": "06e9439a"
+    },
+    {
+      "tick": 3601,
+      "hash": "70199eb4"
+    }
+  ],
+  "endTick": 3601
+}
