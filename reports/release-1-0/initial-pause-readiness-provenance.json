@@ -1,0 +1,25 @@
+{
+  "recordedAt": "2026-10-08T07:59:32.102Z",
+  "priorCi": "https://github.com/JPClow3/game-developer-challenge/actions/runs/37744769262",
+  "priorWindows": {
+    "passed": 71,
+    "failed": 1,
+    "interrupted": 1,
+    "skipped": 6,
+    "didNotRun": 43,
+    "failure": "Initial pause asserted a zero loop gain before the WAV finished loading. A five-second poll observed undefined."
+  },
+  "change": "Wait for the actual active ambience loop after graphics readiness, assert zero paused gain, resume and require simulation progress and restored volume. Production code and media unchanged.",
+  "sourceFile": "tests/e2e/22_renderer_recovery.spec.ts",
+  "sourceSha256": "abfa26dd91ca2330ec5c5308083f9f6f40cf3906aeda4a30ddded85b71a2b64f",
+  "validation": {
+    "passed": 6,
+    "failed": 0,
+    "flaky": 0,
+    "repeatEach": 3,
+    "projects": [
+      "chromium",
+      "mobile-chromium"
+    ]
+  }
+}

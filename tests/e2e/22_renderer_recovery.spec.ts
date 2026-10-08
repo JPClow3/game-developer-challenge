@@ -143,7 +143,11 @@ test('an initial pause before graphics are ready remains paused and starts ambie
   await launch(page);
   await expect(page.getByRole('dialog', { name: 'Game Paused' })).toBeVisible();
   expect(await page.evaluate(() => ({ paused: (window as any).__PIRATE_SIMULATION__.isPaused, tick: (window as any).__PIRATE_SIMULATION__.tickCount }))).toEqual({ paused: true, tick: 0 });
-  await expect.poll(() => page.evaluate(() => (window as any).__PIXI_GAME__.audio.activeLoops.get('ocean_ambience_loop')?.gain.gain.value)).toBe(0);
+  // Graphics readiness does not imply the WAV has finished loading/decoding.
+  // Require the loop to exist before inspecting its paused volume.
+  await page.waitForFunction(() => (window as any).__PIXI_GAME__.audio.activeLoops.has('ocean_ambience_loop'));
+  expect(await page.evaluate(() => (window as any).__PIXI_GAME__.audio.activeLoops.get('ocean_ambience_loop')?.gain.gain.value)).toBe(0);
   await page.getByRole('button', { name: 'Resume Battle', exact: true }).click();
   await expect.poll(() => page.evaluate(() => (window as any).__PIRATE_SIMULATION__.tickCount)).toBeGreaterThan(0);
+  await expect.poll(() => page.evaluate(() => (window as any).__PIXI_GAME__.audio.activeLoops.get('ocean_ambience_loop')?.gain.gain.value)).toBeCloseTo(.35);
 });
