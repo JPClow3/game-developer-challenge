@@ -69,11 +69,11 @@ Open a query below on localhost or the published fixture build. `scenario` overr
 | `?scenario=empty` | Open either data tab. Empty-state instructions replace its table. |
 | `?scenario=slow_network` | Data loads after 2.5 seconds. Finish a battle and reload immediately: the in-flight submission survives and syncs automatically. |
 | `?scenario=timeout` | Finish a battle. The mock saves it before withholding the first response for 6 seconds; Axios times out at 5 seconds and retains it. Reload: startup retries the same ID, receives `200 / isDuplicate: true`, and drains the queue. Reads also time out; choose success to inspect the one saved row. |
-| `?scenario=idempotency_recovery` | Same saved-match/lost-response flow, with healthy reads so the accepted row is visible before retry. |
+| `?scenario=idempotency_recovery` | Saves the match, then immediately loses its acknowledgement with a network error. Reads stay healthy; Retry Registration confirms the duplicate without counting the score twice. |
 | `?scenario=ranking_fails` | Ranking returns 500 with retry; History and registration work. |
 | `?scenario=history_fails` | History returns 500 with retry; Ranking and registration work. |
 | `?scenario=error_500` | Reads/writes return 500. Finish a battle, then choose success and Retry Sync in History, or reload with success. |
-| `?scenario=error_400` | Reads/writes return 400. A rejected submission is removed because retry cannot repair it. |
+| `?scenario=error_400` | Reads/writes return 400. The retry item is removed, but a persistent rejected state explains that the battle was not recorded. Refreshing the result does not resubmit it. |
 | `?scenario=server_offline` | Transport errors. Finish a battle, then restart with success to recover automatically without a manual button. |
 | `?scenario=out_of_order&scenarioSeed=42` | Request consecutive pages quickly. Each endpoint independently alternates slow (1000–1099 ms) and fast (100–199 ms) responses; seed reproduces jitter after reload. Applies to Ranking and History. |
 

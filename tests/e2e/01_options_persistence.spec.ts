@@ -27,6 +27,7 @@ test.describe('Flow 01: Options Navigation, Validation & Persistence', () => {
 
     // 4. Click Save Options
     await page.getByRole('button', { name: /save options/i }).click();
+    await expect(page.getByRole('status').filter({hasText:'Options saved. Your next voyage is ready.'})).toBeVisible();
     await expect(page.getByRole('dialog')).not.toBeVisible();
 
     // 5. Verify text on Main Menu indicates updated configuration

@@ -1,0 +1,40 @@
+{
+  "recordedAt": "2026-10-08T04:44:18.802Z",
+  "sourceCommit": "fc8087e047e5f6db38f48139e332b9f16af3ef14",
+  "sourceDigest": "d3887b8890d99d34638e2de091c93729d93d5150cd84dca2825a63687df7139b",
+  "sourceDigestMethod": "SHA256 of sorted delivered source/test/tool/config paths and contents, excluding reports",
+  "scope": "Local Windows checks on the stable source commit. Full browser results are JSON; new fixture-build and backend HTML reports retain screenshots. CI and public verification remain separate.",
+  "summaries": [
+    {
+      "name": "unit",
+      "passed": 295,
+      "skipped": 0,
+      "failed": 0,
+      "files": 33
+    },
+    {
+      "name": "browser",
+      "passed": 105,
+      "skipped": 5,
+      "failed": 0,
+      "flaky": 0,
+      "durationMs": 393627.297
+    },
+    {
+      "name": "leaderboard",
+      "passed": 4,
+      "skipped": 0,
+      "failed": 0,
+      "flaky": 0,
+      "durationMs": 37729.48299999999
+    },
+    {
+      "name": "published",
+      "passed": 12,
+      "skipped": 0,
+      "failed": 0,
+      "flaky": 0,
+      "durationMs": 67954.529
+    }
+  ]
+}

@@ -27,6 +27,13 @@ export const test = base.extend<{ errorFreeConsole: void; expectNetworkFailure: 
     };
     context.pages().forEach(listen);context.on('page',listen);
     await use();
+    // Completed checks no longer need continuous WebGL work while Playwright
+    // captures its final screenshot/video and closes the browser context.
+    for (const page of context.pages()) {
+      if (!page.isClosed()) await page.evaluate(() => {
+        (window as any).__PIXI_GAME__?.app?.ticker?.stop();
+      });
+    }
     if(expectedMessages.length) await testInfo.attach('declared-network-failures',{body:JSON.stringify(expectedMessages,null,2),contentType:'application/json'});
     if(errors.length) await testInfo.attach('browser-errors',{body:JSON.stringify(errors,null,2),contentType:'application/json'});
     expect(errors, 'Every page must have an error-free console').toEqual([]);

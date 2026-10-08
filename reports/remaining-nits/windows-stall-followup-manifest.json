@@ -1,0 +1,52 @@
+{
+  "recordedAt": "2026-10-08T05:46:51.429Z",
+  "baseSourceCommit": "1f455b4a203b49e7db9b44fd92fdacd2ef3db8fd",
+  "scope": "Two sequential local Windows repetitions of practice/recovery/options/replay specs in both desktop and mobile projects; no retries",
+  "stats": {
+    "startTime": "2026-10-08T05:44:48.434Z",
+    "duration": 102819.29,
+    "expected": 26,
+    "skipped": 2,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "files": [
+    {
+      "path": "playwright.config.ts",
+      "sha256": "0c014a15e4e0dc191cb9eab8bba5169fd96de2e93d153ddfd680f0972050ae09"
+    },
+    {
+      "path": "tests/e2e/fixtures.ts",
+      "sha256": "11638c86a35c5645c8f41e568fce482eb4a0481641bf5c9d7c574b751742323c"
+    },
+    {
+      "path": "tests/e2e/15_playability_recovery.spec.ts",
+      "sha256": "02c047a932e114a24a087ec3bf2091d76bba93382c37f52a517080782acfff7f"
+    },
+    {
+      "path": "tests/e2e/17_replay_transport.spec.ts",
+      "sha256": "a3fa64810e1ab447c8750fb57ab4dc4a3d66bc82a4abb4c92967c3358c64dfe3"
+    }
+  ],
+  "priorCI": {
+    "run": 37730245021,
+    "stats": {
+      "passed": 101,
+      "skipped": 5,
+      "failed": 4
+    },
+    "findings": [
+      "Practice assertions completed; context teardown exceeded 60 seconds.",
+      "Legacy options assertions completed; context teardown exceeded 60 seconds.",
+      "Pause commands stalled, then unrelated live combat sank the vessel before its input assertion.",
+      "Replay resume click took 43.075 seconds in the browser trace and exhausted the test budget.",
+      "Pause/replay traces recorded WebGL GPU stall due to ReadPixels warnings."
+    ]
+  },
+  "changes": [
+    "Disable automatic trace filmstrip screenshots while retaining action/DOM traces, final screenshots and failure videos.",
+    "Stop rendering after checks before browser evidence/context teardown.",
+    "Stop live ticks for keyboard-only pause checks and manually advanced replay controls."
+  ],
+  "limitations": "These local results do not establish CI, production deployment, physical-phone performance, or a quiet benchmark rerun."
+}

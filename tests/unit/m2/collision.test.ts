@@ -14,6 +14,30 @@ import type { ShipState, Projectile, IslandObstacle, ArenaBounds } from '../../.
 describe('CollisionSystem Subsystem', () => {
   const arena: ArenaBounds = { width: 1600, height: 1000, margin: 40 };
 
+  it.each([0, .37, Math.PI / 2, 2.2].flatMap(rotation =>
+    [-1e-6, 0, 1e-6].map(side => ({rotation, side}))))(
+    'separates an island centered on the hull segment at heading $rotation, offset $side', ({rotation, side}) => {
+      const obstacle: IslandObstacle = {id:'centered',x:600,y:350,radius:85,tileIds:[]};
+      const forward = {x:Math.sin(rotation),y:-Math.cos(rotation)};
+      const normal = {x:-forward.y,y:forward.x};
+      const direction = side < 0 ? -1 : 1;
+      const ship = createKinematicState(obstacle.x + forward.x * 6 + normal.x * side,
+        obstacle.y + forward.y * 6 + normal.y * side, rotation);
+      ship.velocityX = forward.x * 100 - normal.x * direction * 25;
+      ship.velocityY = forward.y * 100 - normal.y * direction * 25;
+      CollisionSystem.resolveShipObstacleCollisions(ship,[obstacle]);
+      const capsule = getShipDualDiskCollider(ship);
+      const dx = capsule.disk2.x-capsule.disk1.x, dy = capsule.disk2.y-capsule.disk1.y;
+      const t = Math.max(0,Math.min(1,((obstacle.x-capsule.disk1.x)*dx+(obstacle.y-capsule.disk1.y)*dy)/(dx*dx+dy*dy)));
+      const separation = Math.hypot(capsule.disk1.x+dx*t-obstacle.x,capsule.disk1.y+dy*t-obstacle.y);
+      expect(separation).toBeGreaterThanOrEqual(obstacle.radius+DEFAULT_SHIP_DISK_RADIUS-1e-8);
+      expect(ship.velocityX*normal.x*direction+ship.velocityY*normal.y*direction).toBeCloseTo(0,8);
+      expect(ship.velocityX*forward.x+ship.velocityY*forward.y).toBeCloseTo(100,8);
+      const resolved = {x:ship.x,y:ship.y};
+      CollisionSystem.resolveShipObstacleCollisions(ship,[obstacle]);
+      expect(ship.x).toBeCloseTo(resolved.x,8);expect(ship.y).toBeCloseTo(resolved.y,8);
+    });
+
   it('computes dual-disk capsule collider with bow and stern disks (R=16px, offset 15px)', () => {
     // Ship facing North (0 rad) at (500, 500)
     const ship = createKinematicState(500, 500, 0);

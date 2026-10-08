@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 test('delivered battle has one launch, two enemy types and no bonus progression', async ({
   page,

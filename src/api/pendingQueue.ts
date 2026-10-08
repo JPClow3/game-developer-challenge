@@ -1,5 +1,6 @@
 import type { SubmitMatchRequest, PendingSubmission, SubmitMatchResponse } from '../types/api';
-import { apiClient, isRetryableApiError } from './client';
+import { apiClient, ApiRequestError, isRetryableApiError } from './client';
+import { SubmissionRejections } from './submissionRejections';
 
 const PENDING_STORAGE_KEY = 'pirate_battle_pending_submissions_v1';
 
@@ -10,6 +11,7 @@ export class PendingSubmissionQueue {
   private listeners: Set<() => void> = new Set();
   private inFlight = new Map<string, Promise<SubmitMatchResponse>>();
   private onSynced: (() => Promise<unknown>) | undefined;
+  private rejections = new SubmissionRejections();
 
   private constructor() {
     this.loadFromStorage();
@@ -80,6 +82,8 @@ export class PendingSubmissionQueue {
     return this.queue.length;
   }
 
+  public getRejection(id: string) { return this.rejections.get(id); }
+
   /** Called after the mock worker or live API is ready, once per application boot. */
   public startAutoSync(onSynced: () => Promise<unknown>): void {
     this.onSynced = onSynced;
@@ -89,6 +93,11 @@ export class PendingSubmissionQueue {
   }
 
   public submit(request: SubmitMatchRequest): Promise<SubmitMatchResponse> {
+    const rejection = this.getRejection(request.id);
+    if (rejection) {
+      this.remove(request.id);
+      return Promise.reject(new ApiRequestError(rejection.message, rejection.status));
+    }
     const existing = this.inFlight.get(request.id);
     if (existing) return existing;
     // Persist before dispatch, so a tab closing during the request cannot lose the result.
@@ -108,7 +117,10 @@ export class PendingSubmissionQueue {
     } catch (error) {
       if (isRetryableApiError(error)) {
         this.enqueue(request, error instanceof Error ? error.message : String(error));
-      } else {
+      } else if (error instanceof ApiRequestError && error.status !== undefined) {
+        // Record the terminal outcome before removing the retry item, including
+        // background sync where no foreground mutation can display the error.
+        this.rejections.record({ id: request.id, message: error.message, status: error.status });
         this.remove(request.id);
       }
       throw error;

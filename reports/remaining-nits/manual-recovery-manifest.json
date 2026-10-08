@@ -1,0 +1,36 @@
+{
+  "recordedAt": "2026-10-08T06:41:56.347Z",
+  "baseSourceCommit": "53773ff23419cbcce94bde3890588e2b4c020bd2",
+  "testFile": "tests/e2e/22_renderer_recovery.spec.ts",
+  "testFileDigest": "b394c4ad8d27272432f15f4b18f8ab9dcef639a120b762f636f6103a27dd3748",
+  "scope": "Five stable local repetitions per desktop/mobile project; zero retries",
+  "stats": {
+    "startTime": "2026-10-08T06:39:57.607Z",
+    "duration": 81216.47,
+    "expected": 10,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "priorCI": {
+    "run": 37736556025,
+    "windows": {
+      "passed": 110,
+      "skipped": 5,
+      "failed": 1
+    },
+    "linux": {
+      "gameplayPassed": 111,
+      "skipped": 5,
+      "backendPassed": 4,
+      "publishedPassed": 12
+    },
+    "findings": [
+      "Collision and all four independent accessibility screen checks passed on Windows.",
+      "Manual restored-renderer readiness took 37.715 seconds in the browser trace.",
+      "The subsequent paused-dialog check took 8.102 seconds; the 60-second overall test budget expired before remaining invariants were checked."
+    ]
+  },
+  "change": "Only the manual two-initialization recovery flow receives a 120-second overall test budget and a 60-second restored-renderer readiness wait. State identity, complete state signature, paused tick, silent audio, old renderer destruction, canvas counts, resume/exit and stale-callback cleanup assertions remain. Product graphics initialization timeout and all other test budgets remain unchanged.",
+  "limitations": "This is local evidence. Complete CI and public deployment remain separate gates."
+}

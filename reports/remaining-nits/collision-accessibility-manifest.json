@@ -1,0 +1,68 @@
+{
+  "recordedAt": "2026-10-08T06:15:02.250Z",
+  "baseSourceCommit": "5098aec2555aa77bcc585ab3973beaa288cb103f",
+  "scope": "Stable local Windows source: 307 unit cases and two repetitions per desktop/mobile options, keyboard/collision and engineering/accessibility case; no retries",
+  "browserStats": {
+    "startTime": "2026-10-08T06:11:20.220Z",
+    "duration": 107235.858,
+    "expected": 32,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "unitCounts": {
+    "passed": 307,
+    "failed": 0
+  },
+  "files": [
+    {
+      "path": "src/core/collision/CollisionSystem.ts",
+      "sha256": "0e1e44ad6b61b54c94591a7f192f727dc103a31fa708252b1c7b8a468aac844c"
+    },
+    {
+      "path": "tests/unit/m2/collision.test.ts",
+      "sha256": "842a5cce17c40eac2244ce1ce6b36e5381df9371228d95b995de0bf0e01ce778"
+    },
+    {
+      "path": "tests/e2e/01_options_persistence.spec.ts",
+      "sha256": "391d5ab464d8bc5b311b954ea97fc9181cb0755225d19b99ae07942d541b63a2"
+    },
+    {
+      "path": "tests/e2e/03_combat_kinematics_collisions.spec.ts",
+      "sha256": "b6e1eadc5de85800f68f4967cfe434343d6ee19ae1236b88be3f83f30bc48353"
+    },
+    {
+      "path": "tests/e2e/28_engineering_evidence.spec.ts",
+      "sha256": "de63705c66bc05067e2486f5a48aaaf0122311c80bfb91c2209ffdedffdb100c"
+    }
+  ],
+  "priorCI": {
+    "run": 37734087371,
+    "windows": {
+      "passed": 103,
+      "skipped": 5,
+      "failed": 2
+    },
+    "linux": {
+      "gameplayPassed": 105,
+      "skipped": 5,
+      "backendPassed": 4,
+      "publishedPassed": 12
+    },
+    "findings": [
+      "All four previous Windows failing cases passed.",
+      "The collision snapshot remained in an active battle; island contact skipped its near-zero capsule-centerline normal.",
+      "Twelve independent centered-overlap regression cases failed before the collision fix.",
+      "The combined four-screen accessibility case exhausted its 60-second budget; a pause click took 24.496 seconds in the browser trace.",
+      "The first local split audit sampled a pause button mid-transition and reported contrast 3.83:1; the settled-screen acceptance waits for finite animations."
+    ]
+  },
+  "changes": [
+    "Resolve degenerate island overlap with a deterministic perpendicular normal and preserve tangential velocity.",
+    "Keep real keyboard input assertions and manually advance fixed physics ticks.",
+    "Give each accessibility screen its own unchanged 60-second budget.",
+    "Wait for finite UI transitions before accessibility scans.",
+    "Retain saved-options feedback coverage in the options persistence flow."
+  ],
+  "limitations": "CI, deployed commit identity and public behavior remain separate gates."
+}

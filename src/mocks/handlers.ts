@@ -121,7 +121,12 @@ export const handlers = [
       const result = db.insertMatch(payload);
       // Commit before the client times out. The same ID acknowledges immediately on retry,
       // including after a reload because the mock database persists the accepted record.
-      if ((scenario === 'timeout' || scenario === 'idempotency_recovery') && !result.isDuplicate) {
+      if (scenario === 'idempotency_recovery' && !result.isDuplicate) {
+        // Lose only the acknowledgement, immediately. Reads stay available and
+        // the player's next retry acknowledges the already committed match.
+        return HttpResponse.error();
+      }
+      if (scenario === 'timeout' && !result.isDuplicate) {
         await delay(6000);
         return HttpResponse.error();
       }

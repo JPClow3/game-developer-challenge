@@ -28,7 +28,11 @@ test('context loss freezes the voyage and restoration requires a fresh intention
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
   await launch(page); await page.keyboard.down('w');
   const before = await lose(page);
-  await page.waitForTimeout(300);
+  await expect(page.getByRole('dialog', { name: 'Game view interrupted' })).toBeVisible();
+  await page.evaluate(() => {
+    const sim = (window as any).__PIRATE_SIMULATION__;
+    for (let i = 0; i < 60; i++) sim.update(1 / 60);
+  });
   await page.screenshot({ path: testInfo.outputPath('interrupted-view.png'), mask: [page.getByTestId('msw-scenario-widget')] });
   const frozen = await page.evaluate(() => {
     const sim = (window as any).__PIRATE_SIMULATION__;
@@ -59,6 +63,9 @@ test('context loss freezes the voyage and restoration requires a fresh intention
 });
 
 test('manual view restoration keeps the simulation and state, then exits cleanly', async ({ page }, testInfo) => {
+  // Two WebGL initializations plus recovery and cleanup can exceed the usual
+  // budget on software GPU runners. Keep all state assertions and zero retries.
+  testInfo.setTimeout(120_000);
   await launch(page);
   const before = await lose(page);
   const signature = await page.evaluate(() => {
@@ -68,7 +75,7 @@ test('manual view restoration keeps the simulation and state, then exits cleanly
   await page.getByRole('button', { name: 'Restore game view', exact: true }).click();
   await page.waitForFunction(() => {
     const w = window as any; return w.__PIXI_GAME__?.isReady && w.__PIXI_GAME__ !== w.__RECOVERY_GAME__;
-  });
+  }, undefined, { timeout: 60_000 });
   await expect(page.getByRole('dialog', { name: 'Game Paused' })).toBeVisible();
   await expect.poll(() => page.evaluate(() => (window as any).__PIXI_GAME__.audio.activeLoops.get('ocean_ambience_loop')?.gain.gain.value)).toBe(0);
   expect(await page.evaluate(() => {

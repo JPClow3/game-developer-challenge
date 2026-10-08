@@ -14,7 +14,8 @@ test('a lost practice target can be reset and completed using fresh keyboard inp
   await page.keyboard.up('w');
   await page.keyboard.down('w');
   await page.keyboard.down('a');
-  await page.waitForTimeout(700);
+  await expect.poll(() => page.evaluate(() =>
+    (window as any).__PIRATE_SIMULATION__.player.kinematic.angularVelocity)).toBeLessThan(0);
   await page.getByRole('button', { name: 'Reset lesson', exact: true }).click();
   const reset = await page.evaluate(() => {
     const s = (window as any).__PIRATE_SIMULATION__;
@@ -42,6 +43,9 @@ test('a lost practice target can be reset and completed using fresh keyboard inp
 
 test('holding pause never resumes the game and held movement needs a fresh press', async ({ page }) => {
   await start(page);
+  // This checks real keyboard events and input reset, not elapsed combat time.
+  // A slow browser command must not let an unrelated enemy sink the vessel.
+  await page.evaluate(() => (window as any).__PIXI_GAME__.app.ticker.stop());
   await page.keyboard.down('w');
   await page.keyboard.down('p');
   await expect(page.getByRole('dialog')).toBeVisible();

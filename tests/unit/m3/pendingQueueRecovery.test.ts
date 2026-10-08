@@ -68,4 +68,22 @@ describe('durable submission recovery', () => {
     expect(client.getQueryState(history)?.isInvalidated).toBe(true);
     client.clear();
   });
+
+  it('publishes a background rejection before draining and never resubmits the rejected ID', async () => {
+    const rejected = { ...request, id: 'background-rejected-match' };
+    queue.enqueue(rejected);
+    const observed: unknown[] = [];
+    const unsubscribe = queue.subscribe(() => observed.push(queue.getRejection(rejected.id)));
+    const post = vi.spyOn(apiClient, 'post').mockRejectedValue(new ApiRequestError('Invalid replay', 422));
+    await queue.processQueue();
+    unsubscribe();
+    expect(queue.getPendingCount()).toBe(0);
+    expect(queue.getRejection(rejected.id)).toEqual({ id: rejected.id, message: 'Invalid replay', status: 422 });
+    expect(observed).toContainEqual(queue.getRejection(rejected.id));
+    expect(JSON.parse(localStorage.getItem('pirate_battle_submission_rejections_v1')!))
+      .toContainEqual(queue.getRejection(rejected.id));
+    await expect(queue.submit(rejected)).rejects.toThrow('Invalid replay');
+    await queue.processQueue();
+    expect(post).toHaveBeenCalledTimes(1);
+  });
 });

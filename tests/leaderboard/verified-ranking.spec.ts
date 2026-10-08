@@ -76,7 +76,7 @@ test('a forged early result is rejected visibly and never queued or ranked', asy
     const sim = (window as any).__PIRATE_SIMULATION__;
     sim.resume();sim.step(sim.fixedTimestep);sim.score = 99;sim.endMatch('time_expired');
   });
-  await expect(page.getByText(/Ranking rejected this result/)).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByTestId('submission-rejected')).toContainText('This battle was not recorded in the leaderboard.', { timeout: 15_000 });
   await expect(page.getByRole('button', { name: 'Retry Registration' })).toHaveCount(0);
   expect(await database.select().from(schema.matches)).toHaveLength(0);
   const pending = await page.evaluate(() => JSON.parse(localStorage.getItem('pirate_battle_pending_submissions_v1') || '[]'));

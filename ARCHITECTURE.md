@@ -59,7 +59,11 @@ Published/local builds default to MSW. `VITE_USE_MSW=false` selects the optional
 
 `ScenarioManager` validates `?scenario=...`, gives it startup priority over session state, and writes panel selections to the URL. `?scenarioSeed=42` controls jitter. Ranking/history have independent request counters. Alternating slow/fast ranges guarantee reversed completion for overlapping pairs, with repeatable jitter.
 
-Timeout inserts the match before delaying the first response beyond the client's five-second timeout. Retrying its persisted ID immediately acknowledges the duplicate. `idempotency_recovery` has the same write behavior with healthy reads. `ranking_fails`/`history_fails` isolate each tab's 500 failure. Success, empty, slow network, global 400/500 and offline complete the inventory. [README](README.md) explains each failure's URL, steps and recovery.
+Timeout inserts the match before delaying the first response beyond the client's five-second timeout. Retrying its persisted ID immediately acknowledges the duplicate. `idempotency_recovery` instead loses the first acknowledgement immediately, while reads stay healthy. Both preserve exactly one accepted match. `ranking_fails`/`history_fails` isolate each tab's 500 failure. Success, empty, slow network, global 400/500 and offline complete the inventory. [README](README.md) explains each failure's URL, steps and recovery.
+
+Permanent submission rejections are retained separately from retry items in `submissionRejections.ts`, with at most 50 recent outcomes. The result screen subscribes to queue changes, including background sync, and restores the rejected state after reload. A rejected ID cannot be submitted again automatically. Storage failures preserve feedback for the current session.
+
+PixiGame owns renderer startup, layers, events and cleanup. `ArenaScenery.ts` draws static arena art; `CombatOverlays.ts` draws stateless water, weapon guides, projectiles, health bars and attack cues from a simulation snapshot. These modules do not advance or mutate gameplay.
 
 ## Balancing decisions
 
