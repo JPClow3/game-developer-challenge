@@ -1,0 +1,32 @@
+{
+  "run": "https://github.com/JPClow3/game-developer-challenge/actions/runs/37723630635",
+  "sourceCommit": "112d1cf09af5768f44503825ce9672057e55e642",
+  "image": "mcr.microsoft.com/playwright:v1.63.0-noble",
+  "reviewed": true,
+  "screenshots": [
+    {
+      "file": "harbor-chromium-linux.png",
+      "sha256": "5ae4a28e70e2f5d97d41d5cfd353d7368c95889a21c185e22d7a7f99327fdead"
+    },
+    {
+      "file": "harbor-mobile-chromium-linux.png",
+      "sha256": "2aaaee736c2274d4c341bfd0d401c165714644f04fb82cc37cbfe36516420ef7"
+    },
+    {
+      "file": "battle-chromium-linux.png",
+      "sha256": "e7b5bce0a39aa511613a4b32a0aea46e1a441cbcabe2f1d4c1de0a259496c589"
+    },
+    {
+      "file": "battle-mobile-chromium-linux.png",
+      "sha256": "60fb0c511c4d56e4707d17defdc813c5123a50b69c2f7c4ee3dfaebb150efd35"
+    },
+    {
+      "file": "result-chromium-linux.png",
+      "sha256": "3a6de4c77b7e4c4aa009d868bbd538ce8d1f57b62d2386c39deab334d55a7fcf"
+    },
+    {
+      "file": "result-mobile-chromium-linux.png",
+      "sha256": "e713864b924b53f9bd666d5a5b9920ce572a474510fd00d57dc763308269c392"
+    }
+  ]
+}

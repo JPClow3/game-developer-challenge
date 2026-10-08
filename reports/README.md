@@ -2,7 +2,7 @@
 
 This directory preserves test and profiling snapshots in Git. Evaluators do not need private services or expiring CI artifacts to inspect the evidence.
 
-The final snapshot is in `submission/`. `manifest.json` records its collection time, source digest, test counts and profile inputs. JSON reports retain individual assertions/results; the HTML reports include screenshots and any retained diagnostics. Serve an HTML report with `npx playwright show-report reports/submission/browser` (or `leaderboard` / `published`).
+The initial integrated snapshot is in `submission/`. The newer UI snapshot is in `ui-polish/`, with details in [UI-POLISH.md](UI-POLISH.md). Each `manifest.json` records its collection time, source digest, test counts and profile inputs. JSON reports retain individual assertions/results; the HTML reports include screenshots and any retained diagnostics. Serve the newer HTML report with `npx playwright show-report reports/ui-polish/browser` (or `leaderboard` / `published` / `engineering`).
 
 | Evidence | Scope |
 | --- | --- |

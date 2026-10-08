@@ -1,0 +1,49 @@
+{
+  "recordedAt": "2026-10-08T03:48:55.433Z",
+  "sourceDigest": "4b9f33fa24eb1083b77640990be53236e92e7353dbef1b846c7ce49b052ad89f",
+  "sourceDigestMethod": "SHA256 of sorted delivered source/test/tool/config paths and contents, excluding reports",
+  "parentCommit": "ff515ec569f9633445559ff35137fb3475c4176f",
+  "scope": "Local Windows evidence; CI and published URL verification are separate",
+  "summaries": [
+    {
+      "name": "unit",
+      "passed": 292,
+      "skipped": 0,
+      "failed": 0,
+      "files": 32
+    },
+    {
+      "name": "browser",
+      "passed": 101,
+      "skipped": 5,
+      "failed": 0,
+      "flaky": 0,
+      "durationMs": 518045.21499999997
+    },
+    {
+      "name": "leaderboard",
+      "passed": 4,
+      "skipped": 0,
+      "failed": 0,
+      "flaky": 0,
+      "durationMs": 154033.069
+    },
+    {
+      "name": "published",
+      "passed": 8,
+      "skipped": 0,
+      "failed": 0,
+      "flaky": 0,
+      "durationMs": 270130.024
+    },
+    {
+      "name": "engineering",
+      "passed": 6,
+      "skipped": 0,
+      "failed": 0,
+      "flaky": 0,
+      "durationMs": 65385.664000000004
+    }
+  ],
+  "profiles": []
+}
