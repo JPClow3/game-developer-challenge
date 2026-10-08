@@ -1,5 +1,7 @@
 # Fork-informed gameplay improvements
 
+Release 1.0: see the [current delivery evidence and media](../reports/RELEASE-1.0.md). Measurements and diagnostic captures below describe their original source and date; historical test counts are not the current release total.
+
 Scope authorized: implement all recommendations from the 8 October fork comparison.
 
 Acceptance checklist:
@@ -44,6 +46,6 @@ Validation so far:
 - The optimized production frontend passed eight browser flows. The optional live client to isolated PostgreSQL passed four desktop/mobile flows.
 - Linux visual candidates were generated in the canonical Playwright container by GitHub Actions run 37727357633, inspected, and accepted separately from Windows captures. The candidate workflow passed without deployment.
 - Final native Windows visual comparisons passed on desktop and mobile without regenerating expected images. Lint, browser/Functions typecheck and production build passed.
-- No hosted deployment or physical-phone acceptance is claimed.
+- The checklist describes its original local iteration. Current hosted release evidence is linked above; physical-phone acceptance is not claimed.
 
-New migration `0002_productive_cloak.sql` labels existing rows Classic and adds issued-ticket difficulty/map. Deploying the optional backend requires applying it first. The default fixture build needs no external database.
+New migration `0002_productive_cloak.sql` labels existing rows Classic and adds issued-ticket difficulty/map. The hosted main database now includes this migration; see the release report for provider acceptance. The default fixture build needs no external database.

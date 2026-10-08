@@ -1,5 +1,7 @@
 # A harbor, ready for departure
 
+Release 1.0: see the [current delivery evidence and media](../reports/RELEASE-1.0.md). Measurements and diagnostic captures below describe their original source and date; historical test counts are not the current release total.
+
 The Pirate Kit is used in the menu's open heading area: a single pirate ship moored beside a short dock, with a small sandy shore, a palm, rocks, and two supply barrels. The scene gives “Set Sail” a physical setting without expanding the combat's visual vocabulary or filling the screen with unrelated props.
 
 The angled 3D view is appropriate for this quiet departure moment. The existing top-down combat ships and cannon diagram remain consistent with what players see and control at sea. Switching the whole renderer would change aiming, occlusion, mobile performance, and the challenge's 2D presentation for little gameplay benefit.

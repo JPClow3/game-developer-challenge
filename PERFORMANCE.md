@@ -1,8 +1,21 @@
 # Performance evidence
 
-Measured locally on 7 October 2026 (America/Sao_Paulo). All three runs completed a 180-second simulated match with seed 1337, one-second enemy spawning, scripted steering and all three batteries held. A diagnostic 10,000 HP hull prevents an early death. This is an instrumented workload, not an unmodified player voyage. No result is sent to a ranked backend.
+Release 1.0 was measured locally on 8 October 2026. Historical Classic measurements from 7 October are retained below. The workloads complete a 180-second simulated match with seed 1337, one-second base spawning, scripted steering and all three batteries held. A diagnostic 10,000 HP hull prevents an early death. These are instrumented workloads, not unmodified player voyages. No result is sent to a ranked backend.
 
-## Reference run
+Release 1.0 introduces voyage scenery and feedback. Fresh release profiles, with their actual collection conditions, are recorded in [release evidence](reports/RELEASE-1.0.md). Different historical workloads must not be treated as interchangeable.
+
+## Release 1.0 measurements
+
+Collected on 8 October after local browser jobs ended, using the current Open sea/Smuggler islands rules and renderer. Both runs complete 180 simulated seconds, then five exit cycles. The diagnostic workload uses a one-second base interval and protected hull; mobile uses the desktop GPU with 4x CPU throttling.
+
+| Workload | Browser | CPU rate | Wall seconds | Mean FPS | p95 frame interval | Target |
+| --- | --- | --- | --- | --- | --- | --- |
+| desktop | 154.0.8037.98 | 1x | 179.83 | 143.98 | 7.00 ms | Pass in this environment |
+| mobile-4x | 154.0.8037.98 | 4x | 179.67 | 115.67 | 13.90 ms | Pass in this environment |
+
+[Raw reports and current source provenance](reports/RELEASE-1.0.md#release-performance). These are measured browser presentation intervals, not a universal or physical-phone guarantee.
+
+## Historical Classic reference
 
 | Browser / workload | Viewport, DPR | CPU rate | Simulation / wall seconds | Average FPS | p95 frame interval | Peak enemies / projectiles / total entities | 60 FPS and p95 ≤16.9 ms |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -10,9 +23,9 @@ Measured locally on 7 October 2026 (America/Sao_Paulo). All three runs completed
 
 Total entities includes the player, three islands, enemies and projectiles. The total peak is sampled simultaneously, rather than adding independently observed peaks.
 
-The desktop Chrome reference meets the local target in this environment. It does not establish a universal 60 FPS guarantee. The [comparison runs in Appendix A](#appendix-a-comparison-runs-and-limitations) include two failed measurements, with their original values and collection conditions. No new quiet-machine run is claimed.
+The desktop Chrome reference meets the local target in this environment. It does not establish a universal 60 FPS guarantee. The [comparison runs in Appendix A](#appendix-a-comparison-runs-and-limitations) include two failed measurements, with their original values and collection conditions. Those original sources were not rerun; release measurements above use different gameplay and visual content.
 
-## Machine and rendering environment
+## Historical measurement environment
 
 - Windows, AMD Ryzen 5 3600 (6 cores), 23.93 GiB system memory.
 - Installed Chrome runs report AMD Radeon RX 7600, ANGLE Direct3D11, AMD driver 32.0.31041.1004. Full GPU metadata is retained in the JSON.
@@ -58,6 +71,8 @@ In a second terminal, run the workloads sequentially, with no other GPU browser 
 ```powershell
 $env:PROFILE_URL='http://127.0.0.1:4189'
 $env:PROFILE_CHANNEL='chrome'
+$env:PROFILE_DIFFICULTY='open'
+$env:PROFILE_MAP='archipelago'
 $env:PROFILE_OUTPUT='artifacts/performance-desktop-chrome.json'
 node tools/profile-combat.mjs
 

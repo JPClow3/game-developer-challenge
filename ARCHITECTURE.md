@@ -36,7 +36,7 @@ Cleanup removes resize/context/visibility/input listeners, animation callbacks, 
 
 | Endpoint | Behavior |
 | --- | --- |
-| `GET /api/ranking` | Paginated scores filtered by duration/spawn interval. Sort: score DESC, duration ASC, playedAt ASC, ID as final tie-breaker. |
+| `GET /api/ranking` | Paginated scores filtered by duration, base spawn interval, difficulty and map. Sort: score DESC, duration ASC, playedAt ASC, ID as final tie-breaker. |
 | `GET /api/history` | Paginated player battle history. |
 | `POST /api/match` | One insert per ID. Identical retry returns the stored match with `isDuplicate: true`; conflicting reuse is rejected. |
 | `POST /api/session` | Optional live backend only: issue a bounded ranked-session ticket before play. |
@@ -49,7 +49,7 @@ All acknowledged submissions, including duplicates recovered in background, inva
 
 The queue saves the complete request under `pirate_battle_pending_submissions_v1` before dispatch. HTTP 200/201 acknowledgement removes it. Requests share an in-flight promise by ID so foreground submission and background drain avoid concurrent duplicate work in one tab. Server idempotency remains authoritative across tabs/restarts.
 
-Startup begins sync after fixture-worker/live-API preparation, when the browser reports online. Reconnect and History's Retry Sync also drain restored records. Each drain processes a bounded snapshot; new results use their own foreground submission. Transport errors, 408, 429 and 5xx retain requests with error metadata. Permanent rejections are removed because retry cannot repair them. Notifications refresh History's pending count.
+Startup begins sync after fixture-worker/live-API preparation, when the browser reports online. Reconnect and History's Retry Sync also drain restored records. Each drain processes a bounded snapshot; new results use their own foreground submission. Transport errors, 408, 429 and 5xx retain requests with error metadata. Permanent rejections leave the retry queue and remain in a separate bounded outcome store so the result screen can explain the rejection. Notifications refresh History's pending count.
 
 Storage is best effort when localStorage is blocked/full. There is no background sync after the page closes and no continuously scheduled retry loop: persistent outages need a healthy restart, reconnect or manual retry. Separate tabs do not transactionally coordinate localStorage writes. Replay payloads also consume browser storage. These are limitations of browser-local challenge persistence.
 
@@ -63,9 +63,15 @@ Timeout inserts the match before delaying the first response beyond the client's
 
 Permanent submission rejections are retained separately from retry items in `submissionRejections.ts`, with at most 50 recent outcomes. The result screen subscribes to queue changes, including background sync, and restores the rejected state after reload. A rejected ID cannot be submitted again automatically. Storage failures preserve feedback for the current session.
 
-PixiGame owns renderer startup, layers, events and cleanup. `ArenaScenery.ts` draws static arena art; `CombatOverlays.ts` draws stateless water, weapon guides, projectiles, health bars and attack cues from a simulation snapshot. These modules do not advance or mutate gameplay.
+PixiGame owns renderer startup, layers, events and cleanup. `ArenaScenery.ts` draws static arena art; `CombatOverlays.ts` draws water, bounded wake particles, repair salvage, weapon guides, projectiles, health bars and attack cues from a simulation snapshot. These modules do not advance or mutate gameplay.
+
+## Voyage presets
+
+`VoyageRules.ts` defines Calm waters, Open sea and Storm fleet, plus Smuggler islands, Broken straits and Fortress bay. Compound land uses the same disk union for artwork and collisions. `NavigationField.ts` plans obstacle routes; shooters require line of sight. Spawn pressure rises from three active enemies toward the preset cap. `RepairSalvage.ts` owns seeded repair drops and active-time expiry. `BattleReport.ts` and `CaptainLog.ts` provide accuracy, damage, repairs, grade, personal bests and local titles. Classic v2 recordings retain original rules; v3 recordings include the voyage rules and future-affecting salvage/statistics.
 
 ## Balancing decisions
+
+The table describes Classic defaults. Voyage presets apply documented multipliers and progressive spawn pressure; see [voyage details](docs/FORK-IMPROVEMENTS.md).
 
 | Choice | Rationale |
 | --- | --- |
@@ -76,7 +82,7 @@ PixiGame owns renderer startup, layers, events and cleanup. `ArenaScenery.ts` dr
 | Chaser 35 HP / 35 ram damage; shooter 60 HP / 240–360 px standoff | Distinct close/ranged threats, shapes and attack cues. |
 | One point per cannon kill; no ram-suicide points | Reward aim without encouraging absorbing contact damage. |
 
-Constants live in `src/types/config.ts`. Menu options are validated/persisted for the next match, never applied to an active battle. Ranking filters separate duration/spawn configurations. These are intentional defaults, not statistically proven competitive balance.
+Constants live in `src/types/config.ts`. Menu options are validated/persisted for the next match, never applied to an active battle. Ranking filters separate duration/spawn configurations, difficulty and map. Only menu choices persist; loading rebuilds their canonical balance. These are intentional defaults, not statistically proven competitive balance.
 
 ## Tooling, safety and limitations
 

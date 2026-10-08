@@ -7,8 +7,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('published ranking uses fixtures and scenario selection refreshes the visible board', async ({ page }) => {
-  // Seeded fixture captains belong to the Classic leaderboard.
-  await page.getByLabel('Voyage difficulty').selectOption('classic');
+  await expect(page.getByLabel('Voyage difficulty')).toHaveValue('open');
   await page.getByRole('tab', { name: /ranking/i }).click();
   await expect(page.getByText('Edward Teach (Blackbeard)', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Toggle network simulation scenarios panel' }).click();

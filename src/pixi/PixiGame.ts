@@ -8,7 +8,7 @@ import {
   Text,
 } from 'pixi.js';
 import { drawBackground, drawObstacles } from './ArenaScenery';
-import { renderHealthBars, renderIntentions } from './CombatOverlays';
+import { renderWaterAndGuides, renderSalvage, renderProjectiles, renderHealthBars, renderIntentions } from './CombatOverlays';
 import { GameSimulation } from '../core/simulation/GameSimulation';
 import { DebugOverlay } from './DebugOverlay';
 import { AssetLoader } from '../assets/AssetLoader';
@@ -404,87 +404,15 @@ export class PixiGame {
     visual.sprite.tint = this.simulation.elapsedSeconds < visual.hitUntil ? 0xff9c78 : 0xffffff;
   }
 
-  private renderWaterAndGuides(dt:number): void {
-    const time = this.impact.reducedMotion ? 0 : this.simulation.elapsedSeconds;
-    this.wakeClock+=dt;
-    const emitWake=this.wakeClock>=.075;
-    if(emitWake)this.wakeClock=0;
-    const {width,height} = this.simulation.config.arena;
-    this.waterGraphics.clear();
-    for (let i=0;i<45;i++) {
-      const x=(i*317)%width, y=(i*173)%height;
-      const drift=Math.sin(time*.7+i)*7;
-      this.waterGraphics.moveTo(x+drift,y).quadraticCurveTo(x+15+drift,y+4,x+30+drift,y)
-        .stroke({width:1.5,color:0xc2ede6,alpha:0.10});
-    }
-    this.wakesGraphics.clear();
-    for (const ship of [this.simulation.player,...this.simulation.enemies]) {
-      const k={...ship.kinematic,...this.pose(ship.kinematic)};
-      const speed=Math.hypot(k.velocityX,k.velocityY);
-      if (speed<12 || ship.isDestroyed) continue;
-      const fx=Math.sin(k.rotation), fy=-Math.cos(k.rotation);
-      const rx=Math.cos(k.rotation), ry=Math.sin(k.rotation);
-      const length=Math.min(speed*.27,60);
-      if(emitWake && !this.impact.reducedMotion) {
-        for(const side of [-1,1])this.foam.push({x:k.x-fx*34+rx*side*10,y:k.y-fy*34+ry*side*10,age:0,size:2+speed/85});
-      }
-      if(ship.health/ship.maxHealth<.3) this.wakesGraphics.circle(k.x-fx*20,k.y-fy*20,10).fill({color:0x253c3b,alpha:.3});
-      for (const side of [-1,1]) {
-        this.wakesGraphics.moveTo(k.x-fx*27+rx*side*7,k.y-fy*27+ry*side*7)
-          .lineTo(k.x-fx*(30+length)+rx*side*20,k.y-fy*(30+length)+ry*side*20)
-          .stroke({width:3,color:0xb6f0e6,alpha:.22});
-      }
-    }
-    this.foam=this.foam.slice(-160);
-    for(let i=this.foam.length-1;i>=0;i--) {
-      const particle=this.foam[i]!;particle.age+=dt;
-      if(particle.age>2){this.foam.splice(i,1);continue;}
-      this.wakesGraphics.circle(particle.x,particle.y,particle.size+particle.age*3).fill({color:0xc9f4e6,alpha:(1-particle.age/2)*.25});
-    }
-    const k=this.pose(this.simulation.player.kinematic);
-    this.guideGraphics.clear();
-    this.guideGraphics.circle(k.x,k.y,39).stroke({width:1.5,color:0x9af0d6,alpha:.5});
-    const front=this.simulation.config.weaponFront;
-    const range=front.projectileSpeed*front.projectileLifetime;
-    const fx=Math.sin(k.rotation),fy=-Math.cos(k.rotation);
-    for(let distance=62;distance<Math.min(range,250);distance+=26) {
-      this.guideGraphics.moveTo(k.x+fx*distance,k.y+fy*distance)
-        .lineTo(k.x+fx*(distance+7),k.y+fy*(distance+7))
-        .stroke({width:2,color:0xf2dda5,alpha:.22*(1-distance/300)});
-    }
-    for(const side of [-1,1]) {
-      const rx=Math.cos(k.rotation)*side,ry=Math.sin(k.rotation)*side;
-      this.guideGraphics.moveTo(k.x+rx*48,k.y+ry*48).lineTo(k.x+rx*90,k.y+ry*90)
-        .stroke({width:1.5,color:0xb5e4d9,alpha:.25});
-    }
+  private renderWaterAndGuides(dt: number): void {
+    const state = { clock: this.wakeClock, foam: this.foam };
+    renderWaterAndGuides(this.simulation, this.renderAlpha, this.waterGraphics, this.wakesGraphics, this.guideGraphics, state, dt, this.impact.reducedMotion);
+    this.wakeClock = state.clock;
+    this.foam = state.foam;
   }
 
-  private renderSalvage(): void {
-    const g=this.salvageGraphics.clear();
-    for(const pickup of this.simulation.salvage.items) {
-      const t=this.impact.reducedMotion ? 0 : Math.sin(this.simulation.elapsedSeconds*3+pickup.id);
-      const fade=Math.min(1,pickup.remainingSeconds/2);
-      g.circle(pickup.x,pickup.y,24+t*3).fill({color:0x99ecc1,alpha:.14*fade}).stroke({color:0xb1f4d4,width:2,alpha:.7*fade});
-      g.roundRect(pickup.x-10,pickup.y-10,20,20,3).fill({color:0x8f643a,alpha:fade}).stroke({color:0xe4d79c,width:2,alpha:fade});
-      g.rect(pickup.x-2,pickup.y-7,4,14).fill({color:0xd1ffe0,alpha:fade});
-      g.rect(pickup.x-7,pickup.y-2,14,4).fill({color:0xd1ffe0,alpha:fade});
-    }
-  }
-
-  private renderProjectiles(): void {
-    this.projectilesGraphics.clear();
-    for (const p of this.simulation.projectiles) {
-      const alpha = this.renderAlpha;
-      const x = p.prevX + (p.x - p.prevX) * alpha, y = p.prevY + (p.y - p.prevY) * alpha;
-      const color=p.owner==='player'?0xffdda1:0xff8f77;
-      const speed=Math.hypot(p.vx,p.vy)||1;
-      this.projectilesGraphics.moveTo(x-p.vx/speed*22,y-p.vy/speed*22).lineTo(x,y)
-        .stroke({width:p.radius*1.2,color,alpha:.45});
-      this.projectilesGraphics.circle(x,y,p.radius+1).fill({color,alpha:.95});
-      this.projectilesGraphics.circle(x,y,p.radius*.45).fill(0xffffff);
-    }
-  }
-
+  private renderSalvage(): void { renderSalvage(this.simulation, this.salvageGraphics, this.impact.reducedMotion); }
+  private renderProjectiles(): void { renderProjectiles(this.simulation, this.renderAlpha, this.projectilesGraphics); }
 
   private renderHealthBars(): void { renderHealthBars(this.simulation, this.renderAlpha, this.healthBarsGraphics); }
 

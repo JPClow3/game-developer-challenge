@@ -11,6 +11,7 @@ import { getOrCreatePlayerId, getPlayerName } from '../../../src/api/player';
 import { PendingSubmissionQueue } from '../../../src/api/pendingQueue';
 import { AudioManager } from '../../../src/audio/AudioManager';
 import { RankingTab } from '../../../src/ui/RankingTab';
+import { voyageGameplayConfig } from '../../../src/core/simulation/VoyageRules';
 
 const { query } = vi.hoisted(() => ({ query: vi.fn() }));
 vi.mock('../../../src/api/useApiQueries', () => ({ useRankingQuery: query }));
@@ -29,6 +30,17 @@ const blockedStorage = () => {
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
 describe('Audit regressions', () => {
+  it('restores voyage choices from canonical balance instead of stored combat constants', () => {
+    const storage = memoryStorage();
+    vi.stubGlobal('localStorage', storage);
+    const config = voyageGameplayConfig(90, 5, { difficulty: 'storm', map: 'fortress' });
+    saveUserConfigToStorage(config);
+    const stored = JSON.parse(storage.getItem('pirate_battle_user_config_v1')!);
+    expect(stored.voyage).toEqual(config.voyage);
+    stored.weaponFront = { projectileDamage: 999 };
+    storage.setItem('pirate_battle_user_config_v1', JSON.stringify(stored));
+    expect(loadUserConfigFromStorage()).toEqual(config);
+  });
   it('bounds the physics backlog on slow devices so recovery does not fast-forward', () => {
     const sim = new GameSimulation();
     try {

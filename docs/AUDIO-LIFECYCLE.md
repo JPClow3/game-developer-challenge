@@ -1,5 +1,7 @@
 # Quiet exits and reliable pause audio, 7 October 2026
 
+Release 1.0: see the [current delivery evidence and media](../reports/RELEASE-1.0.md). Measurements and diagnostic captures below describe their original source and date; historical test counts are not the current release total.
+
 A slow ambient-sound download could start playing after the captain had already abandoned the match. The same race could start full-volume ocean ambience while the pause dialog was open. Both happened because asynchronous loop loading ignored later stop and volume commands.
 
 `AudioManager` now records each pending loop request. Exit cancels pending starts as well as active loops. A stale completion cannot start or replace a newer voyage's loop. Repeated starts during one pending request share that request. Pause/resume volume changes update the pending request, so playback begins at the current volume. Successfully downloaded buffers remain reusable by the next voyage; failed loads allow a fresh request.
@@ -51,6 +53,6 @@ $env:PROFILE_OUTPUT='artifacts/lifecycle/extended-after.json'
 node tools/profile-combat.mjs
 ```
 
-The profiler supplies a local diagnostic session ticket, blocks score submission, protects hull health, and uses scripted combat input. Its results are not physical-phone performance. Artifacts are ignored by Git. These changes and checks remain local; deployment and remote CI have not been verified for this iteration.
+The profiler supplies a local diagnostic session ticket, blocks score submission, protects hull health, and uses scripted combat input. Its results are not physical-phone performance. Artifacts are ignored by Git. These measurements describe the historical local iteration. Current CI and deployment evidence is tracked in the release report.
 
 The requested [web-perf skill](C:/Users/lives/.codex/skills/web-perf/SKILL.md) audit still cannot run because Chrome DevTools MCP tools are unavailable. Its instruction says: "If unavailable, STOP-the chrome-devtools MCP server isn't configured." The Playwright/CDP runtime diagnostic above is separate evidence, not a Core Web Vitals or Lighthouse audit.

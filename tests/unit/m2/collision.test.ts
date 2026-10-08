@@ -9,9 +9,25 @@ import {
 } from '../../../src/core/collision/CollisionSystem';
 import { createKinematicState } from '../../../src/core/kinematics/ShipKinematics';
 import { ChaserAI } from '../../../src/core/ai/ChaserAI';
+import { MAPS, voyageObstacles } from '../../../src/core/simulation/VoyageRules';
 import type { ShipState, Projectile, IslandObstacle, ArenaBounds } from '../../../src/types';
 
 describe('CollisionSystem Subsystem', () => {
+  it.each(MAPS.flatMap(map => [0, .37, Math.PI/2, 2.2].map(rotation => ({map, rotation}))))(
+    'clears every disk after a deep contact in $map at $rotation', ({map, rotation}) => {
+      const obstacles = voyageObstacles(map);
+      for (const origin of obstacles) {
+        const ship = createKinematicState(origin.x, origin.y, rotation);
+        CollisionSystem.resolveShipObstacleCollisions(ship, obstacles);
+        const capsule = getShipDualDiskCollider(ship);
+        const dx = capsule.disk2.x-capsule.disk1.x, dy = capsule.disk2.y-capsule.disk1.y;
+        for (const obstacle of obstacles) {
+          const t = Math.max(0,Math.min(1,((obstacle.x-capsule.disk1.x)*dx+(obstacle.y-capsule.disk1.y)*dy)/(dx*dx+dy*dy)));
+          expect(Math.hypot(capsule.disk1.x+dx*t-obstacle.x,capsule.disk1.y+dy*t-obstacle.y))
+            .toBeGreaterThanOrEqual(obstacle.radius+DEFAULT_SHIP_DISK_RADIUS-1e-7);
+        }
+      }
+    });
   const arena: ArenaBounds = { width: 1600, height: 1000, margin: 40 };
 
   it.each([0, .37, Math.PI / 2, 2.2].flatMap(rotation =>

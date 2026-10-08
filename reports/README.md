@@ -1,8 +1,10 @@
 # Submission evidence
 
+The latest consolidated delivery is [Release 1.0](RELEASE-1.0.md). Older snapshots retain their original source, totals and collection limits.
+
 This directory preserves test and profiling snapshots in Git. Evaluators do not need private services or expiring CI artifacts to inspect the evidence.
 
-The latest evaluator follow-up is in `remaining-nits/`. [REMAINING-NITS.md](REMAINING-NITS.md) describes its stable-source checks, rejection/recovery screenshots and report provenance. The earlier UI and profiling snapshots below retain their original scope.
+The earlier evaluator follow-up is in `remaining-nits/`. [REMAINING-NITS.md](REMAINING-NITS.md) describes its stable-source checks, rejection/recovery screenshots and report provenance. Those UI and profiling snapshots retain their original scope; `release-1-0/` contains the consolidated release evidence.
 
 The initial integrated snapshot is in `submission/`. The newer UI snapshot is in `ui-polish/`, with details in [UI-POLISH.md](UI-POLISH.md). Each `manifest.json` records its collection time, source digest, test counts and profile inputs. JSON reports retain individual assertions/results; the HTML reports include screenshots and any retained diagnostics. Serve the newer HTML report with `npx playwright show-report reports/ui-polish/browser` (or `leaderboard` / `published` / `engineering`).
 

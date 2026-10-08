@@ -61,3 +61,7 @@ The final stable [options/collision/accessibility follow-up](remaining-nits/coll
 The trace showed restored-renderer readiness taking 37.715 seconds and the subsequent paused-dialog check taking 8.102 seconds. That recovery flow creates two WebGL renderers and also verifies state preservation, audio and abandonment cleanup. It now has a 120-second total test budget and a 60-second restored-renderer readiness wait. The product initialization timeout is unchanged. No retry, state assertion, canvas count, audio assertion or stale-callback cleanup check was removed.
 
 [Ten stable local repetitions](remaining-nits/manual-recovery-followup.json), five per desktop/mobile project, passed with zero failures, flaky results or retries. The [manifest](remaining-nits/manual-recovery-manifest.json) records the test-file digest and prior CI timings. Lint and type checks passed. Complete CI and public deployment remain separate gates.
+
+## Published acceptance
+
+[Run 37739018226](https://github.com/JPClow3/game-developer-challenge/actions/runs/37739018226) passed all gates on `b65961f`: 307 unit tests, 111 gameplay cases on each OS with five expected skips, four isolated backend cases per OS, 12 fixture preview cases per OS and 12 public browser cases. Cloudflare recorded a clean production deployment of that commit. These totals precede the consolidated 1.0 voyage/audit release; see [current release evidence](RELEASE-1.0.md).

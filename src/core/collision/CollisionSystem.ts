@@ -120,6 +120,53 @@ export class CollisionSystem {
     shipKinematic: KinematicState,
     obstacles: IslandObstacle[]
   ): void {
+    const composite = obstacles.some((a, index) => obstacles.slice(index + 1).some(b =>
+      Math.hypot(a.x - b.x, a.y - b.y) < a.radius + b.radius));
+    if (composite) {
+      // Recompute the capsule after each push. A later disk must never use the
+      // position from before an earlier contact was resolved.
+      for (let pass = 0; pass < 8; pass++) {
+        for (const obstacle of obstacles) this.resolveShipObstacleCollisions(shipKinematic, [obstacle]);
+      }
+      const capsule = getShipDualDiskCollider(shipKinematic);
+      const dx = capsule.disk2.x - capsule.disk1.x, dy = capsule.disk2.y - capsule.disk1.y;
+      const embedded = obstacles.some(obstacle => {
+        const t = Math.max(0, Math.min(1, ((obstacle.x-capsule.disk1.x)*dx+(obstacle.y-capsule.disk1.y)*dy)/(dx*dx+dy*dy)));
+        return Math.hypot(capsule.disk1.x+dx*t-obstacle.x, capsule.disk1.y+dy*t-obstacle.y) < obstacle.radius+DEFAULT_SHIP_DISK_RADIUS-1e-7;
+      });
+      if (embedded) {
+        // Deep insertion can alternate between opposed normals forever. Find
+        // the shortest of 32 deterministic escape rays through the disk union.
+        // The enclosing ship circle is conservative only for this fallback.
+        let best = { distance: Infinity, x: 0, y: 0 };
+        for (let angle = 0; angle < 32; angle++) {
+          const x = Math.cos(angle*Math.PI/16), y = Math.sin(angle*Math.PI/16);
+          const intervals = obstacles.flatMap(obstacle => {
+            const ox = shipKinematic.x-obstacle.x, oy = shipKinematic.y-obstacle.y;
+            const r = obstacle.radius+DEFAULT_SHIP_DISK_RADIUS+DEFAULT_SHIP_DISK_OFFSET;
+            const projection = ox*x+oy*y;
+            const discriminant = projection*projection-(ox*ox+oy*oy-r*r);
+            if (discriminant < 0) return [];
+            const root = Math.sqrt(discriminant);
+            return [{ start: -projection-root, end: -projection+root }];
+          }).sort((a,b) => a.start-b.start);
+          let distance = 0;
+          for (const interval of intervals) {
+            if (interval.start > distance+1e-6) break;
+            if (interval.end >= distance) distance = interval.end+1e-6;
+          }
+          if (distance < best.distance) best = { distance, x, y };
+        }
+        shipKinematic.x += best.x*best.distance;
+        shipKinematic.y += best.y*best.distance;
+        const inward = shipKinematic.velocityX*best.x+shipKinematic.velocityY*best.y;
+        if (inward < 0) {
+          shipKinematic.velocityX -= inward*best.x;
+          shipKinematic.velocityY -= inward*best.y;
+        }
+      }
+      return;
+    }
     const f = getForwardVector(shipKinematic.rotation);
     const radius = DEFAULT_SHIP_DISK_RADIUS; // 16px
     const offset = DEFAULT_SHIP_DISK_OFFSET; // 15px

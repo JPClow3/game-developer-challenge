@@ -44,6 +44,11 @@ export class MockDatabase {
       const ranking: unknown = storedRanking ? JSON.parse(storedRanking) : null;
       this.matches = Array.isArray(matches) ? matches : [];
       this.rankingItems = Array.isArray(ranking) ? ranking : [...INITIAL_LEADERBOARD_FIXTURES];
+      if (Array.isArray(ranking)) {
+        // Upgrade stored Classic boards while preserving completed player results.
+        const known = new Set(this.rankingItems.map(item => item.matchId));
+        this.rankingItems.push(...INITIAL_LEADERBOARD_FIXTURES.filter(item => item.voyage && !known.has(item.matchId)));
+      }
     } catch {
       this.initDefaults();
     }

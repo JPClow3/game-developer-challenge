@@ -6,6 +6,12 @@ Single-player naval combat built with React 18, TypeScript and PixiJS 8. Sail ar
 
 [Requirements matrix and testing story](docs/REVIEW-GUIDE.md) · [Three-minute performance measurements](PERFORMANCE.md)
 
+## Release 1.0
+
+[Release evidence and current media](reports/RELEASE-1.0.md) records the consolidated delivery. Historical diagnostics retain their capture date and source. All development branch histories are merged into `main`; tag `1.0` identifies the released checkout.
+
+![Current harbor](docs/media/release-1.0/desktop-menu.png)
+
 ## Run locally
 
 Use Node 22 or 24 and npm:
@@ -55,9 +61,9 @@ Production omits simulation/renderer debug globals. Profiling or automation requ
 | Starboard broadside | E / L | Starboard |
 | Pause / resume | P / Escape | Pause / Resume |
 
-Hold cannon controls to repeat when loaded. Steering and firing work simultaneously. Blur/pause clears held input; press again after resuming. Options also includes sound and control preferences.
+Hold cannon controls to repeat when loaded. Steering and firing work simultaneously. Blur/pause clears held input; press again after resuming. Options also includes sound, swapped batteries, toggle fire and an optional directional touch joystick.
 
-Default voyage: Open sea difficulty, Smuggler islands, 120 seconds and 100 hull points. The 3-second base enemy interval scales from 4.05 seconds at the opening to 2.25 seconds at the finish, with the enemy cap rising from 3 to 10. Calm waters and Storm fleet change crew strength, speed, damage and repair chances. Broken straits and Fortress bay provide different sailing routes. Choose Classic rules for the original three-island arena and fixed spawning. Every enemy sunk by your cannons earns one point; chaser suicide rams earn none. Front reload: 0.6 seconds. Each three-shot broadside reload: 1.8 seconds. Duration options: 60–180 seconds; spawn interval: 1–15 seconds. Options apply to the next battle. [Architecture](ARCHITECTURE.md) explains balance choices.
+Default voyage: Open sea difficulty, Smuggler islands, 120 seconds and 100 hull points. The 3-second base enemy interval scales from 4.05 seconds at the opening to 2.25 seconds at the finish, with the enemy cap rising from 3 to 10. Calm waters and Storm fleet change crew strength, speed, damage and repair chances. Broken straits and Fortress bay provide different sailing routes. Choose Classic rules for the original three-island arena and fixed spawning. Every enemy sunk by your cannons earns one point; chaser suicide rams earn none. Front reload: 0.6 seconds. Each three-shot broadside reload: 1.8 seconds. Duration options: 60–180 seconds; spawn interval: 1–15 seconds. Options and difficulty/map choices persist and apply to the next battle. Ranking separates duration, base spawn interval, difficulty and map. [Architecture](ARCHITECTURE.md) explains balance choices.
 
 New voyages add repair crates: enemy cannon kills can leave salvage for 12 active seconds. Sail within 45 world pixels while injured to restore up to 20 hull. Routes around islands and shooter line of sight use the same physical shoreline. Shooters retain a visible windup before discharging.
 
@@ -94,7 +100,7 @@ await Promise.all([1, 2].map(async page => {
 console.log(finished); // [2, 1]
 ```
 
-The queue saves the exact submission before sending. Startup, browser `online`, and History's **Retry Sync** retry it. Acknowledgements invalidate all ranking/history queries. Permanent 4xx rejections are discarded; transport errors, 408, 429 and 5xx remain pending. Persistence is browser-local and requires available localStorage.
+The queue saves the exact submission before sending. Startup, browser `online`, and History's **Retry Sync** retry it. Acknowledgements invalidate all ranking/history queries. Permanent 4xx rejections are retained as separate outcomes and shown on the result screen; transport errors, 408, 429 and 5xx remain pending. Persistence is browser-local and requires available localStorage.
 
 ## Reproduce texture and renderer failures
 

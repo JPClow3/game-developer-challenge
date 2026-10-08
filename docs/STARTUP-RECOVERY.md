@@ -1,5 +1,7 @@
 # Recovering an unfinished startup, 7 October 2026
 
+Release 1.0: see the [current delivery evidence and media](../reports/RELEASE-1.0.md). Measurements and diagnostic captures below describe their original source and date; historical test counts are not the current release total.
+
 A controlled unfinished spritesheet request reproduced a startup screen stuck at 5% after 16 real seconds. It had no recovery action. A pending graphics initialization likewise had no deadline. These are distinct from a rejected request, which already offered Retry Loading, and from WebGL context loss, which already offered Restore game view.
 
 The asset loading screen now offers **Reload game** after 15 seconds. It keeps loading in the meantime: a late completion opens the harbor without requiring a reload. Reload starts a fresh page and preserves settings and the last battle result already saved in browser storage. It does not promise that unavailable network resources will become available.

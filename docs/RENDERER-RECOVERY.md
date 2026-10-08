@@ -1,5 +1,7 @@
 # Game view recovery
 
+Release 1.0: see the [current delivery evidence and media](../reports/RELEASE-1.0.md). Measurements and diagnostic captures below describe their original source and date; historical test counts are not the current release total.
+
 WebGL context loss pauses the battle and clears held input. Native context restoration rebuilds Pixi resources and redraws the current scene. Manual restoration replaces the renderer while retaining the same simulation, including health, score, enemies, projectiles and elapsed ticks. Both routes keep the battle paused until the player resumes. Keyboard controls require a fresh press.
 
 Failed or hung graphics initialization offers Restore game view or abandonment. Late initialization completions cannot replace a recovered view. React owns the simulation lifetime; replacing the renderer does not restart or submit a match.

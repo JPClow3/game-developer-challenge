@@ -2,7 +2,7 @@
  * Gameplay Configuration Contracts, Constants & Validation
  */
 
-import { isVoyageRules } from '../core/simulation/VoyageRules';
+import { isVoyageRules, voyageGameplayConfig } from '../core/simulation/VoyageRules';
 
 export interface ShipMovementConfig {
   readonly maxForwardSpeed: number;   // px/s
@@ -258,6 +258,7 @@ export function saveUserConfigToStorage(config: GameplayConfig): void {
     localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify({
       sessionDurationSeconds: config.sessionDurationSeconds,
       spawner: { spawnIntervalSeconds: config.spawner.spawnIntervalSeconds },
+      ...(config.voyage ? { voyage: config.voyage } : {}),
     }));
   } catch (e) {
     console.warn('Failed to save config to localStorage', e);
@@ -278,13 +279,16 @@ export function loadUserConfigFromStorage(): GameplayConfig | null {
     if (!res.isValid) return null;
     // Stored menu options must match the whole-second score/database contract.
     // Keep the simulation validator unchanged so older fractional replays work.
-    return {
+    const options = {
       ...res.validatedConfig,
       spawner: {
         ...res.validatedConfig.spawner,
         spawnIntervalSeconds: Math.round(res.validatedConfig.spawner.spawnIntervalSeconds),
       },
     };
+    return isVoyageRules(parsed.voyage)
+      ? voyageGameplayConfig(options.sessionDurationSeconds, options.spawner.spawnIntervalSeconds, parsed.voyage)
+      : options;
   } catch {
     return null;
   }

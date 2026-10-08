@@ -17,7 +17,8 @@ try {
   await page.keyboard.press('Space');await page.getByRole('status').filter({hasText:'3 / 3'}).waitFor();
   await page.keyboard.press('q');await page.getByRole('status').filter({hasText:'Ready for the high seas'}).waitFor();
   await page.waitForTimeout(600);
-  await page.getByRole('button',{name:'Set Sail',exact:true}).click();
+  await page.getByRole('button',{name:'Back to harbor',exact:true}).click();
+  await page.getByTestId('btn-set-sail').click();
   await page.waitForFunction(()=>window.__PIXI_GAME__?.isRunning && window.__PIRATE_SIMULATION__.mode==='match');
   await page.keyboard.down('w');await page.keyboard.down('Space');
   for (let i=0;i<6;i++) {

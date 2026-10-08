@@ -37,6 +37,10 @@ try {
   }));
   await page.addInitScript(() => localStorage.setItem('pirate_battle_user_config_v1',JSON.stringify({sessionDurationSeconds:180,spawner:{spawnIntervalSeconds:1}})));
   await page.goto(baseURL);
+  if (process.env.PROFILE_DIFFICULTY) {
+    await page.getByLabel('Voyage difficulty').selectOption(process.env.PROFILE_DIFFICULTY);
+    if (process.env.PROFILE_MAP) await page.getByLabel('Voyage map').selectOption(process.env.PROFILE_MAP);
+  }
   await page.getByTestId('btn-set-sail').click();
   await page.waitForFunction(()=>window.__PIXI_GAME__?.isRunning);
   await cdp.send('Performance.enable');
@@ -77,7 +81,7 @@ try {
         if(sim.elapsedSeconds>=durationSeconds || sim.isEnded){
           const sorted=frames.slice(120).sort((a,b)=>a-b);
           const mean=sorted.reduce((sum,value)=>sum+value,0)/sorted.length;
-          resolve({wallSeconds:(now-started)/1000,activeSeconds:sim.elapsedSeconds,frames:frames.length,fps:1000/mean,p95FrameMs:sorted[Math.floor(sorted.length*.95)],peakEnemies,peakProjectiles,peakEntities,reason:sim.endReason,isPaused:sim.isPaused});
+          resolve({wallSeconds:(now-started)/1000,activeSeconds:sim.elapsedSeconds,frames:frames.length,fps:1000/mean,p95FrameMs:sorted[Math.floor(sorted.length*.95)],peakEnemies,peakProjectiles,peakEntities,voyage:sim.config.voyage ?? null,reason:sim.endReason,isPaused:sim.isPaused});
           return;
         }
         sim.player.health=10000;

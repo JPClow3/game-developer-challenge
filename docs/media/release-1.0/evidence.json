@@ -1,0 +1,169 @@
+{
+  "recordedAt": "2026-10-08T07:22:42.907Z",
+  "baseURL": "http://127.0.0.1:5321",
+  "method": "Controlled fixed-tick local scenes with injected salvage and sinking feedback. Pause dialog hidden. Render submission timing overlaps browser validation; it is not frame-rate or physical-device acceptance.",
+  "scenes": [
+    {
+      "viewport": "desktop",
+      "map": "archipelago",
+      "camera": {
+        "scale": 0.72,
+        "portrait": false,
+        "follow": false,
+        "x": 64,
+        "y": 0
+      },
+      "enemies": 4,
+      "indicators": 0,
+      "foam": 160,
+      "debris": 7,
+      "renderMedianMs": 1,
+      "renderP95Ms": 6.5,
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "map": "straits",
+      "camera": {
+        "scale": 0.72,
+        "portrait": false,
+        "follow": false,
+        "x": 64,
+        "y": 0
+      },
+      "enemies": 3,
+      "indicators": 0,
+      "foam": 144,
+      "debris": 21,
+      "renderMedianMs": 2.299999998882413,
+      "renderP95Ms": 26.40000000037253,
+      "errors": []
+    },
+    {
+      "viewport": "desktop",
+      "map": "fortress",
+      "camera": {
+        "scale": 0.72,
+        "portrait": false,
+        "follow": false,
+        "x": 64,
+        "y": 0
+      },
+      "enemies": 4,
+      "indicators": 0,
+      "foam": 160,
+      "debris": 7,
+      "renderMedianMs": 1.799999998882413,
+      "renderP95Ms": 8.5,
+      "errors": []
+    },
+    {
+      "viewport": "landscape",
+      "map": "archipelago",
+      "camera": {
+        "scale": 0.7,
+        "portrait": false,
+        "follow": true,
+        "x": -43.234802425793816,
+        "y": -350.7264981298231
+      },
+      "enemies": 4,
+      "indicators": 2,
+      "foam": 160,
+      "debris": 7,
+      "renderMedianMs": 2.600000001490116,
+      "renderP95Ms": 21,
+      "errors": []
+    },
+    {
+      "viewport": "landscape",
+      "map": "straits",
+      "camera": {
+        "scale": 0.7,
+        "portrait": false,
+        "follow": true,
+        "x": 0,
+        "y": -317.52892028696124
+      },
+      "enemies": 4,
+      "indicators": 2,
+      "foam": 160,
+      "debris": 14,
+      "renderMedianMs": 1.800000000745058,
+      "renderP95Ms": 12.099999999627471,
+      "errors": []
+    },
+    {
+      "viewport": "landscape",
+      "map": "fortress",
+      "camera": {
+        "scale": 0.7,
+        "portrait": false,
+        "follow": true,
+        "x": -205,
+        "y": -323.74651361524707
+      },
+      "enemies": 4,
+      "indicators": 3,
+      "foam": 160,
+      "debris": 14,
+      "renderMedianMs": 1.5,
+      "renderP95Ms": 7.800000000745058,
+      "errors": []
+    },
+    {
+      "viewport": "portrait",
+      "map": "archipelago",
+      "camera": {
+        "scale": 0.851,
+        "portrait": true,
+        "follow": true,
+        "x": -404.1058189273408,
+        "y": -175
+      },
+      "enemies": 4,
+      "indicators": 2,
+      "foam": 160,
+      "debris": 7,
+      "renderMedianMs": 2.900000000372529,
+      "renderP95Ms": 29.40000000037253,
+      "errors": []
+    },
+    {
+      "viewport": "portrait",
+      "map": "straits",
+      "camera": {
+        "scale": 0.851,
+        "portrait": true,
+        "follow": true,
+        "x": -89.89330093870893,
+        "y": -175
+      },
+      "enemies": 4,
+      "indicators": 1,
+      "foam": 160,
+      "debris": 14,
+      "renderMedianMs": 2.399999998509884,
+      "renderP95Ms": 13.900000000372529,
+      "errors": []
+    },
+    {
+      "viewport": "portrait",
+      "map": "fortress",
+      "camera": {
+        "scale": 0.851,
+        "portrait": true,
+        "follow": true,
+        "x": -968.5999999999999,
+        "y": -175
+      },
+      "enemies": 4,
+      "indicators": 2,
+      "foam": 160,
+      "debris": 14,
+      "renderMedianMs": 2.099999999627471,
+      "renderP95Ms": 8.100000001490116,
+      "errors": []
+    }
+  ]
+}

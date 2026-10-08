@@ -1,0 +1,16 @@
+{
+  "checkedOn": "2026-10-08",
+  "project": "game-developer-challenge",
+  "projectId": "crimson-fog-19762627",
+  "branch": "main",
+  "branchId": "br-orange-wildflower-b5a8ydci",
+  "database": "neondb",
+  "method": "Versioned Drizzle migration journal applied first on an isolated hosted branch, inspected, then applied to hosted main. Temporary branch removed after validation.",
+  "appliedMigrations": 3,
+  "requiredTables": ["matches", "browser_sessions", "match_tickets"],
+  "difficultyMapColumns": 4,
+  "completedMatchesBeforeRelease": 0,
+  "verifiedMatchesBeforeRelease": 0,
+  "defaultFrontendUsesFixtures": true,
+  "credentialsRetainedInReport": false
+}

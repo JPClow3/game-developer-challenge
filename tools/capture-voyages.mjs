@@ -46,7 +46,8 @@ try {
     }
     await context.close();
   }
-  await writeFile(resolve(output,'evidence.json'),JSON.stringify(evidence,null,2));
+  await writeFile(resolve(output,'evidence.json'),JSON.stringify({recordedAt:new Date().toISOString(),baseURL,
+    method:'Controlled local test scenes. Fixed ticks, injured captain, visible repair crate and sinking feedback; pause dialog hidden for the capture. Render submission timing ran alongside browser validation and is not frame-rate or physical-device acceptance.',scenes:evidence},null,2));
   if(evidence.some(entry=>entry.errors.length))throw new Error('Browser errors recorded; inspect evidence.json.');
   console.log(`Captured nine voyages in ${output}`);
 } finally {await browser.close();}

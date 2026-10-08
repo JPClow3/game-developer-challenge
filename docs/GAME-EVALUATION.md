@@ -1,5 +1,7 @@
 # Game evaluation and improvements
 
+Release 1.0: see the [current delivery evidence and media](../reports/RELEASE-1.0.md). Measurements and diagnostic captures below describe their original source and date; historical test counts are not the current release total.
+
 Evaluated locally on 7 October 2026 using the requested Game Studio skills. The existing React/PixiJS 2D naval game already separates simulation, presentation, input, and DOM UI. Its strongest features are independent cannons, readable enemy anticipation, deterministic replay, and a short practice encounter. This pass preserves that work and concentrates on player visibility, recovery, and settings that can actually produce a valid score submission.
 
 The shared foundations, 2D architecture, UI, and playtest guidance apply to this game. The requested Three.js, React Three Fiber, and 3D asset skills were reviewed for applicability. Combat retains its 2D runtime and existing ship/environment artwork. A subsequent art pass uses selected Kenney Pirate Kit models to render static harbor artwork offline; see [the harbor art decision](HARBOR-ART.md).
@@ -42,7 +44,7 @@ Final local validation passed:
 - Separate rendered capture passes at 1280×720, 393×851, and 851×393, with no page errors. These captures fast-forward the battle ending through fixed simulation ticks.
 - Git whitespace checks.
 
-Regression coverage includes lesson recovery, key repeats, short-screen scrolling, cancelled options, legacy fractional settings, corrupt result restoration, and portrait hull clearance. The existing browser suites also cover combat, AI, score rules, pause, offline recovery, replay verification, simultaneous touch input, and screenshot baselines. The complete local [browser report](../artifacts/game-evaluation/verified-report/index.html) is retained for review.
+Regression coverage includes lesson recovery, key repeats, short-screen scrolling, cancelled options, legacy fractional settings, corrupt result restoration, and portrait hull clearance. The existing browser suites also cover combat, AI, score rules, pause, offline recovery, replay verification, simultaneous touch input, and screenshot baselines. The complete local [browser report](../reports/README.md) is retained for review.
 
 Reproduce local verification:
 

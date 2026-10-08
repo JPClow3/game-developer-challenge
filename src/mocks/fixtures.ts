@@ -1,6 +1,7 @@
 import type { RankingItem } from '../types/api';
+import { DIFFICULTIES, MAPS } from '../core/simulation/VoyageRules';
 
-export const INITIAL_LEADERBOARD_FIXTURES: readonly Omit<RankingItem, 'rank'>[] = [
+const CLASSIC_FIXTURES: readonly Omit<RankingItem, 'rank'>[] = [
   {
     matchId: 'fixture-m1',
     playerId: 'pirate_blackbeard',
@@ -121,4 +122,13 @@ export const INITIAL_LEADERBOARD_FIXTURES: readonly Omit<RankingItem, 'rank'>[] 
     enemySpawnIntervalSeconds: 3,
     playedAt: '2026-10-06T20:00:00.000Z',
   },
+];
+
+// Fixtures remain synthetic evaluation data. Each ruleset has its own IDs and
+// scope so switching the default voyage never leaves an evaluator a blank board.
+export const INITIAL_LEADERBOARD_FIXTURES: readonly Omit<RankingItem, 'rank'>[] = [
+  ...CLASSIC_FIXTURES,
+  ...DIFFICULTIES.flatMap(difficulty => MAPS.flatMap(map => CLASSIC_FIXTURES.map(item => ({
+    ...item, matchId: `${item.matchId}-${difficulty}-${map}`, voyage: { difficulty, map },
+  })))),
 ];

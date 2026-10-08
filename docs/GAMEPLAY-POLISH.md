@@ -1,5 +1,7 @@
 # Game presentation and combat usability
 
+Release 1.0: see the [current delivery evidence and media](../reports/RELEASE-1.0.md). Measurements and diagnostic captures below describe their original source and date; historical test counts are not the current release total.
+
 This improvement keeps the original challenge rules and the React, TypeScript, PixiJS, Axios, TanStack Query, and MSW stack. Each ship sunk by the player's attacks still awards one point; ramming deaths do not score. Collision dimensions, weapon balance, and match duration limits are unchanged.
 
 ## Player-facing changes
