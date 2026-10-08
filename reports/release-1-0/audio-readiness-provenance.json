@@ -1,0 +1,26 @@
+{
+  "recordedAt": "2026-10-08T07:54:58.153Z",
+  "priorSourceCommit": "02afe93cd034d03fea6efa4615937aed29418ff9",
+  "priorCi": "https://github.com/JPClow3/game-developer-challenge/actions/runs/37744769262",
+  "priorLinux": {
+    "passed": 115,
+    "failed": 1,
+    "skipped": 6,
+    "failure": "Audio gain checked immediately after Resume click: expected 0.35, received 0. Test raced the UI transition."
+  },
+  "change": "Poll the actual loop state after starting/resuming; production code and media unchanged.",
+  "sourceFile": "tests/e2e/20_audio_loop_lifecycle.spec.ts",
+  "sourceSha256": "282efddc5670f792656ff9db93375481b071198c3535aabc573104a9706868ca",
+  "validation": {
+    "passed": 12,
+    "failed": 0,
+    "flaky": 0,
+    "repeatEach": 3,
+    "projects": [
+      "chromium",
+      "mobile-chromium"
+    ]
+  },
+  "originalManifest": "manifest.json",
+  "scope": "The original complete local snapshots and manifest remain intact. This records the subsequent test-only readiness change; full Linux/Windows CI remains required before deployment and tagging."
+}

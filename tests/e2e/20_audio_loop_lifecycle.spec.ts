@@ -55,7 +55,7 @@ test('a delayed ambience load stays silent after exit and starts once on the nex
     await expect(page.locator('canvas')).toHaveCount(0);
     await page.screenshot({ path: testInfo.outputPath('quiet-harbor.png'), mask: [page.getByTestId('msw-scenario-widget')] });
     await startPractice(page);
-    expect(await page.evaluate(() => {
+    await expect.poll(() => page.evaluate(() => {
       const audio = (window as any).__LIFECYCLE_AUDIO__;
       return { loops: audio.activeLoops.size, volume: audio.activeLoops.get('ocean_ambience_loop')?.gain.gain.value };
     })).toEqual({ loops: 1, volume: Math.fround(.35) });
@@ -74,7 +74,7 @@ test('ambience finishing its load during pause remains silent until resume', asy
     expect(await page.evaluate(() => (window as any).__LIFECYCLE_AUDIO__.activeLoops.get('ocean_ambience_loop')?.gain.gain.value)).toBe(0);
     await page.screenshot({ path: testInfo.outputPath('silent-pause.png'), mask: [page.getByTestId('msw-scenario-widget')] });
     await page.getByRole('button', { name: 'Resume Battle', exact: true }).click();
-    expect(await page.evaluate(() => (window as any).__LIFECYCLE_AUDIO__.activeLoops.get('ocean_ambience_loop')?.gain.gain.value)).toBeCloseTo(.35);
+    await expect.poll(() => page.evaluate(() => (window as any).__LIFECYCLE_AUDIO__.activeLoops.get('ocean_ambience_loop')?.gain.gain.value)).toBeCloseTo(.35);
     await expect(page.getByRole('dialog')).toHaveCount(0);
   } finally { delayed.release(); }
 });
