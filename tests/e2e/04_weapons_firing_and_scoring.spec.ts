@@ -21,13 +21,24 @@ test('keyboard weapons discharge full salvos, start cooldowns and score projecti
     const shots=await page.evaluate(weapon=>(window as any).__FIRED__.filter((shot:any)=>shot.weapon===weapon),weapon);
     expect(shots[0].cooldown).toBeGreaterThan(0);
   }
-  await page.evaluate(() => {
-    const sim=(window as any).__PIRATE_SIMULATION__;
+  const scored = await page.evaluate(() => {
+    const game=(window as any).__PIXI_GAME__, sim=game.simulation;
+    // Keyboard salvos can already score while a slower runner captures them.
+    // Isolate the target kill and measure its exact increment with no live ticks.
+    game.app.ticker.stop();
+    sim.clearInputs();
+    sim.projectiles=[];
+    sim.spawner.resetCooldown();
+    const before=sim.score;
     const enemy=sim.spawner.forceSpawn('chaser',sim.player.kinematic.x,sim.player.kinematic.y-120);
-    enemy.health=5;sim.enemies.push(enemy);
+    enemy.health=5;sim.enemies=[enemy];
     sim.weaponSystem.cooldownFront=0;
     sim.projectiles.push(...sim.weaponSystem.fireFront(sim.player.kinematic,'player'));
     for(let i=0;i<30;i++) sim.step(sim.fixedTimestep);
+    game.renderFrame();game.app.render();
+    return {before,after:sim.score,targetDestroyed:enemy.isDestroyed};
   });
-  await expect(page.getByTestId('hud-score-value')).toHaveText('1');
+  expect(scored.targetDestroyed).toBe(true);
+  expect(scored.after-scored.before).toBe(1);
+  await expect(page.getByTestId('hud-score-value')).toHaveText(String(scored.after));
 });
