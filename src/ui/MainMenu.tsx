@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Icon, type IconName } from './Icon';
-import type { GameplayConfig } from '../types/config';
+import { saveUserConfigToStorage, DEFAULT_GAMEPLAY_CONFIG, type GameplayConfig } from '../types/config';
+import { DIFFICULTY_DETAILS, MAP_DETAILS, voyageGameplayConfig, type DifficultyId, type MapId } from '../core/simulation/VoyageRules';
+import { loadCaptainLog, voyageKey, captainTitle } from '../game/CaptainLog';
 import { RankingTab } from './RankingTab';
 import { MatchHistoryTab } from './MatchHistoryTab';
 import { OptionsModal } from './OptionsModal';
@@ -37,6 +39,13 @@ export const MainMenu: React.FC<MainMenuProps> = ({
     return () => clearTimeout(timeout);
   }, [optionsSaved]);
   const helm = loadHelmSettings();
+  const log = loadCaptainLog();
+  const best = log.bests[voyageKey({sessionDurationSeconds:currentConfig.sessionDurationSeconds,enemySpawnIntervalSeconds:currentConfig.spawner.spawnIntervalSeconds,voyage:currentConfig.voyage})];
+  const selectVoyage = (difficulty: DifficultyId | 'classic', map: MapId) => {
+    const next = difficulty === 'classic' ? {...DEFAULT_GAMEPLAY_CONFIG,sessionDurationSeconds:currentConfig.sessionDurationSeconds,spawner:{...DEFAULT_GAMEPLAY_CONFIG.spawner,spawnIntervalSeconds:currentConfig.spawner.spawnIntervalSeconds}}
+      : voyageGameplayConfig(currentConfig.sessionDurationSeconds,currentConfig.spawner.spawnIntervalSeconds,{difficulty,map});
+    saveUserConfigToStorage(next); onUpdateConfig(next);
+  };
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const selectTab = (tab: MenuTab) => {
     AudioManager.getInstance().play('ui_click');
@@ -113,15 +122,26 @@ export const MainMenu: React.FC<MainMenuProps> = ({
                   <span>Outsail.</span> <span>Outgun.</span> <em>Stay afloat.</em>
                 </h2>
                 <p>
-                  Hunt enemy ships through island waters. Every ship sunk earns one point. Survive
-                  until the bell, or go down fighting.
+                  Sink enemy ships for one point each. Keep your hull afloat until the bell.
                 </p>
+                <div className="voyage-picker">
+                  <label>Difficulty<select aria-label="Voyage difficulty" value={currentConfig.voyage?.difficulty ?? 'classic'} onChange={e=>selectVoyage(e.target.value as DifficultyId | 'classic',currentConfig.voyage?.map ?? 'archipelago')}>
+                    {Object.entries(DIFFICULTY_DETAILS).map(([id,detail])=><option key={id} value={id}>{detail.name}</option>)}
+                    <option value="classic">Classic rules</option>
+                  </select></label>
+                  <label>Waters<select aria-label="Voyage map" disabled={!currentConfig.voyage} value={currentConfig.voyage?.map ?? 'archipelago'} onChange={e=>selectVoyage(currentConfig.voyage?.difficulty ?? 'open',e.target.value as MapId)}>
+                    {Object.entries(MAP_DETAILS).map(([id,detail])=><option key={id} value={id}>{detail.name}</option>)}
+                  </select></label>
+                  <p>{currentConfig.voyage ? DIFFICULTY_DETAILS[currentConfig.voyage.difficulty].description : 'Original arena and enemy rules. Compatible with earlier Classic recordings.'}</p>
+                  {currentConfig.voyage && <p>{MAP_DETAILS[currentConfig.voyage.map].description} Collect glowing crates for repairs.</p>}
+                </div>
+                <div className="captain-progress"><strong>{captainTitle(log)}</strong><span>{best ? `Personal best: ${best.score} ships · Grade ${best.grade}` : 'Chart your first personal best in these waters.'}</span></div>
                 <div className="voyage-settings">
                   <span>
                     <strong>{currentConfig.sessionDurationSeconds}s</strong> at sea
                   </span>
                   <span>
-                    <strong>{currentConfig.spawner.spawnIntervalSeconds}s</strong> between enemies
+                    <strong>{currentConfig.spawner.spawnIntervalSeconds}s</strong> {currentConfig.voyage ? 'base enemy interval' : 'between enemies'}
                   </span>
                 </div>
                 <div className="voyage-actions">
@@ -220,6 +240,8 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           )}
           {activeTab === 'ranking' && (
             <RankingTab
+              key={`${currentConfig.voyage?.difficulty}:${currentConfig.voyage?.map}:${currentConfig.sessionDurationSeconds}:${currentConfig.spawner.spawnIntervalSeconds}`}
+              voyage={currentConfig.voyage}
               sessionDurationFilter={currentConfig.sessionDurationSeconds}
               spawnIntervalFilter={currentConfig.spawner.spawnIntervalSeconds}
             />

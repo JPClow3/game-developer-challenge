@@ -4,12 +4,16 @@ import { useRankingQuery } from '../api/useApiQueries';
 import { AudioManager } from '../audio/AudioManager';
 import { getOrCreatePlayerId } from '../api/player';
 
+import { DIFFICULTY_DETAILS, MAP_DETAILS, type VoyageRules } from '../core/simulation/VoyageRules';
+
 interface RankingTabProps {
+  voyage?: VoyageRules;
   sessionDurationFilter?: number;
   spawnIntervalFilter?: number;
 }
 
 export const RankingTab: React.FC<RankingTabProps> = ({
+  voyage,
   sessionDurationFilter,
   spawnIntervalFilter,
 }) => {
@@ -20,6 +24,7 @@ export const RankingTab: React.FC<RankingTabProps> = ({
   const { data, isLoading, isError, error, refetch, isFetching } = useRankingQuery({
     page,
     pageSize,
+    voyage,
     sessionDuration: sessionDurationFilter,
     spawnInterval: spawnIntervalFilter,
   });
@@ -32,7 +37,7 @@ export const RankingTab: React.FC<RankingTabProps> = ({
   return (
     <div className="w-full flex flex-col space-y-4" data-testid="ranking-container">
       <div className="records-header">
-        <div><h3>Classic Leaderboard</h3>
+        <div><h3>{voyage ? `${DIFFICULTY_DETAILS[voyage.difficulty].name} · ${MAP_DETAILS[voyage.map].name}` : 'Classic Leaderboard'}</h3>
           <p>{sessionDurationFilter === undefined ? 'All voyage lengths' : `${sessionDurationFilter}s voyages`} · {spawnIntervalFilter === undefined ? 'All enemy intervals' : `${spawnIntervalFilter}s between enemies`}.<br />Ranked by score, fastest time, then first recorded.</p></div>
         {isFetching && (
           <span className="records-updating" role="status">

@@ -11,6 +11,8 @@ export const matches = pgTable(
     playerId: varchar('player_id', { length: 128 }).notNull(),
     playerName: varchar('player_name', { length: 128 }).default('Captain Anonymous'),
     score: integer('score').notNull().default(0),
+    difficulty: varchar('difficulty', { length: 16 }).notNull().default('classic'),
+    map: varchar('map', { length: 16 }).notNull().default('classic'),
     verified: boolean('verified').notNull().default(false),
     durationSeconds: integer('duration_seconds').notNull(),
     endReason: varchar('end_reason', { length: 32 }).notNull(), // 'time_expired' | 'player_destroyed'
@@ -42,6 +44,8 @@ export const matchTickets = pgTable('match_tickets', {
   id: text('id').primaryKey(),
   playerId: text('player_id').notNull(),
   seed: integer('seed').notNull(),
+  difficulty: varchar('difficulty', { length: 16 }).notNull().default('classic'),
+  map: varchar('map', { length: 16 }).notNull().default('classic'),
   sessionDurationSeconds: integer('session_duration_seconds').notNull(),
   enemySpawnIntervalSeconds: integer('enemy_spawn_interval_seconds').notNull(),
   issuedAt: timestamp('issued_at', { withTimezone: true }).notNull().defaultNow(),

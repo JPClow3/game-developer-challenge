@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { DIFFICULTY_DETAILS, MAP_DETAILS } from '../core/simulation/VoyageRules';
 import { Icon } from './Icon';
 import { useMatchHistoryQuery } from '../api/useApiQueries';
 import { getOrCreatePlayerId } from '../api/player';
@@ -153,7 +154,7 @@ export const MatchHistoryTab: React.FC = () => {
                       )}
                     </td>
                     <td className="text-center record-muted">
-                      {m.sessionDurationSeconds}s / {m.enemySpawnIntervalSeconds}s
+                      {m.voyage ? `${DIFFICULTY_DETAILS[m.voyage.difficulty].name} / ${MAP_DETAILS[m.voyage.map].name}` : 'Classic'}<br />{m.sessionDurationSeconds}s / {m.enemySpawnIntervalSeconds}s
                     </td>
                   </tr>
                 );

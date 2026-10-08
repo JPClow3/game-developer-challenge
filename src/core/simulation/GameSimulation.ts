@@ -18,6 +18,10 @@ import { WeaponSystem } from '../weapons/WeaponSystem';
 import { EnemySpawner } from '../spawner/EnemySpawner';
 import { validateReplay, type BattleReplay } from './Replay';
 import { DEFAULT_ISLAND_OBSTACLES } from '../collision/CollisionSystem';
+import { NavigationField } from '../ai/NavigationField';
+import { RepairSalvage } from './RepairSalvage';
+import { emptyBattleStats, battleReport } from './BattleReport';
+import { isVoyageRules, voyageGameplayConfig, voyageObstacles } from './VoyageRules';
 
 export interface PlayerInputState {
   throttle: number; // 0 to 1
@@ -89,6 +93,9 @@ export class GameSimulation {
   public enemies: EnemyShipState[] = [];
   public projectiles: Projectile[] = [];
   public obstacles: IslandObstacle[];
+  public stats = emptyBattleStats();
+  public salvage: RepairSalvage;
+  public navigation: NavigationField;
 
   public weaponSystem: WeaponSystem;
   public spawner: EnemySpawner;
@@ -112,10 +119,16 @@ export class GameSimulation {
     customConfig = options.replay?.config ?? customConfig;
     const validated = validateGameplayConfig(customConfig);
     this.config = validated.validatedConfig;
+    if (customConfig?.voyage) {
+      if (!isVoyageRules(customConfig.voyage)) throw new Error('Invalid voyage selection.');
+      this.config = voyageGameplayConfig(this.config.sessionDurationSeconds, this.config.spawner.spawnIntervalSeconds, customConfig.voyage);
+    }
     this.durationSeconds = this.config.sessionDurationSeconds;
     this.remainingSeconds = this.durationSeconds;
 
-    this.obstacles = [...DEFAULT_ISLAND_OBSTACLES];
+    this.obstacles = this.config.voyage ? voyageObstacles(this.config.voyage.map) : structuredClone(DEFAULT_ISLAND_OBSTACLES);
+    this.salvage = new RepairSalvage(this.seed);
+    this.navigation = new NavigationField(this.config.arena, this.obstacles);
     this.weaponSystem = new WeaponSystem({
       front: this.config.weaponFront,
       broadsideLeft: this.config.weaponBroadsideLeft,
@@ -303,6 +316,7 @@ export class GameSimulation {
       finalScore: this.score,
       durationSeconds: this.durationSeconds - this.remainingSeconds,
       config: this.config,
+      report: battleReport(this.stats, this.score, this.player.health, this.player.maxHealth, reason === 'time_expired'),
     });
   }
 
@@ -325,6 +339,10 @@ export class GameSimulation {
     if (customConfig) {
       const validated = validateGameplayConfig(customConfig);
       this.config = validated.validatedConfig;
+      if (customConfig.voyage) {
+        if (!isVoyageRules(customConfig.voyage)) throw new Error('Invalid voyage selection.');
+        this.config = voyageGameplayConfig(this.config.sessionDurationSeconds, this.config.spawner.spawnIntervalSeconds, customConfig.voyage);
+      }
     }
     this.durationSeconds = this.config.sessionDurationSeconds;
     this.remainingSeconds = this.durationSeconds;
@@ -339,6 +357,10 @@ export class GameSimulation {
 
     this.enemies = [];
     this.projectiles = [];
+    this.stats = emptyBattleStats();
+    this.salvage = new RepairSalvage(this.seed);
+    this.obstacles = this.mode === 'training' ? [] : this.config.voyage ? voyageObstacles(this.config.voyage.map) : structuredClone(DEFAULT_ISLAND_OBSTACLES);
+    this.navigation = new NavigationField(this.config.arena, this.obstacles);
     this.weaponSystem = new WeaponSystem({
       front: this.config.weaponFront,
       broadsideLeft: this.config.weaponBroadsideLeft,

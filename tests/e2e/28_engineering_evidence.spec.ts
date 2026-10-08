@@ -30,7 +30,7 @@ test('debug draws physics geometry and projectile lifetimes only when requested'
     sim.setInputs({fireFront:true});sim.step(sim.fixedTimestep);game.renderFrame();game.app.render();
     return game.debugOverlay.counts;
   });
-  expect(counts.shipDisks).toBe(4);expect(counts.islands).toBe(3);expect(counts.shooters).toBe(1);expect(counts.projectiles).toBeGreaterThan(0);
+  expect(counts.shipDisks).toBe(4);expect(counts.islands).toBe(6);expect(counts.shooters).toBe(1);expect(counts.projectiles).toBeGreaterThan(0);
   // Keep rendering during capture: WebGL's drawing buffer is discarded between frames.
   await page.evaluate(()=>(window as any).__PIXI_GAME__.app.ticker.start());
   await page.waitForTimeout(100);

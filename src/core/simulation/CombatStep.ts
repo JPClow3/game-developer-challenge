@@ -5,6 +5,7 @@ import { ChaserAI, computeDamageTier } from '../ai/ChaserAI';
 import { ShooterAI } from '../ai/ShooterAI';
 import { CollisionSystem } from '../collision/CollisionSystem';
 import type { ChaserEnemyState, ShooterEnemyState } from '../../types';
+import { voyagePressure } from './VoyageRules';
 
 /** One combat tick. Ordering is part of the deterministic replay contract. */
 export function stepCombat(sim: GameSimulation, dt: number, input: PlayerInputState): void {
@@ -44,6 +45,7 @@ export function stepCombat(sim: GameSimulation, dt: number, input: PlayerInputSt
     const spawned = sim.weaponSystem.fireFront(sim.player.kinematic, 'player');
     for (const p of spawned) p.id = ++sim.entityCounters.projectile;
     sim.projectiles.push(...spawned);
+    sim.stats.shotsFired += spawned.length;
     for (const p of spawned) sim.emit('projectile_spawned', p);
   }
 
@@ -54,6 +56,7 @@ export function stepCombat(sim: GameSimulation, dt: number, input: PlayerInputSt
     sim.emit('broadside_fired', { side: -1, rotation: sim.player.kinematic.rotation });
     for (const p of spawned) p.id = ++sim.entityCounters.projectile;
     sim.projectiles.push(...spawned);
+    sim.stats.shotsFired += spawned.length;
     for (const p of spawned) sim.emit('projectile_spawned', p);
   }
 
@@ -64,6 +67,7 @@ export function stepCombat(sim: GameSimulation, dt: number, input: PlayerInputSt
     sim.emit('broadside_fired', { side: 1, rotation: sim.player.kinematic.rotation });
     for (const p of spawned) p.id = ++sim.entityCounters.projectile;
     sim.projectiles.push(...spawned);
+    sim.stats.shotsFired += spawned.length;
     for (const p of spawned) sim.emit('projectile_spawned', p);
   }
 
@@ -72,9 +76,10 @@ export function stepCombat(sim: GameSimulation, dt: number, input: PlayerInputSt
     if (enemy.isDestroyed || sim.mode === 'training') continue;
 
     const aim = sim.player.kinematic;
+    const waypoint = sim.config.voyage ? sim.navigation.waypoint(enemy.kinematic, aim) : undefined;
 
     if (enemy.type === 'chaser') {
-      ChaserAI.update(enemy as ChaserEnemyState, aim, sim.obstacles, dt, sim.config.arena);
+      ChaserAI.update(enemy as ChaserEnemyState, aim, sim.obstacles, dt, sim.config.arena, sim.config.chaser, waypoint);
     } else if (enemy.type === 'shooter') {
       const shot = ShooterAI.update(
         enemy as ShooterEnemyState,
@@ -82,6 +87,8 @@ export function stepCombat(sim: GameSimulation, dt: number, input: PlayerInputSt
         sim.obstacles,
         dt,
         sim.config.arena,
+        sim.config.shooter,
+        waypoint,
       );
       if (shot) {
         shot.id = ++sim.entityCounters.projectile;
@@ -95,9 +102,11 @@ export function stepCombat(sim: GameSimulation, dt: number, input: PlayerInputSt
   const newEnemy =
     sim.mode === 'training'
       ? null
-      : sim.spawner.step(dt, sim.player.kinematic, sim.enemies, sim.obstacles, sim.config.arena);
+      : sim.spawner.step(dt, sim.player.kinematic, sim.enemies, sim.obstacles, sim.config.arena,
+        sim.config.voyage ? voyagePressure(sim.elapsedSeconds,sim.durationSeconds,sim.config.spawner.maxActiveEnemies) : undefined);
   if (newEnemy) {
     newEnemy.id = `${newEnemy.type}_${++sim.entityCounters.enemy}`;
+    if (sim.config.voyage) newEnemy.health = newEnemy.maxHealth = newEnemy.type==='chaser' ? sim.config.chaser.maxHealth : sim.config.shooter.maxHealth;
     sim.enemies.push(newEnemy);
     sim.emit('enemy_spawned', newEnemy);
   }
@@ -126,7 +135,9 @@ export function stepCombat(sim: GameSimulation, dt: number, input: PlayerInputSt
   }
 
   // C. Ship-to-Ship Ramming & Separation
-  const shipShipResult = CollisionSystem.resolveShipShipCollisions(sim.player, sim.enemies);
+  let healthBefore = sim.player.health;
+  const shipShipResult = CollisionSystem.resolveShipShipCollisions(sim.player, sim.enemies, sim.config.chaser.rammingDamage);
+  sim.stats.damageTaken += Math.max(0,healthBefore-sim.player.health);
 
   if (shipShipResult.playerDamaged) {
     for (const id of shipShipResult.chaserSuicideRams)
@@ -148,18 +159,27 @@ export function stepCombat(sim: GameSimulation, dt: number, input: PlayerInputSt
   }
 
   // D. Projectile Collisions (Single-hit guarantee)
+  healthBefore = sim.player.health;
   const projResult = CollisionSystem.resolveProjectileCollisions(
     sim.projectiles,
     sim.player,
     sim.enemies,
     sim.obstacles,
   );
+  sim.stats.damageTaken += Math.max(0,healthBefore-sim.player.health);
+  sim.stats.hits += projResult.playerProjectileHits ?? 0;
   for (const splash of projResult.splashes ?? []) sim.emit('shot_splash', splash);
-  for (const id of projResult.enemiesDestroyed)
+  for (const id of projResult.enemiesDestroyed) {
+    const enemy=sim.enemies.find(e=>e.id===id);
+    if (enemy && sim.mode !== 'training') {
+      if(enemy.type==='chaser')sim.stats.chasersSunk++;else sim.stats.shootersSunk++;
+      sim.salvage.drop(sim,enemy.kinematic);
+    }
     sim.emit(
       'ship_sunk',
       sim.enemies.find((enemy) => enemy.id === id),
     );
+  }
   if (projResult.scoreAwarded > 0 && sim.mode !== 'training') {
     sim.score += projResult.scoreAwarded;
     sim.emit('score_changed', { score: sim.score });
@@ -180,6 +200,7 @@ export function stepCombat(sim: GameSimulation, dt: number, input: PlayerInputSt
   }
 
   // 9. Prune destroyed enemies & dead projectiles
+  if(sim.mode !== 'training' && sim.config.voyage)sim.salvage.step(sim,dt);
   if (sim.mode !== 'training') sim.enemies = sim.enemies.filter((e) => !e.isDestroyed);
   sim.projectiles = sim.projectiles.filter((p) => !p.isDead);
   // 10. Update player damage tier

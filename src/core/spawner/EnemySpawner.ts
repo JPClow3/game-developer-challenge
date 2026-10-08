@@ -83,6 +83,7 @@ export class EnemySpawner {
     currentEnemies: EnemyShipState[],
     obstacles: IslandObstacle[],
     arena: ArenaBounds,
+    pressure?: { cap: number; intervalScale: number; shooterShare: number },
   ): EnemyShipState | null {
     if (dt <= 0) return null;
 
@@ -90,11 +91,11 @@ export class EnemySpawner {
     if (this.spawnCooldown > 0) return null;
 
     // Reset cooldown for next interval
-    this.spawnCooldown = this.config.spawnIntervalSeconds;
+    this.spawnCooldown = this.config.spawnIntervalSeconds * (pressure?.intervalScale ?? 1);
 
     // 1. Density cap check (max 10 active enemies)
     const activeEnemies = currentEnemies.filter((e) => !e.isDestroyed);
-    if (activeEnemies.length >= this.config.maxActiveEnemies) {
+    if (activeEnemies.length >= (pressure?.cap ?? this.config.maxActiveEnemies)) {
       return null;
     }
 
@@ -105,7 +106,7 @@ export class EnemySpawner {
     }
 
     // 3. Archetype selection: guarantee both appear during match
-    const type = this.selectEnemyType(activeEnemies);
+    const type = this.selectEnemyType(activeEnemies, pressure?.shooterShare);
 
     // Initial heading points roughly towards center of arena
     const toCenterX = arena.width * 0.5 - pos.x;
@@ -159,7 +160,7 @@ export class EnemySpawner {
    * Selects enemy archetype:
    * Guarantees both types appear by prioritizing the missing archetype.
    */
-  public selectEnemyType(activeEnemies: EnemyShipState[]): 'chaser' | 'shooter' {
+  public selectEnemyType(activeEnemies: EnemyShipState[], shooterShare?: number): 'chaser' | 'shooter' {
     const chaserCount = activeEnemies.filter((e) => e.type === 'chaser').length;
     const shooterCount = activeEnemies.filter((e) => e.type === 'shooter').length;
 
@@ -167,7 +168,7 @@ export class EnemySpawner {
     if (shooterCount === 0) return 'shooter';
 
     const rand = this.prng.next();
-    return rand < this.config.chaserWeight ? 'chaser' : 'shooter';
+    return rand < (shooterShare === undefined ? this.config.chaserWeight : 1-shooterShare) ? 'chaser' : 'shooter';
   }
 
   /**

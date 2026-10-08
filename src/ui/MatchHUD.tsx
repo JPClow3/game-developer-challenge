@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { TouchJoystick } from './TouchJoystick';
 import { Icon } from './Icon';
 import { GameSimulation, DEFAULT_PLAYER_INPUT } from '../core/simulation/GameSimulation';
 import type { MatchSnapshot } from '../types/game';
@@ -26,12 +27,14 @@ export const MatchHUD: React.FC<MatchHUDProps> = ({ simulation, onPauseToggle, s
       pointers.current.clear();
       toggled.current.clear();
       setHeld(new Set());
+      simulation.setInputs({...DEFAULT_PLAYER_INPUT},'touch');
     };
     const unsubscribe = simulation.addListener((event) => {
       if (
         ['match_paused', 'match_resumed', 'match_ended', 'training_progress'].includes(event.type)
       )
         reset();
+      if (event.type === 'salvage_collected') setAnnouncement(`Repair collected. Hull restored by ${event.payload.healing}.`);
       if (event.type === 'score_changed')
         setAnnouncement(`Enemy sunk. Score ${event.payload.score}.`);
       if (event.type === 'health_changed' && event.payload.percentage <= 30)
@@ -169,7 +172,7 @@ export const MatchHUD: React.FC<MatchHUDProps> = ({ simulation, onPauseToggle, s
           {snapshot.durationSeconds - snapshot.remainingSeconds < 9
             ? 'Keep moving. Turn your broadside toward the enemy.'
             : healthPct <= 30
-              ? 'Hull critical. Avoid the red ramming ships.'
+              ? simulation.config.voyage ? 'Hull critical. Find glowing repair crates.' : 'Hull critical. Avoid the red ramming ships.'
               : 'Sink enemy ships · 1 point each'}
         </p>
       )}
@@ -188,11 +191,11 @@ export const MatchHUD: React.FC<MatchHUDProps> = ({ simulation, onPauseToggle, s
         >
           <div className="helm-movement">
             <span className="helm-label">Helm</span>
-            {control('forward', 'Move forward', <Icon name="ahead" />)}
+            {settings.joystick ? <TouchJoystick simulation={simulation} /> : <>{control('forward', 'Move forward', <Icon name="ahead" />)}
             <div>
               {control('left', 'Steer left', <Icon name="left" />)}
               {control('right', 'Steer right', <Icon name="arrow" />)}
-            </div>
+            </div></>}
           </div>
           <div className="helm-weapons">
             <span className="helm-label">Cannons</span>

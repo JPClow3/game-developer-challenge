@@ -212,7 +212,7 @@ export class AudioManager {
   /**
    * Play SFX with voice limiting and volume scaling
    */
-  public playSfx(id: SoundId, volumeScale = 1.0): AudioBufferSourceNode | null {
+  public playSfx(id: SoundId, volumeScale = 1.0, pan = 0): AudioBufferSourceNode | null {
     if (!this.ctx || !this.sfxGain || this.settings.isMuted) return null;
 
     // Check voice limit to prevent distortion/clipping
@@ -240,13 +240,18 @@ export class AudioManager {
     gainNode.gain.setValueAtTime(finalVolume, this.ctx.currentTime);
 
     source.connect(gainNode);
-    gainNode.connect(this.sfxGain);
+    const panner = this.ctx.createStereoPanner?.();
+    if (panner) {
+      panner.pan.setValueAtTime(Number.isFinite(pan) ? Math.max(-1,Math.min(1,pan)) : 0,this.ctx.currentTime);
+      gainNode.connect(panner); panner.connect(this.sfxGain);
+    } else gainNode.connect(this.sfxGain);
 
     this.activeSfxVoiceCount.set(id, activeVoices + 1);
     source.onended = () => {
       const count = this.activeSfxVoiceCount.get(id) || 1;
       this.activeSfxVoiceCount.set(id, Math.max(0, count - 1));
       gainNode.disconnect();
+      panner?.disconnect();
     };
 
     source.start(0);
@@ -256,6 +261,11 @@ export class AudioManager {
   /**
    * Unified play helper for sounds and ambient loops
    */
+  public playPositioned(id: SoundId, position:{x:number;y:number}, listener:{x:number;y:number}): void {
+    const distance=Math.hypot(position.x-listener.x,position.y-listener.y);
+    this.playSfx(id,Math.max(.3,1-distance/1400),(position.x-listener.x)/450);
+  }
+
   public play(id: SoundId, volumeScale = 1.0): void {
     if (id === 'ocean_ambience_loop' || id === 'ship_sailing_loop') {
       this.startLoop(id, volumeScale);

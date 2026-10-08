@@ -4,6 +4,8 @@ test.describe('Flow 10: Ranking & History Query, Pagination, Empty & Error State
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await expect(page.getByTestId('main-menu')).toBeVisible({ timeout: 15000 });
+    // These fixtures represent the original Classic leaderboard.
+    await page.getByLabel('Voyage difficulty').selectOption('classic');
   });
 
   test('should query and paginate ranking entries', async ({ page }) => {

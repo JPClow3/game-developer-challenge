@@ -15,7 +15,7 @@ npm ci
 npm run dev
 ```
 
-Open http://localhost:5173. Choose **Play** or **Options**. **Practice voyage** teaches movement and cannon directions without registering a score. Completed battles offer **Watch Replay**, with saved inputs and divergence checks.
+Open http://localhost:5173. Choose a difficulty and map, then **Play**. **Options** changes duration, the base enemy interval, sound and touch controls. **Practice voyage** teaches movement and cannon directions without registering a score. Completed battles offer **Watch Replay**, with saved inputs and divergence checks.
 
 ```sh
 npm run lint       # ESLint, TypeScript rules, React hooks, JSX accessibility
@@ -57,7 +57,13 @@ Production omits simulation/renderer debug globals. Profiling or automation requ
 
 Hold cannon controls to repeat when loaded. Steering and firing work simultaneously. Blur/pause clears held input; press again after resuming. Options also includes sound and control preferences.
 
-Default battle: 120 seconds, one spawn every 3 seconds, 100 hull points and at most 10 active enemies. Every enemy sunk by your cannons earns one point; chaser suicide rams earn none. Front reload: 0.6 seconds. Each three-shot broadside reload: 1.8 seconds. Duration options: 60–180 seconds; spawn interval: 1–15 seconds. Options apply to the next battle. [Architecture](ARCHITECTURE.md) explains balance choices.
+Default voyage: Open sea difficulty, Smuggler islands, 120 seconds and 100 hull points. The 3-second base enemy interval scales from 4.05 seconds at the opening to 2.25 seconds at the finish, with the enemy cap rising from 3 to 10. Calm waters and Storm fleet change crew strength, speed, damage and repair chances. Broken straits and Fortress bay provide different sailing routes. Choose Classic rules for the original three-island arena and fixed spawning. Every enemy sunk by your cannons earns one point; chaser suicide rams earn none. Front reload: 0.6 seconds. Each three-shot broadside reload: 1.8 seconds. Duration options: 60–180 seconds; spawn interval: 1–15 seconds. Options apply to the next battle. [Architecture](ARCHITECTURE.md) explains balance choices.
+
+New voyages add repair crates: enemy cannon kills can leave salvage for 12 active seconds. Sail within 45 world pixels while injured to restore up to 20 hull. Routes around islands and shooter line of sight use the same physical shoreline. Shooters retain a visible windup before discharging.
+
+Completed battles report accuracy, hull, damage, repairs and enemy types sunk. Personal bests are separate for every rules/difficulty/map/duration/interval combination. Three persistent goals unlock captain titles on this device; they do not alter combat balance. Optional joystick controls steer toward a heading while a second thumb fires. Landscape touch viewports use a closer camera with bearings for enemies outside the visible area.
+
+Classic recordings retain simulation version 2; new voyages use version 3. The optional server verifies the replay against the issued difficulty and map. Apply Drizzle migrations before deploying these API changes. [Implementation and validation](docs/FORK-IMPROVEMENTS.md).
 
 ## Reproduce every network failure
 

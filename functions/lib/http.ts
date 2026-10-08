@@ -1,3 +1,5 @@
+import { isVoyageRules, type VoyageRules } from '../../src/core/simulation/VoyageRules';
+
 export class RequestError extends Error {
   constructor(message: string, public readonly status = 400) { super(message); }
 }
@@ -39,7 +41,14 @@ function integerParam(params: URLSearchParams, name: string, min: number, max: n
 
 export function queryParams(url: URL) {
   const params = url.searchParams;
+  let voyage: VoyageRules | undefined;
+  if(params.has('difficulty')||params.has('map')) {
+    const selection={difficulty:params.get('difficulty'),map:params.get('map')};
+    if(!isVoyageRules(selection))throw new RequestError('Invalid voyage selection');
+    voyage=selection;
+  }
   return {
+    ...(voyage ? {voyage} : {}),
     page: integerParam(params, 'page', 1, 1_000_000, 1)!,
     pageSize: integerParam(params, 'pageSize', 1, 50, 10)!,
     sessionDuration: integerParam(params, 'sessionDuration', 60, 180),

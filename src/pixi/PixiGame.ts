@@ -37,6 +37,11 @@ interface ExplosionVisual {
 export class PixiGame {
   public debugOverlay?: DebugOverlay;
   public readonly impact = new ImpactFeedback(typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches);
+  private foam: {x:number;y:number;age:number;size:number}[] = [];
+  private debris: {x:number;y:number;age:number;angle:number;survivor:boolean}[] = [];
+  private wakeClock=0;
+  private lastPlayerHealth=100;
+  private salvageGraphics!: Graphics;
   private splashes: {x:number;y:number;age:number}[] = [];
   private sinking: {container:Container;age:number;rotation:number}[] = [];
   public get feedbackState() {return {sinking:this.sinking.length,splashes:this.splashes.length,freeze:this.impact.freezeSeconds,recoil:Math.hypot(this.impact.recoilX,this.impact.recoilY),shake:this.impact.shakeStrength};}
@@ -57,7 +62,7 @@ export class PixiGame {
   private intentGraphics!: Graphics;
   private indicatorGraphics!: Graphics;
   private indicatorLabels = new Map<string, Text>();
-  public camera = {scale:1,x:0,y:0,portrait:false};
+  public camera = {scale:1,x:0,y:0,portrait:false,follow:false};
   public visibleIndicators: (PlacedBearing & {type:string})[] = [];
 
   private playerVisual!: ShipVisual;
@@ -140,6 +145,8 @@ export class PixiGame {
     this.worldContainer.addChild(this.projectilesGraphics);
     this.worldContainer.addChild(this.healthBarsGraphics);
     this.worldContainer.addChild(this.vfxGraphics);
+    this.salvageGraphics = new Graphics();
+    this.worldContainer.addChild(this.salvageGraphics);
     this.intentGraphics = new Graphics();
     this.worldContainer.addChild(this.intentGraphics);
     if (new URLSearchParams(window.location.search).has('debug')) {
@@ -178,39 +185,61 @@ export class PixiGame {
 
   private drawObstacles(): void {
     const loader = AssetLoader.getInstance();
-    for (const obs of this.simulation.obstacles) {
-      const island = new Container();
-      island.position.set(obs.x, obs.y);
-      this.obstaclesLayer.addChild(island);
-      const shelf = new Graphics().circle(0, 0, obs.radius + 18).fill({color:0x5fbaa9,alpha:0.2})
-        .circle(0, 0, obs.radius + 8).stroke({width:3,color:0xd1eae0,alpha:0.35});
-      island.addChild(shelf);
-      // The sandy shore matches the simulation's circular collision boundary exactly.
-      const sand = new Graphics().circle(0, 0, obs.radius).fill(0xd9ba7d);
-      island.addChild(sand);
-      const sandTexture = loader.getTileTexture(18);
-      if (sandTexture) {
-        const sprite = new TilingSprite({texture:sandTexture,width:obs.radius*2,height:obs.radius*2});
-        sprite.position.set(-obs.radius,-obs.radius);sprite.mask=sand;
-        island.addChild(sprite);
-      }
-      const grassRadius = obs.radius - 19;
-      const grassMask = new Graphics().circle(-4, -3, grassRadius).fill(0x688744);
-      island.addChild(grassMask);
-      const grassTexture = loader.getTileTexture(39);
-      if (grassTexture) {
-        const grass = new TilingSprite({texture:grassTexture,width:obs.radius*2,height:obs.radius*2});
-        grass.position.set(-obs.radius,-obs.radius);grass.mask=grassMask;grass.tint=0xd0dba2;
-        island.addChild(grass);
-      }
-      for (const [tile,x,y,size] of ([[71,-18,-15,70],[70,26,15,48],[65,-22,33,34],[72,26,-27,36]] as const)) {
-        const texture = loader.getTileTexture(tile);
-        if (!texture) continue;
-        const detail = new Sprite(texture);detail.anchor.set(0.5);detail.position.set(x,y);
-        detail.width=detail.height=size * obs.radius / 85;
-        island.addChild(detail);
-      }
+    const obstacles = this.simulation.obstacles;
+    if (!obstacles.length) return;
+    const land = new Container(); this.obstaclesLayer.addChild(land);
+    const shelf=new Graphics(), sand=new Graphics(), grassMask=new Graphics();
+    for(const obs of obstacles) {
+      shelf.circle(obs.x,obs.y,obs.radius+18);
+      sand.circle(obs.x,obs.y,obs.radius);
+      grassMask.circle(obs.x-3,obs.y-3,Math.max(8,obs.radius-17));
     }
+    shelf.fill(0x62bba9);shelf.alpha=.24;land.addChild(shelf);
+    sand.fill(0xd9ba7d);land.addChild(sand);
+    const {width,height}=this.simulation.config.arena;
+    const sandTexture=loader.getTileTexture(18);
+    if(sandTexture) {const texture=new TilingSprite({texture:sandTexture,width,height});texture.mask=sand;land.addChild(texture);}
+    grassMask.fill(0x688744);land.addChild(grassMask);
+    const grassTexture=loader.getTileTexture(39);
+    if(grassTexture) {const texture=new TilingSprite({texture:grassTexture,width,height});texture.mask=grassMask;texture.tint=0xd0dba2;land.addChild(texture);}
+    // Only the exposed arcs of each disk form the shoreline of the compound island.
+    const shoreline=new Graphics();
+    for(const obs of obstacles) for(let angle=0;angle<Math.PI*2;angle+=Math.PI/90) {
+      const point={x:obs.x+Math.cos(angle)*obs.radius,y:obs.y+Math.sin(angle)*obs.radius};
+      if(obstacles.some(other=>other!==obs && Math.hypot(point.x-other.x,point.y-other.y)<other.radius+1)) continue;
+      const next=angle+Math.PI/90;
+      shoreline.moveTo(point.x,point.y).lineTo(obs.x+Math.cos(next)*obs.radius,obs.y+Math.sin(next)*obs.radius);
+    }
+    shoreline.stroke({width:3,color:0xe5f3d9,alpha:.75});land.addChild(shoreline);
+    obstacles.forEach((obs,index)=> {
+      if(obstacles.some((other,i)=>i<index && Math.hypot(obs.x-other.x,obs.y-other.y)<other.radius+obs.radius)) return;
+      const detail=new Container();detail.position.set(obs.x,obs.y);land.addChild(detail);
+      const palms = this.simulation.config.voyage?.map==='straits' ? 3 : 2;
+      for(let i=0;i<palms;i++) {
+        const texture=loader.getTileTexture(i%2 ? 70 : 71);if(!texture)continue;
+        const palm=new Sprite(texture);palm.anchor.set(.5);palm.position.set(-obs.radius*.32+i*22,-obs.radius*.32);
+        palm.width=palm.height=45+i*7;detail.addChild(palm);
+      }
+      const landmark=new Graphics();
+      if(this.simulation.config.voyage?.map==='fortress' && index===0) {
+        landmark.roundRect(-40,-19,80,62,4).fill(0x415b61).stroke({color:0x9cafab,width:6});
+        landmark.rect(-22,-2,44,30).fill(0xbaa983);
+        for(const x of [-38,38])for(const y of [-17,40]) landmark.circle(x,y,13).fill(0x586f73).stroke({color:0xb4c2bb,width:3});
+        landmark.rect(-9,31,18,16).fill(0x193b45);
+      } else if(index%3===0) {
+        landmark.rect(-16,9,38,29).fill(0x805737).stroke({color:0xc29d69,width:2});
+        landmark.poly([-23,12,3,-10,28,12]).fill(0xb87850).stroke({color:0xe1b77e,width:2});
+        landmark.rect(-1,22,9,16).fill(0x2c392d);
+        landmark.rect(28,18,13,12).fill(0xa58151).stroke({color:0xe1bb77,width:2});
+      } else {
+        landmark.circle(4,22,10).fill(0x4d6244).stroke({color:0xc4af85,width:3});
+        landmark.poly([-5,25,7,7,17,24]).fill(0xe9bc74);
+        landmark.rect(-19,28,15,5).fill(0x805737);
+      }
+      landmark.moveTo(28,6).lineTo(28,-25).stroke({color:0xc6bca0,width:3});
+      landmark.poly([29,-25,48,-19,29,-12]).fill(index%2 ? 0xd58962 : 0x76bcb1);
+      detail.addChild(landmark);
+    });
   }
 
   private getShipTexture(series: number, damageTier: number): Texture {
@@ -247,6 +276,7 @@ export class PixiGame {
   }
 
   private setupEventAudio(): void {
+    this.lastPlayerHealth=this.simulation.player.health;
     this.unsubSimulation = this.simulation.addListener((event) => {
       switch (event.type) {
         case 'broadside_fired': this.impact.broadside(event.payload.side,event.payload.rotation); break;
@@ -257,9 +287,9 @@ export class PixiGame {
           const p = event.payload as Projectile;
           this.spawnExplosion(p.x, p.y, 12, 0xffdfa0);
           if (p.weaponType === 'front') {
-            this.audio.play('cannon_fire_1');
+            this.audio.playPositioned('cannon_fire_1',p,this.simulation.player.kinematic);
           } else {
-            this.audio.play('cannon_broadside');
+            this.audio.playPositioned('cannon_broadside',p,this.simulation.player.kinematic);
           }
           break;
         }
@@ -267,7 +297,11 @@ export class PixiGame {
           this.audio.play('score_point');
           break;
         }
+        case 'salvage_collected': this.audio.play('score_point');this.spawnExplosion(event.payload.x,event.payload.y,32,0x9af0b5);break;
         case 'health_changed': {
+          const damaged = event.payload.current < this.lastPlayerHealth;
+          this.lastPlayerHealth=event.payload.current;
+          if(!damaged) break;
           this.impact.hit();
           const pct = event.payload?.percentage ?? 100;
           if (pct < 30) {
@@ -315,7 +349,8 @@ export class PixiGame {
   public renderFrame(dt = 0): void {
     if (!this.isRunning || this.isDestroyed) return;
     if (this.impact.advance(Math.min(dt,.05))) return;
-    this.renderWaterAndGuides();
+    this.renderWaterAndGuides(dt);
+    this.renderSalvage();
     this.renderPlayer();
     this.renderEnemies();
     this.renderProjectiles();
@@ -417,9 +452,14 @@ export class PixiGame {
     container.addChild(sprite);container.position.set(ship.kinematic.x,ship.kinematic.y);container.rotation=ship.kinematic.rotation;
     this.shipsLayer.addChild(container);
     this.sinking.push({container,age:0,rotation:container.rotation});
+    for(let i=0;i<7;i++) {
+      const angle=i*Math.PI*2/7;
+      this.debris.push({x:container.x+Math.cos(angle)*22,y:container.y+Math.sin(angle)*22,age:0,angle,survivor:i===0});
+    }
+    this.debris=this.debris.slice(-112);
     this.impact.sink();this.spawnExplosion(container.x,container.y,42,0xffad67);
     this.splashes.push({x:container.x,y:container.y,age:0});
-    this.audio.play('ship_explosion_1');
+    this.audio.playPositioned('ship_explosion_1',ship.kinematic,this.simulation.player.kinematic);
   }
 
   private renderSinking(dt: number): void {
@@ -442,8 +482,11 @@ export class PixiGame {
     visual.sprite.tint = this.simulation.elapsedSeconds < visual.hitUntil ? 0xff9c78 : 0xffffff;
   }
 
-  private renderWaterAndGuides(): void {
-    const time = this.simulation.elapsedSeconds;
+  private renderWaterAndGuides(dt:number): void {
+    const time = this.impact.reducedMotion ? 0 : this.simulation.elapsedSeconds;
+    this.wakeClock+=dt;
+    const emitWake=this.wakeClock>=.075;
+    if(emitWake)this.wakeClock=0;
     const {width,height} = this.simulation.config.arena;
     this.waterGraphics.clear();
     for (let i=0;i<45;i++) {
@@ -460,11 +503,21 @@ export class PixiGame {
       const fx=Math.sin(k.rotation), fy=-Math.cos(k.rotation);
       const rx=Math.cos(k.rotation), ry=Math.sin(k.rotation);
       const length=Math.min(speed*.27,60);
+      if(emitWake && !this.impact.reducedMotion) {
+        for(const side of [-1,1])this.foam.push({x:k.x-fx*34+rx*side*10,y:k.y-fy*34+ry*side*10,age:0,size:2+speed/85});
+      }
+      if(ship.health/ship.maxHealth<.3) this.wakesGraphics.circle(k.x-fx*20,k.y-fy*20,10).fill({color:0x253c3b,alpha:.3});
       for (const side of [-1,1]) {
         this.wakesGraphics.moveTo(k.x-fx*27+rx*side*7,k.y-fy*27+ry*side*7)
           .lineTo(k.x-fx*(30+length)+rx*side*20,k.y-fy*(30+length)+ry*side*20)
           .stroke({width:3,color:0xb6f0e6,alpha:.22});
       }
+    }
+    this.foam=this.foam.slice(-160);
+    for(let i=this.foam.length-1;i>=0;i--) {
+      const particle=this.foam[i]!;particle.age+=dt;
+      if(particle.age>2){this.foam.splice(i,1);continue;}
+      this.wakesGraphics.circle(particle.x,particle.y,particle.size+particle.age*3).fill({color:0xc9f4e6,alpha:(1-particle.age/2)*.25});
     }
     const k=this.pose(this.simulation.player.kinematic);
     this.guideGraphics.clear();
@@ -481,6 +534,18 @@ export class PixiGame {
       const rx=Math.cos(k.rotation)*side,ry=Math.sin(k.rotation)*side;
       this.guideGraphics.moveTo(k.x+rx*48,k.y+ry*48).lineTo(k.x+rx*90,k.y+ry*90)
         .stroke({width:1.5,color:0xb5e4d9,alpha:.25});
+    }
+  }
+
+  private renderSalvage(): void {
+    const g=this.salvageGraphics.clear();
+    for(const pickup of this.simulation.salvage.items) {
+      const t=this.impact.reducedMotion ? 0 : Math.sin(this.simulation.elapsedSeconds*3+pickup.id);
+      const fade=Math.min(1,pickup.remainingSeconds/2);
+      g.circle(pickup.x,pickup.y,24+t*3).fill({color:0x99ecc1,alpha:.14*fade}).stroke({color:0xb1f4d4,width:2,alpha:.7*fade});
+      g.roundRect(pickup.x-10,pickup.y-10,20,20,3).fill({color:0x8f643a,alpha:fade}).stroke({color:0xe4d79c,width:2,alpha:fade});
+      g.rect(pickup.x-2,pickup.y-7,4,14).fill({color:0xd1ffe0,alpha:fade});
+      g.rect(pickup.x-7,pickup.y-2,14,4).fill({color:0xd1ffe0,alpha:fade});
     }
   }
 
@@ -570,14 +635,14 @@ export class PixiGame {
   private updateCamera(): void {
     const width=this.app.screen.width,height=this.app.screen.height;
     const player=this.pose(this.simulation.player.kinematic);
-    this.camera=combatCamera(width,height,this.simulation.config.arena,player);
+    this.camera=combatCamera(width,height,this.simulation.config.arena,player,width <= 1000 && !!window.matchMedia?.('(pointer: coarse)').matches);
     const c=this.camera;
     const shake=this.impact.shake;
     this.worldContainer.scale.set(c.scale); this.worldContainer.position.set(c.x+shake.x,c.y+shake.y);
     const g=this.indicatorGraphics.clear(); this.visibleIndicators=[];
     const active=new Set<string>();
     const bearings:Bearing[]=[];
-    if (c.portrait) for (const enemy of this.simulation.enemies) {
+    if (c.follow) for (const enemy of this.simulation.enemies) {
       const k=this.pose(enemy.kinematic);
       const marker=edgeIndicator({x:player.x*c.scale+c.x,y:player.y*c.scale+c.y},{x:k.x*c.scale+c.x,y:k.y*c.scale+c.y},width,height);
       if (!marker) continue;
@@ -617,12 +682,24 @@ export class PixiGame {
 
   private renderVfx(dt: number): void {
     this.vfxGraphics.clear();
+    for(let i=this.debris.length-1;i>=0;i--) {
+      const bit=this.debris[i]!;bit.age+=dt;
+      if(bit.age>6){this.debris.splice(i,1);continue;}
+      const drift=this.impact.reducedMotion ? 0 : bit.age*4;
+      const x=bit.x+Math.cos(bit.angle)*drift,y=bit.y+Math.sin(bit.angle)*drift;
+      const alpha=Math.min(1,6-bit.age)*.75;
+      if(bit.survivor) {
+        this.vfxGraphics.ellipse(x,y,9,5).stroke({color:0xc9f4e6,width:2,alpha});
+        this.vfxGraphics.circle(x,y-2,4).fill({color:0xdba77c,alpha});
+        this.vfxGraphics.rect(x-4,y-7,8,3).fill({color:0xdfc38a,alpha});
+      } else this.vfxGraphics.moveTo(x,y).lineTo(x+Math.cos(bit.angle)*13,y+Math.sin(bit.angle)*13).stroke({color:0xc69b63,width:4,alpha});
+    }
     for(let i=this.splashes.length-1;i>=0;i--) {
       const splash=this.splashes[i]!;splash.age+=dt;
       const t=splash.age/.5;
       if(t>=1) {this.splashes.splice(i,1);continue;}
-      this.vfxGraphics.ellipse(splash.x,splash.y,6+t*27,3+t*14).stroke({width:2,color:0xb9f5ee,alpha:1-t});
-      for(let n=0;n<5;n++) {
+      this.vfxGraphics.ellipse(splash.x,splash.y,6+(this.impact.reducedMotion ? .5 : t)*27,3+(this.impact.reducedMotion ? .5 : t)*14).stroke({width:2,color:0xb9f5ee,alpha:1-t});
+      if(!this.impact.reducedMotion) for(let n=0;n<5;n++) {
         const angle=n*Math.PI*2/5;
         this.vfxGraphics.circle(splash.x+Math.cos(angle)*t*22,splash.y+Math.sin(angle)*t*12-Math.sin(t*Math.PI)*16,2*(1-t)+1).fill({color:0xe5fffa,alpha:1-t});
       }
@@ -639,7 +716,7 @@ export class PixiGame {
       }
 
       const progress = exp.age / exp.maxAge;
-      const currentRadius = exp.maxRadius * Math.sin(progress * Math.PI * 0.5);
+      const currentRadius = exp.maxRadius * (this.impact.reducedMotion ? .7 : Math.sin(progress * Math.PI * 0.5));
       const alpha = 1 - progress;
 
       this.vfxGraphics.circle(exp.x, exp.y, currentRadius);
@@ -690,7 +767,7 @@ export class PixiGame {
     this.enemyVisuals.clear();
     this.indicatorLabels.clear();
     this.explosions = [];
-    this.sinking=[];this.splashes=[];
+    this.sinking=[];this.splashes=[];this.foam=[];this.debris=[];
 
     if (this.app?.renderer) {
       try {

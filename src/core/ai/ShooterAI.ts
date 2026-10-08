@@ -4,10 +4,12 @@ import type {
   IslandObstacle,
   ArenaBounds,
   Projectile,
+  ShooterAIConfig,
 } from '../../types';
 import { DEFAULT_SHOOTER_CONFIG } from '../../types';
 import { wrapAngle, getForwardVector, ShipKinematics } from '../kinematics/ShipKinematics';
 import { computeDamageTier } from './ChaserAI';
+import { clearSeaLine } from './NavigationField';
 
 let nextShooterId = 1;
 export function resetShooterIdCounter(): void {
@@ -62,6 +64,8 @@ export class ShooterAI {
     obstacles: IslandObstacle[],
     dt: number,
     arena?: ArenaBounds,
+    config: ShooterAIConfig = DEFAULT_SHOOTER_CONFIG,
+    waypoint?: {x:number;y:number},
   ): Projectile | null {
     if (shooter.isDestroyed || dt <= 0) return null;
 
@@ -75,21 +79,22 @@ export class ShooterAI {
     const toPlayerY = playerKinematic.y - shooter.kinematic.y;
     const distToPlayer = Math.hypot(toPlayerX, toPlayerY);
 
-    const config = DEFAULT_SHOOTER_CONFIG;
     const minEngage = config.engageMinDistance; // 240 px
     const maxEngage = config.engageMaxDistance; // 360 px
 
+    const lead=waypoint ? Math.min(.65,distToPlayer/config.cannon.projectileSpeed)*.65 : 0;
+    const predicted={x:playerKinematic.x+playerKinematic.velocityX*lead,y:playerKinematic.y+playerKinematic.velocityY*lead};
     let throttle = 0;
     let targetDirX = toPlayerX;
     let targetDirY = toPlayerY;
 
     // 3. Standoff Range-Keeping State Machine
-    if (distToPlayer > maxEngage) {
+    if (distToPlayer > maxEngage || (waypoint && !clearSeaLine(shooter.kinematic,playerKinematic,obstacles,32))) {
       // Phase: APPROACH
       shooter.phase = 'approach';
       throttle = 1.0;
-      targetDirX = toPlayerX;
-      targetDirY = toPlayerY;
+      targetDirX = (waypoint?.x ?? playerKinematic.x)-shooter.kinematic.x;
+      targetDirY = (waypoint?.y ?? playerKinematic.y)-shooter.kinematic.y;
     } else if (distToPlayer < minEngage) {
       // Phase: EVADE / BACK AWAY
       shooter.phase = 'evade';
@@ -101,13 +106,13 @@ export class ShooterAI {
       // Phase: ENGAGE / STANDOFF
       shooter.phase = 'engage';
       throttle = 0.15; // Slow station-keeping
-      targetDirX = toPlayerX;
-      targetDirY = toPlayerY;
+      targetDirX = predicted.x-shooter.kinematic.x;
+      targetDirY = predicted.y-shooter.kinematic.y;
     }
 
     // 4. Blend Obstacle Repulsion
     const repulsionRadius = 140;
-    const repulsionWeight = 200;
+    const repulsionWeight = waypoint ? 1.5 : 200;
     for (const obs of obstacles) {
       const toObsX = shooter.kinematic.x - obs.x;
       const toObsY = shooter.kinematic.y - obs.y;
@@ -134,14 +139,15 @@ export class ShooterAI {
 
     // 8. Facing alignment check for cannon fire
     // Direct heading towards player (regardless of evasive movement vector)
-    const directHeadingToPlayer = Math.atan2(toPlayerX, -toPlayerY);
+    const directHeadingToPlayer = Math.atan2(toPlayerX+playerKinematic.velocityX*lead, -toPlayerY-playerKinematic.velocityY*lead);
     const aimDeltaTheta = Math.abs(wrapAngle(directHeadingToPlayer - shooter.kinematic.rotation));
 
     let projectile: Projectile | null = null;
 
     // Check if facing player within 12 degrees (|deltaTheta| < config.aimToleranceRadians)
     // and within reasonable firing range
-    const canAim = aimDeltaTheta <= config.aimToleranceRadians && distToPlayer <= maxEngage + 80;
+    const canAim = aimDeltaTheta <= config.aimToleranceRadians && distToPlayer <= maxEngage + 80 &&
+      (!waypoint || clearSeaLine(shooter.kinematic, predicted, obstacles, config.cannon.projectileRadius));
     if (canAim && shooter.cooldownFront <= 0) {
       shooter.attackWindup = (shooter.attackWindup ?? 0) + dt;
     } else {

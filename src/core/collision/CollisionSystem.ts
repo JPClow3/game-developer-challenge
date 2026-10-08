@@ -28,6 +28,7 @@ export interface CollisionEventResults {
   chaserSuicideRams: string[];
   despawnedProjectileIds: number[];
   splashes?: {x:number;y:number}[];
+  playerProjectileHits?: number;
 }
 
 /**
@@ -204,7 +205,8 @@ export class CollisionSystem {
    */
   public static resolveShipShipCollisions(
     playerShip: ShipState,
-    enemies: EnemyShipState[]
+    enemies: EnemyShipState[],
+    rammingDamage?: number,
   ): { chaserSuicideRams: string[]; playerDamaged: boolean } {
     const results = {
       chaserSuicideRams: [] as string[],
@@ -221,7 +223,7 @@ export class CollisionSystem {
       if (checkCapsuleCapsuleOverlap(playerCapsule, enemyCapsule)) {
         if (enemy.type === 'chaser') {
           // Suicide ramming: damages player 35 HP, destroys chaser, awards STRICTLY 0 score
-          const ram = ChaserAI.detonateRam(enemy as ChaserEnemyState);
+          const ram = ChaserAI.detonateRam(enemy as ChaserEnemyState, rammingDamage);
           playerShip.health = Math.max(0, playerShip.health - ram.rammingDamage);
           if (playerShip.health <= 0) {
             playerShip.isDestroyed = true;
@@ -303,6 +305,7 @@ export class CollisionSystem {
             results.despawnedProjectileIds.push(proj.id);
 
             enemy.health = Math.max(0, enemy.health - proj.damage);
+            results.playerProjectileHits = (results.playerProjectileHits ?? 0) + 1;
             if (enemy.health <= 0) {
               enemy.isDestroyed = true;
               results.enemiesDestroyed.push(enemy.id);
