@@ -15,8 +15,8 @@ test('touch helm remains usable in landscape and releases outside the button', a
   expect(bounds).not.toBeNull();
   await page.mouse.move(bounds!.x+25,bounds!.y+25);await page.mouse.down();
   await expect(forward).toHaveAttribute('aria-pressed','true');
-  await page.waitForTimeout(200);
-  expect(await page.evaluate(() => (window as any).__PIRATE_SIMULATION__.player.kinematic.velocityY)).toBeLessThan(0);
+  await expect.poll(() => page.evaluate(() =>
+    (window as any).__PIRATE_SIMULATION__.player.kinematic.velocityY)).toBeLessThan(0);
   await page.mouse.move(400,150);await page.mouse.up();
   await expect(forward).toHaveAttribute('aria-pressed','false');
   expect(await page.evaluate(() => (window as any).__PIRATE_SIMULATION__.currentInput.throttle)).toBe(0);
@@ -25,7 +25,8 @@ test('touch helm remains usable in landscape and releases outside the button', a
 test('paused held keyboard commands require a fresh press after resuming', async ({page}) => {
   await start(page);
   await page.keyboard.down('w');
-  await page.waitForTimeout(100);
+  await expect.poll(() => page.evaluate(() =>
+    (window as any).__PIRATE_SIMULATION__.currentInput.throttle)).toBe(1);
   await page.keyboard.press('Escape');
   await expect(page.getByRole('dialog')).toBeVisible();
   await page.getByRole('button',{name:'Resume Battle',exact:true}).click();
@@ -72,7 +73,6 @@ test('harbor, stable battle, and result visual baselines', async ({page},testInf
     const enemy=sim.spawner.forceSpawn('shooter',1200,350);enemy.kinematic.rotation=0;sim.enemies.push(enemy);
     game.renderFrame();game.app.render();
   });
-  await page.waitForTimeout(200);
   await capture('game-active-arena','battle.png');
   await page.evaluate(() => (window as any).__PIRATE_SIMULATION__.endMatch('time_expired'));
   await page.getByTestId('result-screen').waitFor();

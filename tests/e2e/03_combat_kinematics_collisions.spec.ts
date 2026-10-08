@@ -13,6 +13,7 @@ test.describe('Flow 03: Combat Kinematics, Steering & Obstacle Collisions', () =
     await page.getByRole('button', { name: /^Play$/i }).click();
     await expect(page.getByTestId('game-active-arena')).toBeVisible();
     await expect(page.getByTestId('combat-canvas')).toBeVisible();
+    await page.waitForFunction(() => (window as any).__PIXI_GAME__?.isReady);
 
     // 2. Initial state verification from window simulation harness
     const initialPos = await page.evaluate(() => {
@@ -24,8 +25,12 @@ test.describe('Flow 03: Combat Kinematics, Steering & Obstacle Collisions', () =
 
     // 3. Move forward with W
     await page.keyboard.down('KeyW');
-    await page.waitForTimeout(600);
-    await page.keyboard.up('KeyW');
+    try {
+      await expect.poll(() => page.evaluate(() =>
+        (window as any).__PIRATE_SIMULATION__.player.kinematic.y)).toBeLessThan(initialPos.y);
+    } finally {
+      await page.keyboard.up('KeyW');
+    }
 
     const movedPos = await page.evaluate(() => {
       const sim = (window as any).__PIRATE_SIMULATION__;

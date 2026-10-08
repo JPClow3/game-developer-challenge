@@ -26,7 +26,10 @@ test('replay speed, progress, pause and restart work without submitting another 
   await speed.selectOption('0.5');
   await page.getByRole('button', { name: 'Pause game', exact: true }).click();
   const pausedTick = await page.evaluate(() => (window as any).__PIRATE_SIMULATION__.tickCount);
-  await page.waitForTimeout(250);
+  await page.evaluate(() => {
+    const sim = (window as any).__PIRATE_SIMULATION__;
+    for (let i = 0; i < 60; i++) sim.update(1 / 60);
+  });
   expect(await page.evaluate(() => (window as any).__PIRATE_SIMULATION__.tickCount)).toBe(pausedTick);
   await page.getByRole('button', { name: 'Resume Battle', exact: true }).click();
   await speed.selectOption('4');

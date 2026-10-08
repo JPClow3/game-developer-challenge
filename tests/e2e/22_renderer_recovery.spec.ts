@@ -28,7 +28,11 @@ test('context loss freezes the voyage and restoration requires a fresh intention
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
   await launch(page); await page.keyboard.down('w');
   const before = await lose(page);
-  await page.waitForTimeout(300);
+  await expect(page.getByRole('dialog', { name: 'Game view interrupted' })).toBeVisible();
+  await page.evaluate(() => {
+    const sim = (window as any).__PIRATE_SIMULATION__;
+    for (let i = 0; i < 60; i++) sim.update(1 / 60);
+  });
   await page.screenshot({ path: testInfo.outputPath('interrupted-view.png'), mask: [page.getByTestId('msw-scenario-widget')] });
   const frozen = await page.evaluate(() => {
     const sim = (window as any).__PIRATE_SIMULATION__;

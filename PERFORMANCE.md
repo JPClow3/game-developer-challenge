@@ -2,15 +2,15 @@
 
 Measured locally on 7 October 2026 (America/Sao_Paulo). All three runs completed a 180-second simulated match with seed 1337, one-second enemy spawning, scripted steering and all three batteries held. A diagnostic 10,000 HP hull prevents an early death. This is an instrumented workload, not an unmodified player voyage. No result is sent to a ranked backend.
 
+## Reference run
+
 | Browser / workload | Viewport, DPR | CPU rate | Simulation / wall seconds | Average FPS | p95 frame interval | Peak enemies / projectiles / total entities | 60 FPS and p95 ≤16.9 ms |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Installed Chrome 154.0.8037.98, desktop | 1280 × 720, 1 | 1× | 180 / 179.72 | 141.63 | 7.10 ms | 10 / 13 / 27 | Pass in this environment |
-| Installed Chrome 154.0.8037.98, mobile viewport | 393 × 851, 1 | 4× | 180 / 179.80 | 70.64 | 27.80 ms | 10 / 13 / 27 | Average FPS passes; p95 fails |
-| Locked Chromium 153.0.8010.12 headless shell, initial run | 1280 × 720, 1 | 1× | 180 / 182.38 | 12.74 | 100.10 ms | 10 / 14 / 28 | Fails |
 
 Total entities includes the player, three islands, enemies and projectiles. The total peak is sampled simultaneously, rather than adding independently observed peaks.
 
-The desktop Chrome result meets the local target. The throttled mobile viewport has slow-tail frames despite an average above 60 FPS. The initial locked-browser run also fails. These results do not establish a universal 60 FPS guarantee. Measurements ran on a shared development machine, and some validation jobs overlapped collection, including a short GPU QA invocation and limited unit testing during the mobile run. CPU/GPU load was not fully controlled. Browser choice and contention both changed, so this comparison cannot isolate the cause of the difference. All results are retained.
+The desktop Chrome reference meets the local target in this environment. It does not establish a universal 60 FPS guarantee. The [comparison runs in Appendix A](#appendix-a-comparison-runs-and-limitations) include two failed measurements, with their original values and collection conditions. No new quiet-machine run is claimed.
 
 ## Machine and rendering environment
 
@@ -69,3 +69,14 @@ node tools/profile-combat.mjs
 ```
 
 Omit `PROFILE_CHANNEL` to use locked Chromium; install it with `npx playwright install chromium`. `PROFILE_SECONDS` defaults to 180, `PROFILE_CYCLES` to 5 and `PROFILE_CYCLE_SECONDS` to 2.2. The script records hardware/browser metadata, timing, entities, heap, DOM/listeners and retired-object weak references. Its successful exit means the measurement completed without runtime or lifecycle-check errors; FPS and p95 acceptance must be assessed from the table, including the reported failures. Build normally with `npm run build` for publication.
+
+## Appendix A: Comparison runs and limitations
+
+These additional measurements are retained for reproducibility. The throttled mobile viewport exceeded the p95 target, and the initial locked headless-shell run failed both targets. They are comparison runs rather than the desktop reference above.
+
+| Browser / workload | Viewport, DPR | CPU rate | Simulation / wall seconds | Average FPS | p95 frame interval | Peak enemies / projectiles / total entities | 60 FPS and p95 ≤16.9 ms |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Installed Chrome 154.0.8037.98, mobile viewport | 393 × 851, 1 | 4× | 180 / 179.80 | 70.64 | 27.80 ms | 10 / 13 / 27 | Average FPS passes; p95 fails |
+| Locked Chromium 153.0.8010.12 headless shell, initial run | 1280 × 720, 1 | 1× | 180 / 182.38 | 12.74 | 100.10 ms | 10 / 14 / 28 | Fails |
+
+Measurements ran on a shared development machine. Some validation jobs overlapped collection, including a short GPU QA invocation and limited unit testing during the mobile run. CPU/GPU load was not fully controlled. Browser choice and contention both changed, so this comparison cannot isolate their effects or attribute either failure solely to runner load. The mobile viewport retained the desktop GPU and is not physical-device evidence. All three original JSON reports remain linked above.

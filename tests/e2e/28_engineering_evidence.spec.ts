@@ -32,8 +32,13 @@ test('debug draws physics geometry and projectile lifetimes only when requested'
   });
   expect(counts.shipDisks).toBe(4);expect(counts.islands).toBe(3);expect(counts.shooters).toBe(1);expect(counts.projectiles).toBeGreaterThan(0);
   // Keep rendering during capture: WebGL's drawing buffer is discarded between frames.
-  await page.evaluate(()=>(window as any).__PIXI_GAME__.app.ticker.start());
-  await page.waitForTimeout(100);
+  const tick = await page.evaluate(() => {
+    const game = (window as any).__PIXI_GAME__;
+    game.app.ticker.start();
+    return game.simulation.tickCount;
+  });
+  await expect.poll(() => page.evaluate(() =>
+    (window as any).__PIRATE_SIMULATION__.tickCount)).toBeGreaterThan(tick);
   const debugCapture=testInfo.outputPath('debug-geometry.png');
   await page.screenshot({path:debugCapture});
   await testInfo.attach('debug-geometry',{path:debugCapture,contentType:'image/png'});

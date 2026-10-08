@@ -27,7 +27,10 @@ test('Watch Replay reproduces a played battle and returns without another submis
   page.on('request',request=>{if(request.method()==='POST' && request.url().includes('/api/match')) submissions++;});
   await page.goto('/');await page.getByTestId('btn-set-sail').click();await running(page);
   await page.keyboard.down('w');await page.keyboard.down('Space');await page.keyboard.down('e');
-  await page.waitForTimeout(300);
+  await expect.poll(() => page.evaluate(() => {
+    const s=(window as any).__PIRATE_SIMULATION__;
+    return s.currentInput.fireFront && s.currentInput.fireBroadsideRight && s.entityCounters.projectile > 0 && s.tickCount > 0;
+  })).toBe(true);
   await page.evaluate(()=>{
     const game=(window as any).__PIXI_GAME__,sim=game.simulation;
     game.app.ticker.stop();
@@ -52,7 +55,8 @@ test('Watch Replay reproduces a played battle and returns without another submis
   await testInfo.attach('verified-replay',{body:await page.screenshot(),contentType:'image/png'});
   await page.getByRole('button',{name:'Back to results',exact:true}).click();
   await expect(page.getByTestId('result-screen')).toBeVisible();
-  await page.waitForTimeout(200);expect(submissions).toBe(before);
+  await expect(page.getByRole('button',{name:'Watch Replay',exact:true})).toBeVisible();
+  expect(submissions).toBe(before);
 });
 
 test('portrait camera follows at a readable scale with bearings and survives rotation',async({page,isMobile},testInfo)=>{
@@ -85,13 +89,18 @@ test('three simultaneous real touch pointers steer, accelerate and fire independ
     touches.push({id,x:bounds.x+bounds.width/2,y:bounds.y+bounds.height/2});
   }
   await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:touches});
-  await page.waitForTimeout(400);
+  await expect.poll(()=>page.evaluate(()=>{
+    const sim=(window as any).__PIRATE_SIMULATION__, k=sim.player.kinematic;
+    const delta=k.rotation-k.prevRotation;
+    return Math.hypot(k.velocityX,k.velocityY)>0 && k.angularVelocity>0 &&
+      Math.atan2(Math.sin(delta),Math.cos(delta))>0 && sim.entityCounters.projectile>0;
+  })).toBe(true);
   const state=await page.evaluate(()=>{
     const sim=(window as any).__PIRATE_SIMULATION__;
-    return {input:sim.currentInput,speed:Math.hypot(sim.player.kinematic.velocityX,sim.player.kinematic.velocityY),rotation:sim.player.kinematic.rotation,shots:sim.entityCounters.projectile};
+    return {input:sim.currentInput,speed:Math.hypot(sim.player.kinematic.velocityX,sim.player.kinematic.velocityY),turn:sim.player.kinematic.angularVelocity,shots:sim.entityCounters.projectile};
   });
   expect(state.input.throttle).toBe(1);expect(state.input.steer).toBe(1);expect(state.input.fireFront).toBe(true);
-  expect(state.speed).toBeGreaterThan(0);expect(state.rotation).toBeGreaterThan(0);expect(state.shots).toBeGreaterThan(0);
+  expect(state.speed).toBeGreaterThan(0);expect(state.turn).toBeGreaterThan(0);expect(state.shots).toBeGreaterThan(0);
   await testInfo.attach('simultaneous-touch',{body:await page.screenshot(),contentType:'image/png'});
   await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[touches[2]!]});
   await expect.poll(()=>page.evaluate(()=> (window as any).__PIRATE_SIMULATION__.currentInput.fireFront)).toBe(false);

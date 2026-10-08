@@ -14,7 +14,8 @@ test('a lost practice target can be reset and completed using fresh keyboard inp
   await page.keyboard.up('w');
   await page.keyboard.down('w');
   await page.keyboard.down('a');
-  await page.waitForTimeout(700);
+  await expect.poll(() => page.evaluate(() =>
+    (window as any).__PIRATE_SIMULATION__.player.kinematic.angularVelocity)).toBeLessThan(0);
   await page.getByRole('button', { name: 'Reset lesson', exact: true }).click();
   const reset = await page.evaluate(() => {
     const s = (window as any).__PIRATE_SIMULATION__;

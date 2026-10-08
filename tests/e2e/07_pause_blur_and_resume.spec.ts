@@ -13,13 +13,16 @@ test.describe('Flow 07: Pause, Window Blur & Resume Without Input Buffering', ()
     await page.getByRole('button', { name: /pause/i }).click();
     await expect(page.getByRole('dialog', { name: /game paused/i })).toBeVisible();
 
-    // 2. Measure remaining time across 500ms
+    // 2. Exercise a full second of attempted updates while paused.
     const timeAtPause = await page.evaluate(() => {
       const sim = (window as any).__PIRATE_SIMULATION__;
       return sim.remainingSeconds;
     });
 
-    await page.waitForTimeout(500);
+    await page.evaluate(() => {
+      const sim = (window as any).__PIRATE_SIMULATION__;
+      for (let i = 0; i < 60; i++) sim.update(1 / 60);
+    });
 
     const timeAfterWait = await page.evaluate(() => {
       const sim = (window as any).__PIRATE_SIMULATION__;

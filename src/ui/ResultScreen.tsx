@@ -1,9 +1,10 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useSyncExternalStore } from 'react';
 import { Icon } from './Icon';
 import type { MatchEndReason } from '../types/game';
 import type { MatchConfigSnapshot, SubmitMatchRequest, SubmitMatchResponse } from '../types/api';
 import { useSubmitMatchMutation } from '../api/useApiQueries';
 import { isRetryableApiError } from '../api/client';
+import { PendingSubmissionQueue } from '../api/pendingQueue';
 import { getOrCreatePlayerId, getPlayerName } from '../api/player';
 import { AudioManager } from '../audio/AudioManager';
 import type { BattleReplay } from '../core/simulation/Replay';
@@ -89,12 +90,17 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
   const [submissionResponse, setSubmissionResponse] = useState<SubmitMatchResponse | null>(null);
   const submitMutation = useSubmitMatchMutation();
   const submittedRef = useRef(false);
+  const queue = PendingSubmissionQueue.getInstance();
+  const rejection = useSyncExternalStore(
+    callback => queue.subscribe(callback),
+    () => queue.getRejection(matchData.id),
+  );
 
   useEffect(() => {
     saveLastMatchResult(matchData);
 
     // Automatically submit once on mount
-    if (!submittedRef.current && !suppressSubmission) {
+    if (!submittedRef.current && !suppressSubmission && !queue.getRejection(matchData.id)) {
       submittedRef.current = true;
       const playerId = matchData.playerId ?? getOrCreatePlayerId();
       const playerName = getPlayerName();
@@ -117,7 +123,7 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
         },
       });
     }
-  }, [matchData, submitMutation, suppressSubmission]);
+  }, [matchData, submitMutation, suppressSubmission, queue]);
 
   const handleManualRetry = () => {
     AudioManager.getInstance().play('ui_click');
@@ -212,7 +218,18 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
             </div>
           )}
 
-          {submitMutation.isError && (
+          {rejection && (
+            <div className="ui-message" data-tone="error" role="alert" data-testid="submission-rejected">
+              <Icon name="alert" />
+              <div className="ui-message-copy">
+                <strong>Result rejected. This battle was not recorded in the leaderboard.</strong>
+                <p>{rejection.message} (HTTP {rejection.status})</p>
+                <p>Your battle remains saved on this device. You can watch its replay or start a new voyage.</p>
+              </div>
+            </div>
+          )}
+
+          {submitMutation.isError && !rejection && (
             <div className="ui-message" data-tone="error" role="alert">
               <Icon name="alert" /><div className="ui-message-copy"><span>
                 {isRetryableApiError(submitMutation.error)

@@ -5,9 +5,10 @@ import {
   Sprite,
   Assets,
   Texture,
-  TilingSprite,
   Text,
 } from 'pixi.js';
+import { drawBackground, drawObstacles } from './ArenaScenery';
+import { renderWaterAndGuides, renderProjectiles, renderHealthBars, renderIntentions } from './CombatOverlays';
 import { GameSimulation } from '../core/simulation/GameSimulation';
 import { DebugOverlay } from './DebugOverlay';
 import { AssetLoader } from '../assets/AssetLoader';
@@ -152,66 +153,9 @@ export class PixiGame {
     this.app.stage.addChild(this.indicatorGraphics);
   }
 
-  private drawBackground(): void {
-    const { width, height } = this.simulation.config.arena;
-    const base = new Graphics().rect(0, 0, width, height).fill(0x184b60);
-    this.backgroundLayer.addChild(base);
-    const waterTexture = AssetLoader.getInstance().getTileTexture(73);
-    if (waterTexture) {
-      const water = new TilingSprite({ texture: waterTexture, width, height });
-      water.tileScale.set(2.5);
-      water.tint = 0x4f9da9;
-      water.alpha = 0.55;
-      this.backgroundLayer.addChild(water);
-    }
-    const border = new Graphics().roundRect(12, 12, width - 24, height - 24, 14)
-      .stroke({ width: 3, color: 0xb5d8d3, alpha: 0.35 });
-    this.backgroundLayer.addChild(border);
-    // Chart-style corner marks keep the arena boundary visible without a bright frame.
-    for (const x of [24, width - 24]) for (const y of [24, height - 24]) {
-      const dx = x < width / 2 ? 1 : -1;
-      const dy = y < height / 2 ? 1 : -1;
-      border.moveTo(x + dx * 34, y).lineTo(x, y).lineTo(x, y + dy * 34)
-        .stroke({width:2,color:0xf0d197,alpha:0.75});
-    }
-  }
+  private drawBackground(): void { drawBackground(this.backgroundLayer, this.simulation.config.arena); }
 
-  private drawObstacles(): void {
-    const loader = AssetLoader.getInstance();
-    for (const obs of this.simulation.obstacles) {
-      const island = new Container();
-      island.position.set(obs.x, obs.y);
-      this.obstaclesLayer.addChild(island);
-      const shelf = new Graphics().circle(0, 0, obs.radius + 18).fill({color:0x5fbaa9,alpha:0.2})
-        .circle(0, 0, obs.radius + 8).stroke({width:3,color:0xd1eae0,alpha:0.35});
-      island.addChild(shelf);
-      // The sandy shore matches the simulation's circular collision boundary exactly.
-      const sand = new Graphics().circle(0, 0, obs.radius).fill(0xd9ba7d);
-      island.addChild(sand);
-      const sandTexture = loader.getTileTexture(18);
-      if (sandTexture) {
-        const sprite = new TilingSprite({texture:sandTexture,width:obs.radius*2,height:obs.radius*2});
-        sprite.position.set(-obs.radius,-obs.radius);sprite.mask=sand;
-        island.addChild(sprite);
-      }
-      const grassRadius = obs.radius - 19;
-      const grassMask = new Graphics().circle(-4, -3, grassRadius).fill(0x688744);
-      island.addChild(grassMask);
-      const grassTexture = loader.getTileTexture(39);
-      if (grassTexture) {
-        const grass = new TilingSprite({texture:grassTexture,width:obs.radius*2,height:obs.radius*2});
-        grass.position.set(-obs.radius,-obs.radius);grass.mask=grassMask;grass.tint=0xd0dba2;
-        island.addChild(grass);
-      }
-      for (const [tile,x,y,size] of ([[71,-18,-15,70],[70,26,15,48],[65,-22,33,34],[72,26,-27,36]] as const)) {
-        const texture = loader.getTileTexture(tile);
-        if (!texture) continue;
-        const detail = new Sprite(texture);detail.anchor.set(0.5);detail.position.set(x,y);
-        detail.width=detail.height=size * obs.radius / 85;
-        island.addChild(detail);
-      }
-    }
-  }
+  private drawObstacles(): void { drawObstacles(this.obstaclesLayer, this.simulation.obstacles); }
 
   private getShipTexture(series: number, damageTier: number): Texture {
     const frameName = AssetLoader.getShipFrameName(series as any, damageTier as any);
@@ -442,130 +386,16 @@ export class PixiGame {
     visual.sprite.tint = this.simulation.elapsedSeconds < visual.hitUntil ? 0xff9c78 : 0xffffff;
   }
 
-  private renderWaterAndGuides(): void {
-    const time = this.simulation.elapsedSeconds;
-    const {width,height} = this.simulation.config.arena;
-    this.waterGraphics.clear();
-    for (let i=0;i<45;i++) {
-      const x=(i*317)%width, y=(i*173)%height;
-      const drift=Math.sin(time*.7+i)*7;
-      this.waterGraphics.moveTo(x+drift,y).quadraticCurveTo(x+15+drift,y+4,x+30+drift,y)
-        .stroke({width:1.5,color:0xc2ede6,alpha:0.10});
-    }
-    this.wakesGraphics.clear();
-    for (const ship of [this.simulation.player,...this.simulation.enemies]) {
-      const k={...ship.kinematic,...this.pose(ship.kinematic)};
-      const speed=Math.hypot(k.velocityX,k.velocityY);
-      if (speed<12 || ship.isDestroyed) continue;
-      const fx=Math.sin(k.rotation), fy=-Math.cos(k.rotation);
-      const rx=Math.cos(k.rotation), ry=Math.sin(k.rotation);
-      const length=Math.min(speed*.27,60);
-      for (const side of [-1,1]) {
-        this.wakesGraphics.moveTo(k.x-fx*27+rx*side*7,k.y-fy*27+ry*side*7)
-          .lineTo(k.x-fx*(30+length)+rx*side*20,k.y-fy*(30+length)+ry*side*20)
-          .stroke({width:3,color:0xb6f0e6,alpha:.22});
-      }
-    }
-    const k=this.pose(this.simulation.player.kinematic);
-    this.guideGraphics.clear();
-    this.guideGraphics.circle(k.x,k.y,39).stroke({width:1.5,color:0x9af0d6,alpha:.5});
-    const front=this.simulation.config.weaponFront;
-    const range=front.projectileSpeed*front.projectileLifetime;
-    const fx=Math.sin(k.rotation),fy=-Math.cos(k.rotation);
-    for(let distance=62;distance<Math.min(range,250);distance+=26) {
-      this.guideGraphics.moveTo(k.x+fx*distance,k.y+fy*distance)
-        .lineTo(k.x+fx*(distance+7),k.y+fy*(distance+7))
-        .stroke({width:2,color:0xf2dda5,alpha:.22*(1-distance/300)});
-    }
-    for(const side of [-1,1]) {
-      const rx=Math.cos(k.rotation)*side,ry=Math.sin(k.rotation)*side;
-      this.guideGraphics.moveTo(k.x+rx*48,k.y+ry*48).lineTo(k.x+rx*90,k.y+ry*90)
-        .stroke({width:1.5,color:0xb5e4d9,alpha:.25});
-    }
-  }
+  private renderWaterAndGuides(): void { renderWaterAndGuides(this.simulation, this.renderAlpha, this.waterGraphics, this.wakesGraphics, this.guideGraphics); }
 
-  private renderProjectiles(): void {
-    this.projectilesGraphics.clear();
-    for (const p of this.simulation.projectiles) {
-      const alpha = this.renderAlpha;
-      const x = p.prevX + (p.x - p.prevX) * alpha, y = p.prevY + (p.y - p.prevY) * alpha;
-      const color=p.owner==='player'?0xffdda1:0xff8f77;
-      const speed=Math.hypot(p.vx,p.vy)||1;
-      this.projectilesGraphics.moveTo(x-p.vx/speed*22,y-p.vy/speed*22).lineTo(x,y)
-        .stroke({width:p.radius*1.2,color,alpha:.45});
-      this.projectilesGraphics.circle(x,y,p.radius+1).fill({color,alpha:.95});
-      this.projectilesGraphics.circle(x,y,p.radius*.45).fill(0xffffff);
-    }
-  }
+  private renderProjectiles(): void { renderProjectiles(this.simulation, this.renderAlpha, this.projectilesGraphics); }
 
-  private renderHealthBars(): void {
-    this.healthBarsGraphics.clear();
-
-    // 1. Player health bar
-    const player = this.simulation.player;
-    const barWidth = 44;
-    const barHeight = 5;
-    const pose = this.pose(player.kinematic);
-    const px = pose.x - barWidth / 2;
-    const py = pose.y - 48;
-
-    this.healthBarsGraphics.rect(px, py, barWidth, barHeight);
-    this.healthBarsGraphics.fill({ color: 0x000000, alpha: 0.6 });
-
-    const pRatio = Math.max(0, Math.min(1, player.health / player.maxHealth));
-    const pColor = pRatio > 0.5 ? 0x2ecc71 : pRatio > 0.25 ? 0xf39c12 : 0xe74c3c;
-    this.healthBarsGraphics.rect(px, py, barWidth * pRatio, barHeight);
-    this.healthBarsGraphics.fill({ color: pColor, alpha: 0.9 });
-
-    // 2. Enemies health bars
-    for (const enemy of this.simulation.enemies) {
-      if (enemy.isDestroyed) continue;
-      const eWidth = 36;
-      const eHeight = 4;
-      const pose = this.pose(enemy.kinematic);
-      const ex = pose.x - eWidth / 2;
-      const ey = pose.y - 40;
-      if (enemy.type === 'chaser') {
-        this.healthBarsGraphics.circle(pose.x, ey - 10, 7).fill(0xff886d).stroke({width:2,color:0xffeddb});
-      } else {
-        this.healthBarsGraphics.poly([pose.x,ey-18,pose.x+8,ey-10,pose.x,ey-2,pose.x-8,ey-10]).fill(0xefc475).stroke({width:2,color:0xffeddb});
-      }
-
-      this.healthBarsGraphics.rect(ex, ey, eWidth, eHeight);
-      this.healthBarsGraphics.fill({ color: 0x000000, alpha: 0.6 });
-
-      const eRatio = Math.max(0, Math.min(1, enemy.health / enemy.maxHealth));
-      const eColor = enemy.type === 'chaser' ? 0xe74c3c : 0xf39c12;
-      this.healthBarsGraphics.rect(ex, ey, eWidth * eRatio, eHeight);
-      this.healthBarsGraphics.fill({ color: eColor, alpha: 0.9 });
-    }
-  }
+  private renderHealthBars(): void { renderHealthBars(this.simulation, this.renderAlpha, this.healthBarsGraphics); }
 
   private get renderAlpha(): number { return this.simulation.isPaused || this.simulation.isEnded ? 1 : this.simulation.alpha; }
   private pose(k: import('../types').KinematicState) { return interpolateTransform(k, this.renderAlpha); }
 
-  private renderIntentions(): void {
-    const g = this.intentGraphics.clear();
-    for (const enemy of this.simulation.enemies) {
-      const k = this.pose(enemy.kinematic);
-      if (this.simulation.mode === 'training') {
-        g.circle(k.x,k.y,48).stroke({width:3,color:0xffdda1});
-        continue;
-      }
-      const loading = enemy.type === 'shooter' ? (enemy.attackWindup ?? 0) > 0 : enemy.chargeStage === 'loading';
-      const charging = enemy.type === 'chaser' && enemy.chargeStage === 'charging';
-      if (!loading && !charging) continue;
-      const color = enemy.type === 'shooter' ? 0xffdda1 : 0xff886d;
-      const progress = enemy.type === 'shooter' ? (enemy.attackWindup ?? 0) / .45 : (enemy.chargeSeconds ?? 0) / .55;
-      g.circle(k.x,k.y,44).stroke({width:3,color,alpha:.85});
-      if (loading) g.moveTo(k.x,k.y-49).arc(k.x,k.y,49,-Math.PI/2,-Math.PI/2+Math.PI*2*Math.min(1,progress)).stroke({width:5,color});
-      const heading = k.rotation;
-      const fx=Math.sin(heading),fy=-Math.cos(heading);
-      const length = enemy.type === 'shooter' ? 140 : 190;
-      g.moveTo(k.x+fx*35,k.y+fy*35).lineTo(k.x+fx*length,k.y+fy*length).stroke({width:charging?5:3,color,alpha:.7});
-      g.circle(k.x+fx*length,k.y+fy*length,7).stroke({width:2,color});
-    }
-  }
+  private renderIntentions(): void { renderIntentions(this.simulation, this.renderAlpha, this.intentGraphics); }
 
   private updateCamera(): void {
     const width=this.app.screen.width,height=this.app.screen.height;
