@@ -1,6 +1,6 @@
 import type { GameSimulation, PlayerInputState } from './GameSimulation';
 import { DEFAULT_PLAYER_INPUT } from './GameSimulation';
-import { SIMULATION_VERSION, stateHash, validateReplay, type BattleReplay } from './Replay';
+import { SIMULATION_VERSION, VOYAGE_SIMULATION_VERSION, stateHash, validateReplay, type BattleReplay } from './Replay';
 import type { GameplayConfig } from '../../types';
 
 /** Input recording, fixed-tick playback and state verification. No combat rules. */
@@ -23,7 +23,7 @@ export class ReplaySession {
 
   private newRecording(seed: number, config: GameplayConfig): BattleReplay {
     return {
-      version: SIMULATION_VERSION,
+      version: config.voyage ? VOYAGE_SIMULATION_VERSION : SIMULATION_VERSION,
       seed,
       config: structuredClone(config),
       inputs: [],

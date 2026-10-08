@@ -4,9 +4,11 @@ import type {
   IslandObstacle,
   ArenaBounds,
   DamageTier,
+  ChaserAIConfig,
 } from '../../types';
 import { DEFAULT_CHASER_CONFIG } from '../../types';
 import { wrapAngle, ShipKinematics } from '../kinematics/ShipKinematics';
+import { clearSeaLine } from './NavigationField';
 
 export function computeDamageTier(currentHp: number, maxHp: number): DamageTier {
   if (currentHp <= 0) return 4;
@@ -67,6 +69,8 @@ export class ChaserAI {
     obstacles: IslandObstacle[],
     dt: number,
     arena?: ArenaBounds,
+    config: ChaserAIConfig = DEFAULT_CHASER_CONFIG,
+    waypoint?: {x:number;y:number},
   ): void {
     if (chaser.isDestroyed || dt <= 0) return;
 
@@ -75,12 +79,15 @@ export class ChaserAI {
     const toPlayerY = playerKinematic.y - chaser.kinematic.y;
     const distToPlayer = Math.hypot(toPlayerX, toPlayerY);
 
-    let desiredDirX = distToPlayer > 0.001 ? toPlayerX / distToPlayer : 0;
-    let desiredDirY = distToPlayer > 0.001 ? toPlayerY / distToPlayer : -1;
+    const targetX=(waypoint?.x ?? playerKinematic.x)-chaser.kinematic.x;
+    const targetY=(waypoint?.y ?? playerKinematic.y)-chaser.kinematic.y;
+    const targetDistance=Math.hypot(targetX,targetY);
+    let desiredDirX = targetDistance > 0.001 ? targetX / targetDistance : 0;
+    let desiredDirY = targetDistance > 0.001 ? targetY / targetDistance : -1;
 
     // 2. Obstacle Repulsion: blend repulsive vector away from nearby island obstacles
     const repulsionRadius = 160;
-    const repulsionWeight = 250;
+    const repulsionWeight = waypoint ? 1.5 : 250;
 
     for (const obs of obstacles) {
       const toObsX = chaser.kinematic.x - obs.x;
@@ -106,7 +113,7 @@ export class ChaserAI {
     let steer = Math.max(-1, Math.min(1, headingError * 2.5));
     // Relentless forward throttle
     let throttle = 1.0;
-    if (!chaser.chargeStage && distToPlayer < 300) {
+    if (!chaser.chargeStage && distToPlayer < 300 && (!waypoint || clearSeaLine(chaser.kinematic,playerKinematic,obstacles,32))) {
       chaser.chargeStage = 'loading';
       chaser.chargeSeconds = 0;
     }
@@ -139,7 +146,7 @@ export class ChaserAI {
     ShipKinematics.step(
       chaser.kinematic,
       { throttle, steer },
-      DEFAULT_CHASER_CONFIG.movement,
+      config.movement,
       dt,
       arena,
     );
@@ -152,7 +159,7 @@ export class ChaserAI {
    * Executes suicide detonation when Chaser ship contacts Player ship.
    * Awards STRICTLY 0 score to player.
    */
-  public static detonateRam(chaser: ChaserEnemyState): ChaserAIUpdateResult {
+  public static detonateRam(chaser: ChaserEnemyState, damage = DEFAULT_CHASER_CONFIG.rammingDamage): ChaserAIUpdateResult {
     chaser.health = 0;
     chaser.isDestroyed = true;
     chaser.phase = 'dead';
@@ -160,7 +167,7 @@ export class ChaserAI {
 
     return {
       detonated: true,
-      rammingDamage: DEFAULT_CHASER_CONFIG.rammingDamage, // 35 HP
+      rammingDamage: damage,
     };
   }
 }

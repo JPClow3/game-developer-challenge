@@ -3,8 +3,9 @@ import type { GameSimulation, PlayerInputState } from './GameSimulation';
 
 // Bump whenever tick ordering, physics, AI, or default obstacles change.
 export const SIMULATION_VERSION = 'pirate-battle-2';
+export const VOYAGE_SIMULATION_VERSION = 'pirate-battle-3';
 export interface BattleReplay {
-  version: typeof SIMULATION_VERSION;
+  version: typeof SIMULATION_VERSION | typeof VOYAGE_SIMULATION_VERSION;
   seed: number;
   config: GameplayConfig;
   inputs: { tick: number; input: PlayerInputState }[];
@@ -27,6 +28,7 @@ export function stateHash(sim: GameSimulation): string {
     weapons: sim.weaponSystem,
     counters: sim.entityCounters,
     obstacles: sim.obstacles,
+    ...(sim.config.voyage ? { stats: sim.stats, salvage: sim.salvage } : {}),
   });
   let hash = 2166136261;
   for (let i = 0; i < state.length; i++) hash = Math.imul(hash ^ state.charCodeAt(i), 16777619);
@@ -45,8 +47,10 @@ export function validateReplay(replay: BattleReplay): void {
     typeof replay.config !== 'object'
   )
     throw new Error('Invalid replay structure.');
-  if (replay.version !== SIMULATION_VERSION)
+  if (replay.version !== SIMULATION_VERSION && replay.version !== VOYAGE_SIMULATION_VERSION)
     throw new Error('This replay uses an incompatible simulation version.');
+  if ((replay.version === VOYAGE_SIMULATION_VERSION) !== !!replay.config.voyage)
+    throw new Error('Invalid replay ruleset.');
   if ('raid' in replay || 'upgrades' in replay) throw new Error('Invalid replay ruleset.');
   if (
     !Number.isSafeInteger(replay.seed) ||

@@ -32,13 +32,13 @@ test.describe('Flow 01: Options Navigation, Validation & Persistence', () => {
 
     // 5. Verify text on Main Menu indicates updated configuration
     await expect(page.locator('.voyage-settings')).toContainText('80s at sea');
-    await expect(page.locator('.voyage-settings')).toContainText('5s between enemies');
+    await expect(page.locator('.voyage-settings')).toContainText('5s base enemy interval');
 
     // 6. Reload page and verify persistence
     await page.reload();
     await expect(page.getByTestId('main-menu')).toBeVisible({ timeout: 15000 });
     await expect(page.locator('.voyage-settings')).toContainText('80s at sea');
-    await expect(page.locator('.voyage-settings')).toContainText('5s between enemies');
+    await expect(page.locator('.voyage-settings')).toContainText('5s base enemy interval');
 
     // 7. Verify options dialog reflects persisted values
     await page.getByRole('button', { name: /options/i }).click();

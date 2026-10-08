@@ -22,6 +22,7 @@ export const onRequestPost: ApiHandler = async ({ request, env }) => {
       seed: crypto.getRandomValues(new Uint32Array(1))[0]! & 0x7fffffff, config };
     const now = new Date();
     await db.insert(matchTickets).values({ id: ticket.id, playerId: ticket.playerId, seed: ticket.seed,
+      difficulty: config.voyage?.difficulty ?? 'classic', map: config.voyage?.map ?? 'classic',
       sessionDurationSeconds: config.sessionDurationSeconds, enemySpawnIntervalSeconds: config.enemySpawnIntervalSeconds,
       issuedAt: now, expiresAt: new Date(now.getTime() + 24 * 60 * 60 * 1000) });
     return json(ticket, 201, cookie ? { 'Set-Cookie': cookie } : {});

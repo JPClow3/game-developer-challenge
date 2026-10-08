@@ -8,7 +8,7 @@ import type {
   SubmitMatchResponse,
 } from '../types/api';
 import { INITIAL_LEADERBOARD_FIXTURES } from './fixtures';
-import { compareRankedMatches } from '../core/ranking';
+import { compareRankedMatches, sameVoyage } from '../core/ranking';
 
 const STORAGE_KEY_MATCHES = 'pirate_battle_mock_matches_v1';
 const STORAGE_KEY_LEADERBOARD = 'pirate_battle_mock_leaderboard_v1';
@@ -83,7 +83,7 @@ export class MockDatabase {
       if (existingMatch.playerId !== req.playerId || existingMatch.score !== req.score ||
         existingMatch.durationSeconds !== Math.floor(req.durationSeconds) || existingMatch.endReason !== req.endReason ||
         existingMatch.sessionDurationSeconds !== req.config.sessionDurationSeconds ||
-        existingMatch.enemySpawnIntervalSeconds !== req.config.enemySpawnIntervalSeconds)
+        existingMatch.enemySpawnIntervalSeconds !== req.config.enemySpawnIntervalSeconds || !sameVoyage(existingMatch.voyage,req.config.voyage))
         throw new Error('Match ID already has a different result');
       const rank = this.computeRank(existingMatch);
       return {
@@ -96,6 +96,7 @@ export class MockDatabase {
     // 2. Create new record
     const newRecord: MatchRecord = {
       id: req.id,
+      voyage: req.config.voyage,
       playerId: req.playerId,
       playerName: req.playerName,
       score: req.score,
@@ -112,6 +113,7 @@ export class MockDatabase {
     // 3. Add to ranking entries
     const rankingEntry: Omit<RankingItem, 'rank'> = {
       matchId: req.id,
+      voyage: req.config.voyage,
       playerId: req.playerId,
       playerName: req.playerName || 'Captain Player',
       score: req.score,
@@ -136,14 +138,14 @@ export class MockDatabase {
   private computeRank(match: MatchRecord): number {
     const entry = { ...match, matchId: match.id };
     return this.rankingItems.filter(item => item.sessionDurationSeconds === match.sessionDurationSeconds &&
-      item.enemySpawnIntervalSeconds === match.enemySpawnIntervalSeconds && compareRankedMatches(item, entry) < 0).length + 1;
+      item.enemySpawnIntervalSeconds === match.enemySpawnIntervalSeconds && sameVoyage(item.voyage,match.voyage) && compareRankedMatches(item, entry) < 0).length + 1;
   }
 
   public getRanking(params: RankingQueryParams = {}): PaginatedResponse<RankingItem> {
     const page = Math.max(1, params.page || 1);
     const pageSize = Math.max(1, Math.min(50, params.pageSize || 10));
 
-    let filtered = [...this.rankingItems];
+    let filtered = this.rankingItems.filter(item=>sameVoyage(item.voyage,params.voyage));
 
     if (params.sessionDuration !== undefined) {
       filtered = filtered.filter((i) => i.sessionDurationSeconds === params.sessionDuration);

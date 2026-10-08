@@ -75,7 +75,7 @@ test('portrait camera follows at a readable scale with bearings and survives rot
   await expect.poll(() => page.evaluate(() => (window as any).__PIXI_GAME__.app.screen.width)).toBe(851);
   await page.evaluate(()=>{const g=(window as any).__PIXI_GAME__;g.renderFrame();g.app.render();});
   camera=await page.evaluate(()=>({camera:(window as any).__PIXI_GAME__.camera,indicators:(window as any).__PIXI_GAME__.visibleIndicators}));
-  expect(camera.camera.portrait).toBe(false);expect(camera.indicators.length).toBe(0);
+  expect(camera.camera.portrait).toBe(false);expect(camera.camera.follow).toBe(true);expect(camera.camera.scale*70).toBeGreaterThanOrEqual(49);expect(camera.indicators.length).toBe(2);
   await expect(page.getByRole('button',{name:'Fire front cannon',exact:true})).toBeVisible();
 });
 

@@ -1,9 +1,11 @@
 import { DEFAULT_GAMEPLAY_CONFIG, type GameplayConfig } from '../../types/config';
 import { GameSimulation } from './GameSimulation';
-import { SIMULATION_VERSION, validateReplay } from './Replay';
+import { SIMULATION_VERSION, VOYAGE_SIMULATION_VERSION, validateReplay } from './Replay';
+import { voyageGameplayConfig } from './VoyageRules';
 import type { MatchConfigSnapshot, SubmitMatchRequest } from '../../types/api';
 
 export function rankedGameplayConfig(config: MatchConfigSnapshot): GameplayConfig {
+  if (config.voyage) return voyageGameplayConfig(config.sessionDurationSeconds,config.enemySpawnIntervalSeconds,config.voyage);
   return { ...DEFAULT_GAMEPLAY_CONFIG, sessionDurationSeconds: config.sessionDurationSeconds,
     spawner: { ...DEFAULT_GAMEPLAY_CONFIG.spawner, spawnIntervalSeconds: config.enemySpawnIntervalSeconds } };
 }
@@ -22,9 +24,9 @@ export function verifyScore(request: SubmitMatchRequest, seed: number): void {
   const replay = request.replay;
   if (!replay) throw new Error('A complete battle replay is required');
   validateReplay(replay);
-  if (replay.version !== SIMULATION_VERSION || 'raid' in replay || 'upgrades' in replay ||
+  if (replay.version !== (request.config.voyage ? VOYAGE_SIMULATION_VERSION : SIMULATION_VERSION) || 'raid' in replay || 'upgrades' in replay ||
     replay.checks.some(check => check.tick !== replay.endTick && check.tick % 120 !== 0))
-    throw new Error('Only classic voyages can enter this leaderboard');
+    throw new Error('Replay rules do not match this leaderboard');
   const config = rankedGameplayConfig(request.config);
   if (replay.seed !== seed || canonical(replay.config) !== canonical(config)) throw new Error('Replay does not match the issued voyage');
   const simulation = new GameSimulation(config, seed);

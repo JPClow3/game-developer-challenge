@@ -2,9 +2,9 @@ import { eq, sql } from 'drizzle-orm';
 import { createDbClient } from '../../src/db/client';
 import { matches, matchTickets, type MatchEntity } from '../../src/db/schema';
 import type { SubmitMatchRequest, SubmitMatchResponse } from '../../src/types/api';
-import { isMatchConfig } from '../../src/core/ranking';
+import { isMatchConfig, sameVoyage } from '../../src/core/ranking';
 import { verifyScore } from '../../src/core/simulation/verifyScore';
-import { aheadOf } from '../lib/ranking';
+import { aheadOf, recordVoyage } from '../lib/ranking';
 import { checkOrigin, getBrowserSession } from '../lib/sessions';
 import { json, readJson, RequestError, type ApiHandler } from '../lib/http';
 
@@ -32,10 +32,10 @@ export const onRequestPost: ApiHandler = async ({ request, env }) => {
       if (!record.verified || record.playerId !== session.playerId || record.score !== body.score ||
         record.durationSeconds !== body.durationSeconds || record.endReason !== body.endReason ||
         record.sessionDurationSeconds !== body.config.sessionDurationSeconds ||
-        record.enemySpawnIntervalSeconds !== body.config.enemySpawnIntervalSeconds)
+        record.enemySpawnIntervalSeconds !== body.config.enemySpawnIntervalSeconds || !sameVoyage(recordVoyage(record),body.config.voyage))
         throw new RequestError('Match ID already has a different result', 409);
       const higher = await db.select({ count: sql<number>`count(*)` }).from(matches).where(aheadOf(record));
-      const response: SubmitMatchResponse = { match: { ...record, playerName: record.playerName || undefined,
+      const response: SubmitMatchResponse = { match: { ...record, voyage: recordVoyage(record), playerName: record.playerName || undefined,
         endReason: record.endReason as 'time_expired' | 'player_destroyed',
         playedAt: record.playedAt.toISOString(), createdAt: record.createdAt.toISOString() },
         rankingPosition: Number(higher[0]?.count || 0) + 1, isDuplicate };
@@ -48,7 +48,7 @@ export const onRequestPost: ApiHandler = async ({ request, env }) => {
     if (!ticket || ticket.playerId !== session.playerId) throw new RequestError('A server-issued voyage is required', 403);
     if (ticket.expiresAt.getTime() <= Date.now()) throw new RequestError('This voyage has expired. Start a new voyage.', 410);
     if (ticket.sessionDurationSeconds !== body.config.sessionDurationSeconds ||
-      ticket.enemySpawnIntervalSeconds !== body.config.enemySpawnIntervalSeconds) throw new RequestError('Voyage configuration changed');
+      ticket.enemySpawnIntervalSeconds !== body.config.enemySpawnIntervalSeconds || !sameVoyage(recordVoyage(ticket),body.config.voyage)) throw new RequestError('Voyage configuration changed');
     if (!body.replay || !Number.isInteger(body.replay.endTick) ||
       body.replay.endTick / 60 * 1000 > Date.now() - ticket.issuedAt.getTime() + 250)
       throw new RequestError('Voyage duration is inconsistent with its start');
@@ -59,6 +59,7 @@ export const onRequestPost: ApiHandler = async ({ request, env }) => {
     const inserted = await db.insert(matches).values({ id: body.id, playerId: session.playerId,
       playerName: body.playerName?.trim() || 'Anonymous Pirate', score: body.score, verified: true,
       durationSeconds: body.durationSeconds, endReason: body.endReason,
+      difficulty: ticket.difficulty, map: ticket.map,
       sessionDurationSeconds: ticket.sessionDurationSeconds, enemySpawnIntervalSeconds: ticket.enemySpawnIntervalSeconds,
       playedAt: new Date() }).onConflictDoNothing({ target: matches.id }).returning();
     const record = inserted[0] || (await db.select().from(matches).where(eq(matches.id, body.id)).limit(1))[0];

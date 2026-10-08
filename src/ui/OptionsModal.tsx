@@ -54,6 +54,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
     AudioManager.getInstance().play('ui_click');
 
     const result = validateGameplayConfig({
+      ...currentConfig,
       sessionDurationSeconds: Number(duration),
       spawner: {
         ...currentConfig.spawner,
@@ -154,7 +155,7 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
               aria-describedby="spawn-help"
             />
             <span id="spawn-help" className="option-help">
-              Shorter intervals bring a busier sea. Choose 1 to 15 seconds.
+              Shorter intervals bring a busier sea. Choose 1 to 15 seconds. {currentConfig.voyage && 'Voyage pressure increases as the battle progresses.'}
             </span>
           </div>
 
@@ -162,6 +163,8 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
             <legend>Helm & sound</legend>
             <label><input type="checkbox" checked={helm.toggleFire} onChange={event=>setHelm({...helm,toggleFire:event.target.checked})} /> Tap to toggle cannon fire</label>
             <small>Press a cannon key or touch button once to keep firing, again to stop. Pausing clears firing.</small>
+            <label><input type="checkbox" checked={helm.joystick ?? false} onChange={event=>setHelm({...helm,joystick:event.target.checked})} /> Use touch joystick</label>
+            <small>Drag to steer and set sail. Your other thumb controls the cannons.</small>
             <label><input type="checkbox" checked={helm.swapped} onChange={event=>setHelm({...helm,swapped:event.target.checked})} /> Swap touch helm and cannons</label>
             <label><input type="checkbox" checked={helm.muted} onChange={event=>setHelm({...helm,muted:event.target.checked})} /> Mute sound</label>
             <div className="option-field-head">

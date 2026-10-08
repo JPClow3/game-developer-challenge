@@ -19,6 +19,8 @@ import {
 } from './types/config';
 import { generateUUIDv4, getOrCreatePlayerId, adoptServerPlayerId } from './api/player';
 import { startRankedMatch } from './api/rankingApi';
+import { voyageGameplayConfig } from './core/simulation/VoyageRules';
+import { recordPersonalBattle } from './game/CaptainLog';
 import { rankedGameplayConfig } from './core/simulation/verifyScore';
 
 type ScreenState = 'loading' | 'menu' | 'playing' | 'result';
@@ -37,7 +39,7 @@ export const App: React.FC = () => {
   const preloadNotice = useRef<ReturnType<typeof setTimeout>>();
 
   const [config, setConfig] = useState<GameplayConfig>(() => {
-    return loadUserConfigFromStorage() || DEFAULT_GAMEPLAY_CONFIG;
+    return loadUserConfigFromStorage() || voyageGameplayConfig(DEFAULT_GAMEPLAY_CONFIG.sessionDurationSeconds, DEFAULT_GAMEPLAY_CONFIG.spawner.spawnIntervalSeconds, {difficulty: 'open', map: 'archipelago'});
   });
 
   const [simulation, setSimulation] = useState<GameSimulation | null>(null);
@@ -160,6 +162,7 @@ export const App: React.FC = () => {
         ? await startRankedMatch({
             sessionDurationSeconds: config.sessionDurationSeconds,
             enemySpawnIntervalSeconds: config.spawner.spawnIntervalSeconds,
+            voyage: config.voyage,
           })
         : undefined;
       if (ticket) adoptServerPlayerId(ticket.playerId);
@@ -187,11 +190,14 @@ export const App: React.FC = () => {
             config: {
               sessionDurationSeconds: payload.config.sessionDurationSeconds,
               enemySpawnIntervalSeconds: payload.config.spawner.spawnIntervalSeconds,
+              voyage: payload.config.voyage,
             },
+            report: payload.report,
             playedAt: new Date().toISOString(),
             replay,
           };
 
+          recordPersonalBattle(matchData);
           setCompletedMatch(matchData);
           // Let the render-only wreck finish before disposing of the canvas.
           const showResult = () => {

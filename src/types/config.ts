@@ -2,6 +2,8 @@
  * Gameplay Configuration Contracts, Constants & Validation
  */
 
+import { isVoyageRules } from '../core/simulation/VoyageRules';
+
 export interface ShipMovementConfig {
   readonly maxForwardSpeed: number;   // px/s
   readonly acceleration: number;      // px/s²
@@ -59,6 +61,7 @@ export interface SpawnerConfig {
 }
 
 export interface GameplayConfig {
+  readonly voyage?: import('../core/simulation/VoyageRules').VoyageRules;
   readonly sessionDurationSeconds: number; // 60 - 180s
   readonly playerMaxHealth: number;
   readonly playerMovement: ShipMovementConfig;
@@ -195,6 +198,7 @@ export interface ValidationResult<T> {
 
 export function validateGameplayConfig(partial?: Partial<GameplayConfig>): ValidationResult<GameplayConfig> {
   const errors: string[] = [];
+  if (partial?.voyage !== undefined && !isVoyageRules(partial.voyage)) errors.push('Invalid voyage difficulty or map.');
 
   const sessionDuration = partial?.sessionDurationSeconds !== undefined
     ? partial.sessionDurationSeconds

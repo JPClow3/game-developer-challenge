@@ -7,6 +7,9 @@ import { isRetryableApiError } from '../api/client';
 import { PendingSubmissionQueue } from '../api/pendingQueue';
 import { getOrCreatePlayerId, getPlayerName } from '../api/player';
 import { AudioManager } from '../audio/AudioManager';
+import { isBattleReport, type BattleReport } from '../core/simulation/BattleReport';
+import { loadCaptainLog, voyageKey, captainTitle } from '../game/CaptainLog';
+import { DIFFICULTY_DETAILS, MAP_DETAILS, isVoyageRules } from '../core/simulation/VoyageRules';
 import type { BattleReplay } from '../core/simulation/Replay';
 
 export interface CompletedMatchData {
@@ -18,6 +21,7 @@ export interface CompletedMatchData {
   playedAt: string;
   playerId?: string;
   replay?: BattleReplay;
+  report?: BattleReport;
 }
 
 interface ResultScreenProps {
@@ -69,6 +73,8 @@ export function loadLastMatchResult(): CompletedMatchData | null {
       data.config.enemySpawnIntervalSeconds > 15 ||
       typeof data.playedAt !== 'string' ||
       !Number.isFinite(Date.parse(data.playedAt)) ||
+      (data.config.voyage !== undefined && !isVoyageRules(data.config.voyage)) ||
+      (data.report !== undefined && !isBattleReport(data.report)) ||
       'voyage' in data
     )
       return null;
@@ -149,6 +155,9 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
     });
   };
 
+  const log = loadCaptainLog();
+  const best = log.bests[voyageKey(matchData.config)];
+  const report = matchData.report;
   const isVictory = matchData.endReason === 'time_expired';
 
   return (
@@ -195,6 +204,14 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
           </div>
         </div>
 
+        {report && <section className="combat-report" aria-label="Combat report">
+          <div className="report-grade"><strong>{report.grade}</strong><span>Captain's grade<small>{matchData.config.voyage ? `${DIFFICULTY_DETAILS[matchData.config.voyage.difficulty].name} · ${MAP_DETAILS[matchData.config.voyage.map].name}` : 'Classic rules'}</small></span></div>
+          <dl><div><dt>Accuracy</dt><dd>{report.accuracy}%</dd></div><div><dt>Shots / hits</dt><dd>{report.stats.shotsFired} / {report.stats.hits}</dd></div>
+            <div><dt>Chasers / shooters</dt><dd>{report.stats.chasersSunk} / {report.stats.shootersSunk}</dd></div><div><dt>Hull restored</dt><dd>{report.stats.healthRestored} · {report.stats.repairsCollected} crates</dd></div><div><dt>Damage taken</dt><dd>{report.stats.damageTaken}</dd></div><div><dt>Hull remaining</dt><dd>{report.health}</dd></div></dl>
+          <p>{best && matchData.score === best.score ? 'Personal best for these rules!' : `Personal best: ${best?.score ?? matchData.score} ships.`} Your title: {captainTitle(log)}.</p>
+          <ul className="captain-goals"><li>{log.medals.includes('survivor') ? '✓' : '○'} Survive a voyage</li><li>{log.medals.includes('hunter') ? '✓' : '○'} Sink 5 ships in one battle</li><li>{log.medals.includes('marksman') ? '✓' : '○'} Land 40% of 20+ shots</li></ul>
+          <small>Grades reward ships sunk, accuracy, remaining hull and survival. Personal progress is saved on this device.</small>
+        </section>}
         {/* Match Registration Status Banner */}
         <div className="result-registration">
           {submitMutation.isPending && (

@@ -28,8 +28,8 @@ const post = (path: string, body: unknown, cookie?: string, origin?: string) => 
 }));
 const get = (path: string) => context(new Request(`https://game.test/api/${path}`));
 
-async function voyage() {
-  const response = await start(post('session', config));
+async function voyage(rules?: {difficulty: 'calm' | 'open' | 'storm'; map: 'archipelago' | 'straits' | 'fortress'}) {
+  const response = await start(post('session', {...config,...(rules ? {voyage:rules} : {})}));
   expect(response.status).toBe(201);
   const cookie = response.headers.get('Set-Cookie')!.split(';')[0]!;
   const ticket = await response.json() as MatchTicket;
@@ -167,5 +167,31 @@ describe('Live leaderboard endpoints against isolated PostgreSQL', () => {
     for (let i = 1; i < 10; i++) expect((await start(post('session', config, cookie))).status).toBe(201);
     const limited = await start(post('session', config, cookie));expect(limited.status).toBe(429);expect(limited.headers.get('Retry-After')).toBe('60');
     expect(Number((await database.select({ count: sql<number>`count(*)` }).from(schema.matchTickets))[0]?.count)).toBe(10);
+  });
+});
+
+
+describe('Voyage leaderboard separation',()=> {
+  it('verifies each difficulty and map and keeps Classic isolated',async()=> {
+    for(const difficulty of ['calm','open','storm'] as const) for(const map of ['archipelago','straits','fortress'] as const) {
+      const {body,cookie}=await voyage({difficulty,map});
+      const response=await submit(post('match',body,cookie));expect(response.status).toBe(201);
+      const ranked=await (await ranking(get(`ranking?difficulty=${difficulty}&map=${map}&sessionDuration=60&spawnInterval=3`))).json() as PaginatedResponse<RankingItem>;
+      expect(ranked.items).toHaveLength(1);expect(ranked.items[0]?.voyage).toEqual({difficulty,map});
+    }
+    const classic=await (await ranking(get('ranking'))).json() as PaginatedResponse<RankingItem>;
+    expect(classic.totalItems).toBe(0);
+  },30000);
+  it('rejects changed ticket rules, difficulty and map before ranking',async()=> {
+    const {body,cookie}=await voyage({difficulty:'open',map:'archipelago'});
+    for(const config of [{...body.config,voyage:undefined},{...body.config,voyage:{difficulty:'calm',map:'archipelago'}},{...body.config,voyage:{difficulty:'open',map:'fortress'}}]) {
+      const response=await submit(post('match',{...body,config},cookie));expect(response.status).toBe(400);
+    }
+    expect(await database.select().from(schema.matches)).toHaveLength(0);
+    expect((await submit(post('match',body,cookie))).status).toBe(201);
+    expect((await submit(post('match',{...body,config:{...body.config,voyage:{difficulty:'storm',map:'archipelago'}}},cookie))).status).toBe(409);
+  });
+  it('rejects incomplete or invalid leaderboard scope',async()=> {
+    for(const query of ['difficulty=open','map=straits','difficulty=storm&map=unknown']) expect((await ranking(get(`ranking?${query}`))).status).toBe(400);
   });
 });

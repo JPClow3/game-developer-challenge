@@ -24,6 +24,8 @@ export async function fetchRanking(params: RankingQueryParams = {}, signal?: Abo
       pageSize: params.pageSize ?? 10,
       sessionDuration: params.sessionDuration,
       spawnInterval: params.spawnInterval,
+      difficulty: params.voyage?.difficulty,
+      map: params.voyage?.map,
     },
   });
   return response.data;

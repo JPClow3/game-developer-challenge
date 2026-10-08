@@ -4,8 +4,10 @@
 
 import type { MatchEndReason } from './game';
 import type { BattleReplay } from '../core/simulation/Replay';
+import type { VoyageRules } from '../core/simulation/VoyageRules';
 
 export interface MatchConfigSnapshot {
+  voyage?: VoyageRules;
   sessionDurationSeconds: number;
   enemySpawnIntervalSeconds: number;
 }
@@ -30,6 +32,7 @@ export interface MatchTicket {
 }
 
 export interface MatchRecord {
+  voyage?: VoyageRules;
   id: string;
   playerId: string;
   playerName?: string;
@@ -57,6 +60,7 @@ export interface PaginatedResponse<T> {
 }
 
 export interface RankingItem {
+  voyage?: VoyageRules;
   rank: number;
   matchId: string;
   playerId: string;
@@ -70,6 +74,7 @@ export interface RankingItem {
 }
 
 export interface RankingQueryParams {
+  voyage?: VoyageRules;
   page?: number;
   pageSize?: number;
   sessionDuration?: number;

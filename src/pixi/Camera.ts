@@ -7,17 +7,18 @@ export function interpolateTransform(k: KinematicState, alpha: number) {
     rotation: k.prevRotation + wrapAngle(k.rotation - k.prevRotation) * t };
 }
 
-export function combatCamera(width: number, height: number, arena: ArenaBounds, player: {x:number;y:number}) {
+export function combatCamera(width: number, height: number, arena: ArenaBounds, player: {x:number;y:number}, compactTouch = false) {
   const portrait = width < height && width < 768;
-  const scale = portrait ? Math.max(width / 560, height / arena.height) : Math.min(width / arena.width, height / arena.height);
+  const follow = portrait || compactTouch;
+  const scale = compactTouch && !portrait ? Math.max(.7,Math.min(width/arena.width,height/arena.height)) : portrait ? Math.max(width / 560, height / arena.height) : Math.min(width / arena.width, height / arena.height);
   const clamp = (value: number, size: number, span: number) => Math.max(Math.min(0, size - span), Math.min(Math.max(0, size - span), value));
   // Allow sea beyond the vertical arena edge so the hull stays clear of DOM
   // status and touch controls even when the ship reaches the world boundary.
-  const topInset = Math.min(128, height * .2);
-  const bottomInset = Math.min(175, height * .27);
-  return { scale, portrait,
-    x: portrait ? clamp(width / 2 - player.x * scale, width, arena.width * scale) : (width - arena.width * scale) / 2,
-    y: portrait ? Math.max(height - bottomInset - arena.height * scale, Math.min(topInset, height * .53 - player.y * scale)) : (height - arena.height * scale) / 2 };
+  const topInset = Math.min(compactTouch && !portrait ? 76 : 128, height * .2);
+  const bottomInset = Math.min(compactTouch && !portrait ? 115 : 175, height * .27);
+  return { scale, portrait, follow,
+    x: follow ? clamp(width / 2 - player.x * scale, width, arena.width * scale) : (width - arena.width * scale) / 2,
+    y: follow ? Math.max(height - bottomInset - arena.height * scale, Math.min(topInset, height * .53 - player.y * scale)) : (height - arena.height * scale) / 2 };
 }
 
 /** Keep edge bearings inside the combat HUD and touch controls. */
