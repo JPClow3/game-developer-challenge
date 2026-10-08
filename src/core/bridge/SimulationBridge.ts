@@ -33,6 +33,7 @@ export class SimulationBridge {
   private lastEmittedScore = -1;
   private lastEmittedHealth = -1;
   private unsubSimulation: (() => void) | null = null;
+  private harness: FullSimulationHarness | null = null;
 
   constructor(customConfig?: Partial<GameplayConfig>, seed: number = 1337) {
     this.simulation = new GameSimulation(customConfig, seed);
@@ -258,6 +259,7 @@ export class SimulationBridge {
     };
 
     (window as any).__GAME_SIMULATION__ = harness;
+    this.harness = harness;
   }
 
   /**
@@ -271,8 +273,10 @@ export class SimulationBridge {
     this.simulation.destroy();
     this.listeners.clear();
 
-    if (typeof window !== 'undefined' && (window as any).__GAME_SIMULATION__) {
+    // A newer bridge (e.g. a Strict Mode remount) may own the global by now.
+    if (typeof window !== 'undefined' && this.harness && (window as any).__GAME_SIMULATION__ === this.harness) {
       delete (window as any).__GAME_SIMULATION__;
     }
+    this.harness = null;
   }
 }

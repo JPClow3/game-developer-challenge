@@ -35,6 +35,18 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
   }, [isOpen, currentConfig]);
 
   const dialogRef = useDialogFocus(isOpen);
+  // Escape cancels the modal dialog, discarding unsaved edits like Cancel.
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      event.preventDefault();
+      AudioManager.getInstance().play('ui_close');
+      onClose();
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen, onClose]);
   if (!isOpen) return null;
 
   const handleSave = (e: React.FormEvent) => {

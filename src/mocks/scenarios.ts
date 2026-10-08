@@ -4,6 +4,13 @@ import { MSW_SCENARIOS } from '../types/api';
 const SCENARIO_STORAGE_KEY = 'pirate_battle_msw_scenario';
 const isScenario = (value: string | null): value is MswScenarioId =>
   MSW_SCENARIOS.some((scenario) => scenario.id === value);
+// Blocked session storage must not stop the fixture API from starting.
+const readStored = (): string | null => {
+  try { return sessionStorage.getItem(SCENARIO_STORAGE_KEY); } catch { return null; }
+};
+const store = (scenario: MswScenarioId): void => {
+  try { sessionStorage.setItem(SCENARIO_STORAGE_KEY, scenario); } catch { /* URL state still applies. */ }
+};
 
 export class ScenarioManager {
   private static instance: ScenarioManager | null = null;
@@ -28,9 +35,9 @@ export class ScenarioManager {
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const fromUrl = params.get('scenario');
-      const stored = sessionStorage.getItem(SCENARIO_STORAGE_KEY);
+      const stored = readStored();
       this.currentScenario = isScenario(fromUrl) ? fromUrl : isScenario(stored) ? stored : 'success';
-      sessionStorage.setItem(SCENARIO_STORAGE_KEY, this.currentScenario);
+      store(this.currentScenario);
       const seed = Number(params.get('scenarioSeed') ?? 1337);
       if (Number.isSafeInteger(seed)) this.seed = seed >>> 0;
       const latency = Number(params.get('scenarioLatency') ?? 0);
@@ -47,7 +54,7 @@ export class ScenarioManager {
 
   public getScenario(): MswScenarioId {
     if (typeof window !== 'undefined') {
-      const stored = sessionStorage.getItem(SCENARIO_STORAGE_KEY);
+      const stored = readStored();
       if (isScenario(stored) && stored !== this.currentScenario) {
         this.currentScenario = stored;
         this.sequences = { ranking: 0, history: 0 };
@@ -60,7 +67,7 @@ export class ScenarioManager {
     this.currentScenario = scenario;
     this.sequences = { ranking: 0, history: 0 };
     if (typeof window !== 'undefined') {
-      sessionStorage.setItem(SCENARIO_STORAGE_KEY, scenario);
+      store(scenario);
       const url = new URL(window.location.href);
       url.searchParams.set('scenario', scenario);
       window.history.replaceState(window.history.state, '', url);

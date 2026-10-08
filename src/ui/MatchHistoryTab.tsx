@@ -16,6 +16,12 @@ export const MatchHistoryTab: React.FC = () => {
     pageSize,
   });
 
+  // A reset or new filter can shrink the result set. Never strand the table past its end.
+  const lastPage = data?.totalPages;
+  useEffect(() => {
+    if (lastPage !== undefined && page > lastPage) setPage(Math.max(1, lastPage));
+  }, [page, lastPage]);
+
   const [pendingCount, setPendingCount] = useState<number>(
     PendingSubmissionQueue.getInstance().getPendingCount()
   );

@@ -37,7 +37,14 @@ export class PendingSubmissionQueue {
     try {
       const data = localStorage.getItem(PENDING_STORAGE_KEY);
       if (data) {
-        this.queue = JSON.parse(data);
+        const parsed: unknown = JSON.parse(data);
+        // Corrupt or foreign data must not break submission and startup sync.
+        this.queue = Array.isArray(parsed)
+          ? parsed.filter((item): item is PendingSubmission =>
+              !!item && typeof item === 'object' && typeof item.id === 'string' &&
+              !!item.request && typeof item.request === 'object' && item.request.id === item.id &&
+              Number.isFinite(item.retryCount))
+          : [];
       }
     } catch {
       this.queue = [];

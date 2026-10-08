@@ -219,7 +219,12 @@ export class GameSimulation {
     }
 
     const speed = this.mode === 'replay' ? this.replay.speed : 1;
-    this.accumulator += delta * speed;
+    // Cap the backlog too: below the sub-step budget's frame rate it would otherwise grow
+    // without bound and fast-forward the battle once rendering recovers.
+    this.accumulator = Math.min(
+      this.accumulator + delta * speed,
+      this.maxAccumulator * Math.max(1, speed),
+    );
     // Allow fast playback on 30 Hz displays while keeping catch-up work bounded.
     const stepLimit = this.maxSubSteps * Math.max(1, speed);
 

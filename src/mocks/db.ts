@@ -39,14 +39,11 @@ export class MockDatabase {
       const storedMatches = localStorage.getItem(STORAGE_KEY_MATCHES);
       const storedRanking = localStorage.getItem(STORAGE_KEY_LEADERBOARD);
 
-      if (storedMatches) {
-        this.matches = JSON.parse(storedMatches);
-      }
-      if (storedRanking) {
-        this.rankingItems = JSON.parse(storedRanking);
-      } else {
-        this.rankingItems = [...INITIAL_LEADERBOARD_FIXTURES];
-      }
+      // Corrupt arrays would make every fixture request fail. Fall back per table.
+      const matches: unknown = storedMatches ? JSON.parse(storedMatches) : [];
+      const ranking: unknown = storedRanking ? JSON.parse(storedRanking) : null;
+      this.matches = Array.isArray(matches) ? matches : [];
+      this.rankingItems = Array.isArray(ranking) ? ranking : [...INITIAL_LEADERBOARD_FIXTURES];
     } catch {
       this.initDefaults();
     }
@@ -69,8 +66,12 @@ export class MockDatabase {
 
   public reset(): void {
     if (typeof window !== 'undefined') {
-      localStorage.removeItem(STORAGE_KEY_MATCHES);
-      localStorage.removeItem(STORAGE_KEY_LEADERBOARD);
+      try {
+        localStorage.removeItem(STORAGE_KEY_MATCHES);
+        localStorage.removeItem(STORAGE_KEY_LEADERBOARD);
+      } catch {
+        // In-memory fixtures still reset when storage is blocked.
+      }
     }
     this.initDefaults();
   }

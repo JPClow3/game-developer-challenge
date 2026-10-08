@@ -28,6 +28,7 @@ export class AudioManager {
   private musicGain: GainNode | null = null;
 
   private bufferCache = new Map<SoundId, AudioBuffer>();
+  private pendingLoads = new Map<SoundId, Promise<AudioBuffer | null>>();
   private activeLoops = new Map<string, { source: AudioBufferSourceNode; gain: GainNode }>();
   private pendingLoops = new Map<string, { volumeScale: number }>();
   private activeSfxVoiceCount = new Map<SoundId, number>();
@@ -168,27 +169,35 @@ export class AudioManager {
   /**
    * Preload an audio file into AudioBuffer
    */
-  public async loadSound(id: SoundId): Promise<AudioBuffer | null> {
-    if (this.bufferCache.has(id)) {
-      return this.bufferCache.get(id)!;
-    }
-    if (!this.ctx) return null;
+  public loadSound(id: SoundId): Promise<AudioBuffer | null> {
+    const cached = this.bufferCache.get(id);
+    if (cached) return Promise.resolve(cached);
+    const ctx = this.ctx;
+    if (!ctx) return Promise.resolve(null);
 
     const manifestEntry = SOUND_MANIFEST[id];
-    if (!manifestEntry) return null;
+    if (!manifestEntry) return Promise.resolve(null);
 
-    try {
+    // Held cannons trigger many plays before the first decode finishes: fetch each sound once.
+    const pending = this.pendingLoads.get(id);
+    if (pending) return pending;
+    // The fetch starts synchronously; chained handlers always run after `load` is assigned.
+    const load: Promise<AudioBuffer | null> = (async () => {
       const response = await fetch(`/assets/sounds/${manifestEntry.filename}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch audio: ${manifestEntry.filename}`);
       }
-      const arrayBuffer = await response.arrayBuffer();
-      const audioBuffer = await this.ctx.decodeAudioData(arrayBuffer);
+      const audioBuffer = await ctx.decodeAudioData(await response.arrayBuffer());
       this.bufferCache.set(id, audioBuffer);
       return audioBuffer;
-    } catch {
-      return null;
-    }
+    })()
+      .catch(() => null)
+      .finally(() => {
+        // A failed load may be retried by a later play.
+        if (this.pendingLoads.get(id) === load) this.pendingLoads.delete(id);
+      });
+    this.pendingLoads.set(id, load);
+    return load;
   }
 
   /**
@@ -345,6 +354,7 @@ export class AudioManager {
   public reset(): void {
     this.stopAllLoops();
     this.bufferCache.clear();
+    this.pendingLoads.clear();
     this.activeSfxVoiceCount.clear();
   }
 }

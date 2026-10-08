@@ -246,10 +246,15 @@ export function validateGameplayConfig(partial?: Partial<GameplayConfig>): Valid
 
 const CONFIG_STORAGE_KEY = 'pirate_battle_user_config_v1';
 
+// Only menu options persist. Balance constants always come from the current build, so a
+// stored config cannot pin outdated rules or diverge from server replay verification.
 export function saveUserConfigToStorage(config: GameplayConfig): void {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify(config));
+    localStorage.setItem(CONFIG_STORAGE_KEY, JSON.stringify({
+      sessionDurationSeconds: config.sessionDurationSeconds,
+      spawner: { spawnIntervalSeconds: config.spawner.spawnIntervalSeconds },
+    }));
   } catch (e) {
     console.warn('Failed to save config to localStorage', e);
   }
@@ -261,7 +266,11 @@ export function loadUserConfigFromStorage(): GameplayConfig | null {
     const raw = localStorage.getItem(CONFIG_STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    const res = validateGameplayConfig(parsed);
+    if (!parsed || typeof parsed !== 'object') return null;
+    const res = validateGameplayConfig({
+      sessionDurationSeconds: parsed.sessionDurationSeconds,
+      spawner: { ...DEFAULT_SPAWNER_CONFIG, spawnIntervalSeconds: parsed.spawner?.spawnIntervalSeconds },
+    });
     if (!res.isValid) return null;
     // Stored menu options must match the whole-second score/database contract.
     // Keep the simulation validator unchanged so older fractional replays work.

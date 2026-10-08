@@ -61,20 +61,16 @@ describe('Ambient loop loading across match exit and restart', () => {
     expect(createSource.mock.results[0]!.value.loop).toBe(true);
   });
 
-  it.each([true, false])('a stale load cannot start or replace the restarted voyage (old first: %s)', async oldFirst => {
+  it('a stale load cannot start or replace the restarted voyage', async () => {
     const context = (audio as unknown as { ctx: AudioContext }).ctx;
     const gains = vi.mocked(context.createGain);
     audio.startLoop('ocean_ambience_loop', .2);
     audio.stopAllLoops();
     audio.startLoop('ocean_ambience_loop', .8);
-    if (oldFirst) {
-      await finishLoading(loads.mock.results[0]!.value);
-      expect(createSource).not.toHaveBeenCalled();
-      await finishLoading(loads.mock.results[1]!.value, 1);
-    } else {
-      await finishLoading(loads.mock.results[1]!.value, 1);
-      await finishLoading(loads.mock.results[0]!.value);
-    }
+    // The restarted voyage reuses the in-flight download instead of fetching again.
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(loads.mock.results[1]!.value).toBe(loads.mock.results[0]!.value);
+    await finishLoading(loads.mock.results[0]!.value);
     expect(createSource).toHaveBeenCalledTimes(1);
     expect(gains.mock.results[0]!.value.gain.setValueAtTime).toHaveBeenCalledWith(.35 * .8, context.currentTime);
   });

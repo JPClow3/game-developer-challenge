@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Icon } from './Icon';
 import { useRankingQuery } from '../api/useApiQueries';
 import { AudioManager } from '../audio/AudioManager';
@@ -23,6 +23,12 @@ export const RankingTab: React.FC<RankingTabProps> = ({
     sessionDuration: sessionDurationFilter,
     spawnInterval: spawnIntervalFilter,
   });
+
+  // A reset or new filter can shrink the result set. Never strand the table past its end.
+  const lastPage = data?.totalPages;
+  useEffect(() => {
+    if (lastPage !== undefined && page > lastPage) setPage(Math.max(1, lastPage));
+  }, [page, lastPage]);
 
   const handlePageChange = (newPage: number) => {
     AudioManager.getInstance().play('ui_click');
