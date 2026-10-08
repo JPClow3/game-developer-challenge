@@ -6,10 +6,12 @@ test('axe scans the menu, options, pause and result screens', async ({page}, tes
     const result=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa']).analyze();
     await testInfo.attach(`axe-${screen}`,{body:JSON.stringify(result,null,2),contentType:'application/json'});
     expect(result.violations, `${screen} accessibility violations`).toEqual([]);
+    await testInfo.attach(`ui-${screen}`, { body: await page.screenshot(), contentType: 'image/png' });
   };
   await page.goto('/');await expect(page.getByTestId('main-menu')).toBeVisible();await scan('menu');
   await page.getByRole('button',{name:/options/i}).click();await scan('options');
   await page.getByRole('button',{name:/save options/i}).click();
+  await expect(page.getByRole('status').filter({hasText:'Options saved. Your next voyage is ready.'})).toBeVisible();
   await page.getByTestId('btn-set-sail').click();await running(page);
   await page.getByRole('button',{name:'Pause game',exact:true}).click();await scan('pause');
   await page.getByRole('button',{name:/resume/i}).click();
@@ -65,4 +67,9 @@ test('Network Lab exposes cancellation, seeded latency, retries and duplicate ac
   await testInfo.attach('network-lab',{path:labCapture,contentType:'image/png'});
   await page.getByRole('button',{name:'Reset Mock DB'}).click();
   await expect(page.getByLabel('Network seed',{exact:true})).toHaveValue('1337');
+  await expect(page.getByRole('status').filter({hasText:'Fixture data reset.'})).toBeVisible();
+  await page.getByLabel('Network seed',{exact:true}).focus();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('region',{name:'Network Lab',exact:true})).not.toBeVisible();
+  await expect(page.getByRole('button',{name:'Toggle network simulation scenarios panel'})).toBeFocused();
 });

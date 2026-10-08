@@ -5,6 +5,7 @@ import App from './App';
 import { useMockApi } from './api/environment';
 import { PendingSubmissionQueue } from './api/pendingQueue';
 import './index.css';
+import './ui/polish.css';
 
 const queryClient = new QueryClient({
   defaultOptions: {

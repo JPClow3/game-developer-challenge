@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { Icon } from './Icon';
 import type { MatchEndReason } from '../types/game';
 import type { MatchConfigSnapshot, SubmitMatchRequest, SubmitMatchResponse } from '../types/api';
 import { useSubmitMatchMutation } from '../api/useApiQueries';
@@ -155,65 +156,65 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
         style={{ backgroundImage: "url('/assets/ui_scene_background.png')" }}
       />
 
-      <main className="relative z-10 w-full max-w-md pirate-wood-panel p-6 sm:p-8 my-auto shrink-0 flex flex-col items-center text-center space-y-5 animate-in fade-in zoom-in-95 duration-200">
+      <main className="relative z-10 w-full max-w-md pirate-wood-panel result-card my-auto shrink-0">
         {/* Title / Outcome */}
         <h1
-          className={`text-3xl sm:text-4xl font-black uppercase tracking-wider ${
+          className={`result-title ${
             isVictory ? 'pirate-gold-text' : 'text-red-400'
           }`}
         >
           {isVictory ? 'Victory at Sea!' : 'Vessel Sunk!'}
         </h1>
 
-        <p className="text-amber-200/80 text-xs sm:text-sm uppercase tracking-widest font-medium">
+        <p className="result-subtitle">
           {isVictory
             ? 'You held the waters until the final bell.'
             : 'Your hull cracked and slipped beneath the tide.'}
         </p>
 
         {/* Score & Time Cards */}
-        <div className="w-full grid grid-cols-2 gap-3">
-          <div className="bg-stone-950/80 border border-amber-900/60 rounded p-3 flex flex-col items-center">
-            <span className="text-xs uppercase text-amber-300 font-bold">Total Score</span>
-            <span className="text-3xl font-black font-mono text-yellow-400 mt-1">
+        <div className="result-stats">
+          <div className="result-stat">
+            <span>Total Score</span>
+            <span>
               {matchData.score}
             </span>
           </div>
 
-          <div className="bg-stone-950/80 border border-amber-900/60 rounded p-3 flex flex-col items-center">
-            <span className="text-xs uppercase text-amber-300 font-bold">Time Survived</span>
-            <span className="text-3xl font-black font-mono text-amber-100 mt-1">
+          <div className="result-stat">
+            <span>Time Survived</span>
+            <span>
               {matchData.durationSeconds}s
             </span>
           </div>
         </div>
 
         {/* Match Registration Status Banner */}
-        <div className="w-full">
+        <div className="result-registration">
           {submitMutation.isPending && (
-            <div className="p-3 bg-stone-900/80 border border-amber-700/60 rounded text-xs text-amber-200 flex items-center justify-center space-x-2">
-              <div className="w-3.5 h-3.5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
+            <div className="ui-message" role="status">
+              <span className="ui-spinner" aria-hidden="true" />
               <span>Recording battle results to online ranking...</span>
             </div>
           )}
 
           {submitMutation.isSuccess && (
-            <div className="p-3 bg-emerald-950/80 border border-emerald-600 rounded text-xs text-emerald-200 flex flex-col items-center space-y-1">
-              <span className="font-bold">
-                ✓ Confirmed in Leaderboard{' '}
+            <div className="ui-message" data-tone="success" role="status">
+              <Icon name="check" />
+              <div className="ui-message-copy"><strong>
+                Confirmed in Leaderboard{' '}
                 {submissionResponse ? `(Rank #${submissionResponse.rankingPosition})` : ''}
-              </span>
+              </strong>
               {submissionResponse?.isDuplicate && (
-                <span className="text-[10px] text-emerald-300/80">
-                  (Existing registration safely verified without duplicate)
-                </span>
+                <p>Already recorded. Your score was counted once.</p>
               )}
+              </div>
             </div>
           )}
 
           {submitMutation.isError && (
-            <div className="p-3 bg-red-950/80 border border-red-700 rounded text-xs text-red-200 flex flex-col items-center space-y-2">
-              <span>
+            <div className="ui-message" data-tone="error" role="alert">
+              <Icon name="alert" /><div className="ui-message-copy"><span>
                 {isRetryableApiError(submitMutation.error)
                   ? 'Saved locally. Network sync failed:'
                   : 'Saved locally. Ranking rejected this result:'}{' '}
@@ -223,26 +224,18 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
                 <button
                   type="button"
                   onClick={handleManualRetry}
-                  className="pirate-button px-4 py-1 rounded font-bold text-xs uppercase text-amber-100"
+                  className="ui-button ui-button-secondary"
                 >
-                  Retry Registration
+                  <Icon name="refresh" />Retry Registration
                 </button>
               )}
+              </div>
             </div>
           )}
         </div>
 
         {/* Action Buttons */}
-        <div className="w-full flex flex-col space-y-3 pt-2">
-          {onWatchReplay && (
-            <button
-              type="button"
-              className="pirate-button px-6 py-2 rounded font-bold"
-              onClick={onWatchReplay}
-            >
-              Watch Replay
-            </button>
-          )}
+        <div className="result-actions">
           {replayError && (
             <p role="alert" className="text-red-200 text-sm">
               {replayError}
@@ -254,12 +247,18 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
               AudioManager.getInstance().play('game_start');
               onPlayAgain();
             }}
-            className="pirate-button w-full py-3 rounded-lg font-bold text-amber-100 uppercase tracking-wider text-base shadow-lg"
+            className="ui-button pirate-button"
             aria-label="Play Again"
             disabled={isStarting}
+            aria-busy={isStarting}
           >
-            Play Again
+            {isStarting ? <span className="ui-spinner" aria-hidden="true" /> : <Icon name="play" />}
+            {isStarting ? 'Preparing your voyage…' : 'Play Again'}
           </button>
+
+          {onWatchReplay && <button type="button" className="ui-button ui-button-secondary" onClick={onWatchReplay}>
+            <Icon name="history" />Watch Replay
+          </button>}
 
           <button
             type="button"
@@ -267,10 +266,10 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
               AudioManager.getInstance().play('ui_back');
               onMainMenu();
             }}
-            className="w-full py-2.5 rounded-lg bg-stone-900 hover:bg-stone-800 text-stone-300 border border-amber-900/40 font-semibold text-xs uppercase tracking-wider transition"
+            className="ui-button ui-button-quiet"
             aria-label="Main Menu"
           >
-            Main Menu
+            <Icon name="left" />Main Menu
           </button>
         </div>
       </main>

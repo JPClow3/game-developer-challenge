@@ -4,6 +4,7 @@ import { AudioManager } from './audio/AudioManager';
 import { GameSimulation } from './core/simulation/GameSimulation';
 import { PixiCanvas, type RendererState } from './pixi/PixiCanvas';
 import { MainMenu } from './ui/MainMenu';
+import { Icon } from './ui/Icon';
 import { MatchHUD } from './ui/MatchHUD';
 import { VoyageOverlay } from './ui/VoyageOverlay';
 import { loadHelmSettings } from './game/HelmSettings';
@@ -323,18 +324,18 @@ export const App: React.FC = () => {
             className="absolute inset-0 bg-cover bg-center opacity-30 pointer-events-none"
             style={{ backgroundImage: "url('/assets/ui_scene_background.png')" }}
           />
-          <main className="relative z-10 w-full max-w-md my-auto shrink-0 pirate-wood-panel p-6 sm:p-8 flex flex-col items-center text-center">
-            <h1 className="text-3xl sm:text-4xl font-extrabold pirate-gold-text tracking-wider uppercase mb-2">
+          <main className="startup-card relative z-10 w-full max-w-md my-auto shrink-0 pirate-wood-panel">
+            <h1>
               Pirate Battle
             </h1>
-            <p className="text-amber-200/80 text-sm mb-6 uppercase tracking-widest font-medium">
+            <p className="startup-subtitle">
               Preparing the high seas...
             </p>
 
             {loadingError ? (
               <div className="w-full flex flex-col items-center space-y-4 my-2" role="alert">
-                <div className="p-3 bg-red-950/80 border border-red-700 text-red-200 rounded text-sm w-full">
-                  {loadingError}
+                <div className="ui-message" data-tone="error">
+                  <Icon name="alert" />{loadingError}
                 </div>
                 <button
                   type="button"
@@ -342,10 +343,10 @@ export const App: React.FC = () => {
                     AssetLoader.getInstance().reset();
                     startPreload();
                   }}
-                  className="pirate-button px-6 py-2.5 rounded font-bold text-amber-100 uppercase tracking-wider text-sm"
+                  className="ui-button pirate-button"
                   aria-label="Retry loading assets"
                 >
-                  Retry Loading
+                  <Icon name="refresh" />Retry Loading
                 </button>
               </div>
             ) : (
@@ -354,12 +355,12 @@ export const App: React.FC = () => {
                 role="status"
                 aria-live="polite"
               >
-                <span className="text-amber-100 text-sm font-semibold">
+                <span className="startup-progress-label">
                   Arming Cannons & Hoisting Sails ({Math.round(progress * 100)}%)
                 </span>
-                <div className="w-full bg-slate-900 border-2 border-amber-800 rounded-full h-5 p-0.5 overflow-hidden shadow-inner">
+                <div className="startup-progress-track" aria-hidden="true">
                   <div
-                    className="bg-gradient-to-r from-amber-600 to-yellow-400 h-full rounded-full transition-all duration-200"
+                    className="startup-progress-fill"
                     style={{ width: `${Math.round(progress * 100)}%` }}
                   />
                 </div>
@@ -382,9 +383,9 @@ export const App: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => window.location.reload()}
-                  className="pirate-button px-6 py-2.5 rounded font-bold uppercase tracking-wider text-sm"
+                  className="ui-button ui-button-secondary"
                 >
-                  Reload game
+                  <Icon name="refresh" />Reload game
                 </button>
               </div>
             )}

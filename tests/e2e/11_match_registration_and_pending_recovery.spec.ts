@@ -74,7 +74,7 @@ test.describe('Flow 11: Match Registration, Tab Updates & Pending Recovery', () 
     await page.getByRole('tab', { name: /match history/i }).click();
 
     // Verify pending alert banner is visible
-    await expect(page.locator('text=1 match record(s) pending online sync')).toBeVisible();
+    await expect(page.getByText('1 voyage saved locally, waiting to sync.')).toBeVisible();
     await expect(page.getByRole('button', { name: /retry sync/i })).toBeVisible();
 
     // A healthy restart drains the queue without visiting History or pressing Retry.
@@ -86,7 +86,7 @@ test.describe('Flow 11: Match Registration, Tab Updates & Pending Recovery', () 
     await page.getByRole('tab', { name: /match history/i }).click();
 
     // Banner should disappear upon successful sync
-    await expect(page.locator('text=pending online sync')).not.toBeVisible({ timeout: 5000 });
+    await expect(page.getByText('1 voyage saved locally, waiting to sync.')).not.toBeVisible({ timeout: 5000 });
     await expect(page.getByText('33 pts', { exact: true })).toBeVisible();
   });
 });

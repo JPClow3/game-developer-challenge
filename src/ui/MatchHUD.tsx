@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { Icon } from './Icon';
 import { GameSimulation, DEFAULT_PLAYER_INPUT } from '../core/simulation/GameSimulation';
 import type { MatchSnapshot } from '../types/game';
 import type { HelmSettings } from '../game/HelmSettings';
@@ -64,7 +65,7 @@ export const MatchHUD: React.FC<MatchHUDProps> = ({ simulation, onPauseToggle, s
   const release = (event: React.PointerEvent<HTMLButtonElement>) => {
     if (pointers.current.delete(event.pointerId)) publish();
   };
-  const control = (action: Control, label: string, content: string, cooldown = 0) => (
+  const control = (action: Control, label: string, content: React.ReactNode, cooldown = 0) => (
     <button
       type="button"
       className={`helm-control ${held.has(action) ? 'is-held' : ''} ${cooldown > 0 ? 'is-reloading' : ''}`}
@@ -93,7 +94,7 @@ export const MatchHUD: React.FC<MatchHUDProps> = ({ simulation, onPauseToggle, s
     >
       <span>{content}</span>
       {['front', 'port', 'starboard'].includes(action) && (
-        <small>{cooldown > 0 ? 'Loading' : 'Ready'}</small>
+        <small>{cooldown > 0 ? 'Reloading' : held.has(action) ? 'Firing' : 'Ready'}</small>
       )}
     </button>
   );
@@ -105,7 +106,7 @@ export const MatchHUD: React.FC<MatchHUDProps> = ({ simulation, onPauseToggle, s
       <div className="battery-track">
         <i style={{ width: `${(1 - cooldown) * 100}%` }} />
       </div>
-      <small>{cooldown > 0 ? 'Loading' : 'Ready'}</small>
+      <small>{cooldown > 0 ? 'Reloading' : 'Ready'}</small>
     </div>
   );
 
@@ -160,7 +161,7 @@ export const MatchHUD: React.FC<MatchHUDProps> = ({ simulation, onPauseToggle, s
             onPauseToggle();
           }}
         >
-          Ⅱ <span>Pause</span>
+          <Icon name="pause" /> <span>Pause</span>
         </button>
       </div>
       {simulation.mode === 'match' && (
@@ -187,10 +188,10 @@ export const MatchHUD: React.FC<MatchHUDProps> = ({ simulation, onPauseToggle, s
         >
           <div className="helm-movement">
             <span className="helm-label">Helm</span>
-            {control('forward', 'Move forward', '↑')}
+            {control('forward', 'Move forward', <Icon name="ahead" />)}
             <div>
-              {control('left', 'Steer left', '←')}
-              {control('right', 'Steer right', '→')}
+              {control('left', 'Steer left', <Icon name="left" />)}
+              {control('right', 'Steer right', <Icon name="arrow" />)}
             </div>
           </div>
           <div className="helm-weapons">

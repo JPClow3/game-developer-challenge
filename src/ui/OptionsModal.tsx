@@ -1,4 +1,5 @@
 import { useDialogFocus } from './useDialogFocus';
+import { Icon } from './Icon';
 import React, { useEffect, useState } from 'react';
 import type { GameplayConfig } from '../types/config';
 import { validateGameplayConfig, saveUserConfigToStorage, MIN_SPAWN_INTERVAL, MAX_SPAWN_INTERVAL } from '../types/config';
@@ -63,16 +64,16 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 backdrop-blur-sm p-4"
+      className="ui-dialog-backdrop"
       ref={dialogRef}
       tabIndex={-1}
       role="dialog"
       aria-modal="true"
       aria-labelledby="options-title"
     >
-      <div className="w-full max-w-md my-auto shrink-0 pirate-wood-panel p-6 text-amber-100 flex flex-col space-y-5 animate-in fade-in zoom-in-95 duration-150">
-        <div className="flex items-center justify-between border-b border-amber-900/60 pb-3">
-          <h2 id="options-title" className="text-2xl font-bold pirate-gold-text uppercase tracking-wide">
+      <div className="ui-dialog options-dialog pirate-wood-panel">
+        <div className="ui-dialog-header">
+          <h2 id="options-title">
             Game Options
           </h2>
           <button
@@ -81,25 +82,25 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
               AudioManager.getInstance().play('ui_close');
               onClose();
             }}
-            className="text-amber-300 hover:text-amber-100 text-xl font-bold px-2 py-1 rounded"
+            className="ui-icon-button"
             aria-label="Close options modal"
           >
-            ✕
+            <Icon name="close" />
           </button>
         </div>
 
         {error && (
-          <div className="p-3 bg-red-950/80 border border-red-700 text-red-200 rounded text-sm" role="alert">
-            {error}
+          <div className="ui-message" data-tone="error" role="alert">
+            <Icon name="alert" /><span>{error}</span>
           </div>
         )}
 
-        <form onSubmit={handleSave} className="flex flex-col space-y-5">
+        <form onSubmit={handleSave} className="options-form">
           {/* Game Session Time */}
-          <div className="flex flex-col space-y-2">
-            <div className="flex justify-between items-center text-sm font-semibold">
-              <label htmlFor="session-duration">Session Duration (seconds):</label>
-              <span className="text-yellow-400 font-mono text-base">{duration}s</span>
+          <div className="option-field">
+            <div className="option-field-head">
+              <label htmlFor="session-duration">Session duration</label>
+              <output htmlFor="session-duration" className="option-value">{duration}s</output>
             </div>
             <input
               id="session-duration"
@@ -115,16 +116,16 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
               className="w-full accent-amber-500 cursor-pointer"
               aria-describedby="duration-help"
             />
-            <span id="duration-help" className="text-xs text-amber-200/60">
-              Valid range: 60 to 180 seconds.
+            <span id="duration-help" className="option-help">
+              A voyage lasts between 60 and 180 seconds.
             </span>
           </div>
 
           {/* Enemy Spawn Interval */}
-          <div className="flex flex-col space-y-2">
-            <div className="flex justify-between items-center text-sm font-semibold">
-              <label htmlFor="spawn-interval">Enemy Spawn Interval (seconds):</label>
-              <span className="text-yellow-400 font-mono text-base">{spawnInterval}s</span>
+          <div className="option-field">
+            <div className="option-field-head">
+              <label htmlFor="spawn-interval">Time between enemies</label>
+              <output htmlFor="spawn-interval" className="option-value">{spawnInterval}s</output>
             </div>
             <input
               id="spawn-interval"
@@ -140,8 +141,8 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
               className="w-full accent-amber-500 cursor-pointer"
               aria-describedby="spawn-help"
             />
-            <span id="spawn-help" className="text-xs text-amber-200/60">
-              Interval between new enemies (1 to 15 seconds, in whole seconds).
+            <span id="spawn-help" className="option-help">
+              Shorter intervals bring a busier sea. Choose 1 to 15 seconds.
             </span>
           </div>
 
@@ -151,26 +152,29 @@ export const OptionsModal: React.FC<OptionsModalProps> = ({
             <small>Press a cannon key or touch button once to keep firing, again to stop. Pausing clears firing.</small>
             <label><input type="checkbox" checked={helm.swapped} onChange={event=>setHelm({...helm,swapped:event.target.checked})} /> Swap touch helm and cannons</label>
             <label><input type="checkbox" checked={helm.muted} onChange={event=>setHelm({...helm,muted:event.target.checked})} /> Mute sound</label>
-            <label htmlFor="master-volume">Sound volume: {Math.round(helm.volume*100)}%</label>
+            <div className="option-field-head">
+              <label htmlFor="master-volume">Sound volume</label>
+              <output htmlFor="master-volume" className="option-value">{Math.round(helm.volume*100)}%</output>
+            </div>
             <input id="master-volume" type="range" min="0" max="1" step="0.05" value={helm.volume} onChange={event=>setHelm({...helm,volume:Number(event.target.value)})} />
           </fieldset>
           {/* Buttons */}
-          <div className="flex justify-end space-x-3 pt-3 border-t border-amber-900/60">
+          <div className="dialog-actions">
             <button
               type="button"
               onClick={() => {
                 AudioManager.getInstance().play('ui_back');
                 onClose();
               }}
-              className="px-4 py-2 rounded bg-stone-800 hover:bg-stone-700 text-stone-300 font-medium text-sm transition"
+              className="ui-button ui-button-secondary"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="pirate-button px-6 py-2 rounded text-amber-100 font-bold text-sm uppercase tracking-wider"
+              className="ui-button pirate-button"
             >
-              Save Options
+              <Icon name="check" />Save Options
             </button>
           </div>
         </form>

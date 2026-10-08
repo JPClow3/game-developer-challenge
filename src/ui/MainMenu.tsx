@@ -1,4 +1,5 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Icon, type IconName } from './Icon';
 import type { GameplayConfig } from '../types/config';
 import { RankingTab } from './RankingTab';
 import { MatchHistoryTab } from './MatchHistoryTab';
@@ -14,10 +15,10 @@ interface MainMenuProps {
   onUpdateConfig: (config: GameplayConfig) => void;
   isStarting?: boolean;
 }
-const tabs: { id: MenuTab; label: string }[] = [
-  { id: 'play', label: 'Play Battle' },
-  { id: 'ranking', label: 'Ranking' },
-  { id: 'history', label: 'Match History' },
+const tabs: { id: MenuTab; label: string; icon: IconName }[] = [
+  { id: 'play', label: 'Play Battle', icon: 'compass' },
+  { id: 'ranking', label: 'Ranking', icon: 'trophy' },
+  { id: 'history', label: 'Match History', icon: 'history' },
 ];
 
 export const MainMenu: React.FC<MainMenuProps> = ({
@@ -29,6 +30,12 @@ export const MainMenu: React.FC<MainMenuProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<MenuTab>('play');
   const [isOptionsOpen, setIsOptionsOpen] = useState(false);
+  const [optionsSaved, setOptionsSaved] = useState(false);
+  useEffect(() => {
+    if (!optionsSaved) return;
+    const timeout = setTimeout(() => setOptionsSaved(false), 3200);
+    return () => clearTimeout(timeout);
+  }, [optionsSaved]);
   const helm = loadHelmSettings();
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const selectTab = (tab: MenuTab) => {
@@ -88,7 +95,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
                 }
               }}
             >
-              {tab.label}
+              <Icon name={tab.icon} />{tab.label}
             </button>
           ))}
         </div>
@@ -121,6 +128,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
                   <button
                     type="button"
                     disabled={isStarting}
+                    aria-busy={isStarting}
                     className="pirate-button voyage-start"
                     data-testid="btn-set-sail"
                     aria-label="Play"
@@ -130,8 +138,9 @@ export const MainMenu: React.FC<MainMenuProps> = ({
                       onStartGame();
                     }}
                   >
-                    Play <span aria-hidden="true">⚓</span>
-                    <small>Set sail</small>
+                    <span>{isStarting ? 'Preparing…' : 'Play'}</span>
+                    <Icon name="anchor" />
+                    <small>{isStarting ? 'Ready in a moment' : 'Set sail'}</small>
                   </button>
                   <button
                     type="button"
@@ -143,7 +152,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
                       setIsOptionsOpen(true);
                     }}
                   >
-                    Options
+                    <Icon name="settings" />Options
                   </button>
                 </div>
                 <button
@@ -154,7 +163,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({
                     onTraining();
                   }}
                 >
-                  Practice voyage <small>Three quick actions. No score.</small>
+                  <Icon name="compass" /><span>Practice voyage <small>Three quick actions. No score.</small></span>
                 </button>
               </div>
               <div className="captains-chart">
@@ -222,11 +231,12 @@ export const MainMenu: React.FC<MainMenuProps> = ({
           <img src="/assets/logo_jungle_gaming.svg" alt="Jungle Gaming" />
         </footer>
       </main>
+      {optionsSaved && <div className="ui-message harbor-toast" data-tone="success" role="status"><Icon name="check" /><span>Options saved. Your next voyage is ready.</span></div>}
       <OptionsModal
         currentConfig={currentConfig}
         isOpen={isOptionsOpen}
         onClose={() => setIsOptionsOpen(false)}
-        onSave={onUpdateConfig}
+        onSave={(nextConfig) => { onUpdateConfig(nextConfig); setOptionsSaved(true); }}
       />
     </div>
   );
