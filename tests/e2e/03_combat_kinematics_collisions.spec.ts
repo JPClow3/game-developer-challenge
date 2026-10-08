@@ -14,6 +14,9 @@ test.describe('Flow 03: Combat Kinematics, Steering & Obstacle Collisions', () =
     await expect(page.getByTestId('game-active-arena')).toBeVisible();
     await expect(page.getByTestId('combat-canvas')).toBeVisible();
     await page.waitForFunction(() => (window as any).__PIXI_GAME__?.isReady);
+    // Exercise real keyboard input with explicit physics time. Browser command
+    // latency must not let unrelated combat end before the collision phase.
+    await page.evaluate(() => (window as any).__PIXI_GAME__.app.ticker.stop());
 
     // 2. Initial state verification from window simulation harness
     const initialPos = await page.evaluate(() => {
@@ -26,6 +29,11 @@ test.describe('Flow 03: Combat Kinematics, Steering & Obstacle Collisions', () =
     // 3. Move forward with W
     await page.keyboard.down('KeyW');
     try {
+      expect(await page.evaluate(() => (window as any).__PIRATE_SIMULATION__.currentInput.throttle)).toBe(1);
+      await page.evaluate(() => {
+        const sim = (window as any).__PIRATE_SIMULATION__;
+        for (let i = 0; i < 60; i++) sim.update(sim.fixedTimestep);
+      });
       await expect.poll(() => page.evaluate(() =>
         (window as any).__PIRATE_SIMULATION__.player.kinematic.y)).toBeLessThan(initialPos.y);
     } finally {
@@ -42,6 +50,11 @@ test.describe('Flow 03: Combat Kinematics, Steering & Obstacle Collisions', () =
     // 4. Steer with D (turn right)
     await page.keyboard.down('KeyD');
     try {
+      expect(await page.evaluate(() => (window as any).__PIRATE_SIMULATION__.currentInput.steer)).toBe(1);
+      await page.evaluate(() => {
+        const sim = (window as any).__PIRATE_SIMULATION__;
+        for (let i = 0; i < 60; i++) sim.update(sim.fixedTimestep);
+      });
       // Slow renderers can keep the key held long enough to cross +/-pi.
       // Check actual clockwise movement over the latest fixed simulation tick.
       await expect.poll(() => page.evaluate(() => {
@@ -56,6 +69,7 @@ test.describe('Flow 03: Combat Kinematics, Steering & Obstacle Collisions', () =
     // 5. Test island collision invariant: position cannot penetrate island center closer than radius
     const collisionCheck = await page.evaluate(() => {
       const sim = (window as any).__PIRATE_SIMULATION__;
+      if (sim.isEnded || sim.isPaused) throw new Error('Collision check requires an active simulation');
       const island = sim.obstacles[0];
       // Force player directly into island center
       sim.player.kinematic.x = island.x;

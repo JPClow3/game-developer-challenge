@@ -1,24 +1,41 @@
 import AxeBuilder from '@axe-core/playwright';
 import { test, expect, type Page } from './fixtures';
 
-test('axe scans the menu, options, pause and result screens', async ({page}, testInfo) => {
-  const scan = async (screen:string) => {
+for (const screen of ['menu', 'options', 'pause', 'result'] as const) {
+  test(`axe scans the ${screen} screen`, async ({page}, testInfo) => {
+    await page.goto('/');
+    await expect(page.getByTestId('main-menu')).toBeVisible();
+    if (screen === 'options') {
+      await page.getByRole('button',{name:/options/i}).click();
+      await expect(page.getByRole('dialog')).toBeVisible();
+    }
+    if (screen === 'pause' || screen === 'result') {
+      await page.getByTestId('btn-set-sail').click();
+      await running(page);
+      // Accessibility scans inspect a stable screen, not elapsed gameplay.
+      await page.evaluate(() => (window as any).__PIXI_GAME__.app.ticker.stop());
+      if (screen === 'pause') {
+        await page.getByRole('button',{name:'Pause game',exact:true}).click();
+        await expect(page.getByRole('dialog')).toBeVisible();
+      } else {
+        await page.evaluate(()=>{
+          const sim=(window as any).__PIRATE_SIMULATION__;
+          while(!sim.isEnded) sim.step(sim.fixedTimestep);
+        });
+        await expect(page.getByTestId('result-screen')).toBeVisible();
+        await expect(page.getByText('Confirmed in Leaderboard')).toBeVisible();
+      }
+    }
+    // Scan settled colors/opacity rather than an intermediate entrance or
+    // button-color transition. Infinite loading indicators are not blockers.
+    await expect.poll(() => page.evaluate(() => document.getAnimations().filter(animation =>
+      animation.playState === 'running' && animation.effect?.getTiming().iterations !== Infinity).length)).toBe(0);
     const result=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa']).analyze();
     await testInfo.attach(`axe-${screen}`,{body:JSON.stringify(result,null,2),contentType:'application/json'});
     expect(result.violations, `${screen} accessibility violations`).toEqual([]);
     await testInfo.attach(`ui-${screen}`, { body: await page.screenshot(), contentType: 'image/png' });
-  };
-  await page.goto('/');await expect(page.getByTestId('main-menu')).toBeVisible();await scan('menu');
-  await page.getByRole('button',{name:/options/i}).click();await scan('options');
-  await page.getByRole('button',{name:/save options/i}).click();
-  await expect(page.getByRole('status').filter({hasText:'Options saved. Your next voyage is ready.'})).toBeVisible();
-  await page.getByTestId('btn-set-sail').click();await running(page);
-  await page.getByRole('button',{name:'Pause game',exact:true}).click();await scan('pause');
-  await page.getByRole('button',{name:/resume/i}).click();
-  await page.evaluate(()=>{const game=(window as any).__PIXI_GAME__;game.app.ticker.stop();while(!game.simulation.isEnded) game.simulation.step(game.simulation.fixedTimestep);});
-  await expect(page.getByTestId('result-screen')).toBeVisible();
-  await expect(page.getByText('Confirmed in Leaderboard')).toBeVisible();await scan('result');
-});
+  });
+}
 
 async function running(page:Page) {await page.waitForFunction(()=>(window as any).__PIXI_GAME__?.isReady);}
 

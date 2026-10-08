@@ -147,11 +147,24 @@ export class CollisionSystem {
       const dist = Math.hypot(dx, dy);
       const minDist = radius + obs.radius;
 
-      if (dist < minDist && dist > 0.0001) {
+      if (dist < minDist) {
         // Normal pointing from obstacle center towards closest contact point on ship
-        const nx = dx / dist;
-        const ny = dy / dist;
-        const penetration = minDist - dist;
+        let nx: number, ny: number, penetration: number;
+        if (dist > 0.0001) {
+          nx = dx / dist;
+          ny = dy / dist;
+          penetration = minDist - dist;
+        } else {
+          // A center on the capsule segment has no radial contact normal.
+          // Slide perpendicular to the hull toward its existing side, choosing
+          // a deterministic side at exact overlap. Do not leave it embedded.
+          nx = -f.y;
+          ny = f.x;
+          const side = (shipKinematic.x - obs.x) * nx + (shipKinematic.y - obs.y) * ny;
+          // Ignore floating-point roundoff when choosing the exact-center side.
+          if (side < -1e-10) { nx = -nx; ny = -ny; }
+          penetration = minDist - Math.abs(side);
+        }
 
         // 1. Inelastic position push-out along normal
         shipKinematic.x += nx * penetration;
