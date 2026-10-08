@@ -4,7 +4,9 @@ import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
 
 // Run only after the final local gates. Failing evidence is never relabeled green.
-const destination = 'reports/submission';
+const destination = process.env.REPORT_SNAPSHOT_DIR || 'reports/submission';
+if (!/^reports\/[a-z0-9-]+$/.test(destination))
+  throw new Error('Report snapshot destination must be a named directory under reports/');
 const inputs = [
   ['unit', 'test-results/unit.json'],
   ['browser', 'test-results/browser.json'],

@@ -146,6 +146,9 @@
 .network-description { border-left:2px solid var(--brass); padding:3px 0 3px 12px; color:var(--muted); font-size:11px; line-height:1.6; }
 .network-feedback { color:var(--ui-success); font-size:11px; }
 .voyage-overlay { border-radius:var(--ui-radius); }
+.voyage-overlay .pirate-button { color:#172633; }
+.voyage-overlay .ui-button { border-radius:var(--ui-radius); }
+.replay-transport select { border-radius:var(--ui-radius); }
 .voyage-overlay button { transition:background-color 150ms,border-color 150ms; }
 .voyage-overlay button:hover { background:#ffffff0a; border-color:var(--brass); }
 @keyframes ui-enter { from { opacity:0; translate:0 5px; } to { opacity:1; translate:0 0; } }

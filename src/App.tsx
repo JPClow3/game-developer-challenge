@@ -312,9 +312,10 @@ export const App: React.FC = () => {
       {startError && (
         <div
           role="alert"
-          className="absolute top-4 left-1/2 -translate-x-1/2 z-50 rounded bg-red-950 p-3 text-sm"
+          className="ui-message harbor-toast"
+          data-tone="error"
         >
-          {startError} Try starting again, or practice while offline.
+          <Icon name="alert" />{startError} Try starting again, or practice while offline.
         </div>
       )}
       {/* 1. ASSET PRELOAD / ERROR SCREEN */}

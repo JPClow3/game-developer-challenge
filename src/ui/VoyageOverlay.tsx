@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Icon } from './Icon';
 import type { GameSimulation } from '../core/simulation/GameSimulation';
 
 const lessons = {
@@ -84,28 +85,30 @@ export const VoyageOverlay: React.FC<{
                 ))}
               </select>
             </label>
-            <button type="button" aria-label="Restart replay" onClick={onRestartReplay}>
-              Restart
+            <button type="button" className="ui-button ui-button-secondary" aria-label="Restart replay" onClick={onRestartReplay}>
+              <Icon name="refresh" />Restart
             </button>
           </div>
         )}
         {training && simulation.trainingStage === 'complete' && (
-          <button type="button" className="pirate-button" onClick={() => onBattle()}>
-            Play
+          <button type="button" className="ui-button pirate-button" onClick={() => onBattle()}>
+            <Icon name="play" />Play
           </button>
         )}
         {training && simulation.trainingStage !== 'complete' && (
           <button
             type="button"
+            className="ui-button ui-button-secondary"
             onClick={(event) => {
               event.currentTarget.blur();
               simulation.resetTrainingLesson();
             }}
           >
-            Reset lesson
+            <Icon name="refresh" />Reset lesson
           </button>
         )}
-        <button type="button" onClick={onExit}>
+        <button type="button" className="ui-button ui-button-quiet" onClick={onExit}>
+          <Icon name="left" />
           {training
             ? simulation.trainingStage === 'complete'
               ? 'Back to harbor'

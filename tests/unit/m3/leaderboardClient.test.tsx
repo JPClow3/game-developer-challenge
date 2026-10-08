@@ -40,8 +40,8 @@ describe('Leaderboard client regressions', () => {
         { ...base, matchId: 'other-match', rank: 2, playerId: 'another', playerName: 'Other captain', isCurrentPlayer: true }] } });
     render(<RankingTab sessionDurationFilter={120} spawnIntervalFilter={3} />);
     expect(screen.getAllByText('You')).toHaveLength(1);
-    expect(screen.getByText('My captain').closest('tr')).toHaveClass('font-bold');
-    expect(screen.getByText('Other captain').closest('tr')).not.toHaveClass('font-bold');
+    expect(screen.getByText('My captain').closest('tr')).toHaveClass('player-row');
+    expect(screen.getByText('Other captain').closest('tr')).not.toHaveClass('player-row');
   });
 
   it('discards permanently rejected scores but keeps transient errors for offline retry', async () => {
