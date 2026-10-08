@@ -1,5 +1,7 @@
 # Gameplay and engineering review
 
+For the current consolidated build, start with [release 1.0 evidence](../reports/RELEASE-1.0.md) and the [current desktop/mobile map captures](media/release-1.0/evidence.json). Dated runs below describe their recorded revisions; the release tag identifies the final CI-verified deployment.
+
 ## Review the running build
 
 Open **Network Lab** at the lower right of the harbor. Open Ranking or Match History to create requests. Set additional latency, switch scenario while a request is pending, and observe `cancelled stale response`. The seed controls repeatable out-of-order request delays independently of the gameplay seed. Choose Server Error to see attempts 1, 2 and 3. Finish a battle, return to its persisted result through `/#last-result`, and inspect `isDuplicate=true`. Reset Mock DB cancels queries, resets fixtures, seed, latency and the bounded 80-entry log, then refetches. This panel is present whenever the build uses MSW; the optional live backend has no fault-injection controls.
@@ -64,7 +66,7 @@ Current release evidence is indexed in [RELEASE-1.0](../reports/RELEASE-1.0.md).
 
 ## Browser evidence and baseline policy
 
-Follow [Playwright's CI guidance](https://playwright.dev/docs/ci): install dependencies and browsers, run with one worker, retain traces, and upload the report even on failure. The committed Windows screenshot baselines are compared only on Windows. Linux runs all behavior and layout flows and attaches the same screenshots for review, without comparing its font/WebGL pixels to Windows. Baselines must be reviewed and regenerated deliberately on Windows when the visuals or locked browser change. CI never updates snapshots.
+Follow [Playwright's CI guidance](https://playwright.dev/docs/ci): install dependencies and browsers, run with one worker, retain traces, and upload the report even on failure. Windows compares its native desktop/mobile screenshot baselines. Linux compares separate committed baselines inside the locked Playwright Docker image, currently `mcr.microsoft.com/playwright:v1.63.0-noble`; macOS can use `npm run test:visual:docker` for that same environment. Screenshot assertions run on every OS and missing baselines fail. Regenerated candidates require visual review before acceptance. The normal deployment workflow never updates snapshots; its separate manual candidate-capture job cannot deploy.
 
 ```sh
 npm ci
@@ -78,11 +80,11 @@ If the browser CDN is unavailable locally, an installed Chrome can be used with 
 
 For concurrent local work, set `PLAYWRIGHT_PORT` to a free port. Vite uses strict port binding, so the test cannot silently run against a server on another port. CI owns its server; local runs can reuse an existing development server.
 
-Earlier local verification on 7 October 2026, before the current evaluator additions, passed: 222 unit tests, the production build (including frontend and Pages Functions typechecks), and 61 browser tests using locked Chromium on Windows. Five mobile-only cases were skipped in the desktop project and passed in the mobile project. That run owned port 5175. These historical counts do not describe the current suite. The current engineering additions passed six focused E2E cases across desktop and mobile, including eight axe scans. Final full-suite, CI and published-build evidence is tracked separately in the delivery reports.
+Earlier local verification on 7 October 2026, before the evaluator additions, passed: 222 unit tests, the production build (including frontend and Pages Functions typechecks), and 61 browser tests using locked Chromium on Windows. Five mobile-only cases were skipped in the desktop project and passed in the mobile project. That run owned port 5175. The later engineering additions passed six focused E2E cases across desktop and mobile, including eight axe scans. These historical counts do not describe the current suite. Final full-suite, CI and published-build evidence is tracked separately in the [release report](../reports/RELEASE-1.0.md).
 
-## Android Studio emulator verification
+## Historical Android Studio emulator verification
 
-The requested simulator check passed on 7 October 2026 using a Pixel 5 Android Studio AVD, Android 15, and Chrome for Android 124. Tests ran inside Android Chrome through Playwright's Android API, with real OS rotation and three simultaneous browser touch pointers dispatched through CDP. This is emulator evidence; physical ergonomics and hardware performance were not measured.
+The simulator check passed on the earlier 7 October 2026 revision using a Pixel 5 Android Studio AVD, Android 15, and Chrome for Android 124. Tests ran inside Android Chrome through Playwright's Android API, with real OS rotation and three simultaneous browser touch pointers dispatched through CDP. This is historical emulator evidence, not a rerun of the consolidated release; physical ergonomics and hardware performance were not measured.
 
 - Portrait: 393 x 722 CSS pixels at DPR 2.75. Landscape: 802 x 289 CSS pixels at DPR 2.75.
 - Forward, right steering, and Front produced movement, rotation, and projectiles together. Releasing Front kept both helm inputs active. Cancellation cleared movement, and pause/resume froze ticks and resumed with cleared inputs.
