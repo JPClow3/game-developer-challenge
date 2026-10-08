@@ -78,7 +78,7 @@ If the browser CDN is unavailable locally, an installed Chrome can be used with 
 
 For concurrent local work, set `PLAYWRIGHT_PORT` to a free port. Vite uses strict port binding, so the test cannot silently run against a server on another port. CI owns its server; local runs can reuse an existing development server.
 
-Local verification on 7 October 2026 passed: 222 unit tests, the production build (including frontend and Pages Functions typechecks), and 61 browser tests using locked Chromium on Windows. Five mobile-only cases were skipped in the desktop project and passed in the mobile project. The final browser run owned port 5175 with CI server lifecycle settings; HTML evidence is available under `playwright-report/`, with screenshots under `test-results/`. This does not establish a Linux or GitHub Actions run.
+Earlier local verification on 7 October 2026, before the current evaluator additions, passed: 222 unit tests, the production build (including frontend and Pages Functions typechecks), and 61 browser tests using locked Chromium on Windows. Five mobile-only cases were skipped in the desktop project and passed in the mobile project. That run owned port 5175. These historical counts do not describe the current suite. The current engineering additions passed six focused E2E cases across desktop and mobile, including eight axe scans. Final full-suite, CI and published-build evidence is tracked separately in the delivery reports.
 
 ## Android Studio emulator verification
 

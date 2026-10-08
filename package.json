@@ -21,7 +21,8 @@
     "deploy": "node tools/deploy.mjs",
     "test:published": "playwright test --config=playwright.published.config.ts",
     "test:visual": "playwright test 13_combat_polish --grep baselines",
-    "test:visual:docker": "node tools/test-visual-docker.mjs"
+    "test:visual:docker": "node tools/test-visual-docker.mjs",
+    "test:evidence": "playwright test --config=playwright.evidence.config.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",

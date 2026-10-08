@@ -29,7 +29,12 @@ test('debug draws physics geometry and projectile lifetimes only when requested'
     return game.debugOverlay.counts;
   });
   expect(counts.shipDisks).toBe(4);expect(counts.islands).toBe(3);expect(counts.shooters).toBe(1);expect(counts.projectiles).toBeGreaterThan(0);
-  await testInfo.attach('debug-geometry',{body:await page.screenshot(),contentType:'image/png'});
+  // Keep rendering during capture: WebGL's drawing buffer is discarded between frames.
+  await page.evaluate(()=>(window as any).__PIXI_GAME__.app.ticker.start());
+  await page.waitForTimeout(100);
+  const debugCapture=testInfo.outputPath('debug-geometry.png');
+  await page.screenshot({path:debugCapture});
+  await testInfo.attach('debug-geometry',{path:debugCapture,contentType:'image/png'});
   await page.goto('/');await page.getByTestId('btn-set-sail').click();await running(page);
   expect(await page.evaluate(()=>(window as any).__PIXI_GAME__.debugOverlay)).toBeUndefined();
 });
@@ -55,7 +60,9 @@ test('Network Lab exposes cancellation, seeded latency, retries and duplicate ac
     await submitMatch(request);await submitMatch(request);
   });
   await expect(log).toContainText('isDuplicate=true');
-  await testInfo.attach('network-lab',{body:await page.screenshot(),contentType:'image/png'});
+  const labCapture=testInfo.outputPath('network-lab.png');
+  await page.screenshot({path:labCapture});
+  await testInfo.attach('network-lab',{path:labCapture,contentType:'image/png'});
   await page.getByRole('button',{name:'Reset Mock DB'}).click();
   await expect(page.getByLabel('Network seed',{exact:true})).toHaveValue('1337');
 });

@@ -68,4 +68,3 @@ it('shows three parallel lanes on each side and reaches beyond the previous shor
   expect(lanes.map((lane) => lane.endX)).toEqual([1464, 1464, 1464]);
   expect(lanes.map((lane) => lane.endY)).toEqual([482, 500, 518]);
 });
-

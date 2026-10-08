@@ -10,6 +10,7 @@ const inputs = [
   ['browser', 'test-results/browser.json'],
   ['leaderboard', 'test-results/leaderboard.json'],
   ['published', 'test-results/published.json'],
+  ['engineering', 'test-results/engineering.json'],
 ];
 const summaries = [];
 await mkdir(destination, { recursive: true });
@@ -33,6 +34,7 @@ for (const [source, target] of [
   ['playwright-report', 'browser'],
   ['playwright-leaderboard-report', 'leaderboard'],
   ['playwright-published-report', 'published'],
+  ['artifacts/engineering-report', 'engineering'],
 ]) await cp(source, `${destination}/${target}`, { recursive: true });
 
 const profiles = process.argv.slice(2);

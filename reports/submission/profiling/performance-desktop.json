@@ -1,0 +1,164 @@
+{
+  "recordedAt": "2026-10-08T01:34:37.263Z",
+  "platform": "win32",
+  "cpu": "AMD Ryzen 5 3600 6-Core Processor              ",
+  "totalMemoryGB": 23.92669677734375,
+  "browser": "153.0.8010.12",
+  "baseURL": "http://127.0.0.1:4189",
+  "viewport": {
+    "width": 1280,
+    "height": 720,
+    "dpr": 1
+  },
+  "cpuThrottlingRate": 1,
+  "configuration": {
+    "sessionSeconds": 180,
+    "spawnSeconds": 1,
+    "seed": 1337
+  },
+  "method": "Headless optimized build. Local diagnostic session ticket, no ranked backend traffic. 180-second measurement. Scripted movement and all batteries held. Diagnostic hull protection. rAF sampling, first 120 frames excluded. 5 2.2-second play/abandon cycles with forced GC, then 10 seconds idle. Weak references track retired simulation, game, application and canvas objects. Simulation indices identify whether retention accumulates or replaces an earlier instance.",
+  "baseline": {
+    "heapBytes": 7501740,
+    "documents": 1,
+    "nodes": 139,
+    "jsEventListeners": 191
+  },
+  "combat": {
+    "wallSeconds": 182.38110000000597,
+    "activeSeconds": 180.00000000003539,
+    "frames": 2345,
+    "fps": 12.73783979976691,
+    "p95FrameMs": 100.09999999999854,
+    "peakEnemies": 10,
+    "peakProjectiles": 14,
+    "peakEntities": 28,
+    "reason": "time_expired",
+    "isPaused": false
+  },
+  "afterCombat": {
+    "heapBytes": 8406344,
+    "documents": 2,
+    "nodes": 173,
+    "jsEventListeners": 188,
+    "retained": {
+      "simulation": 0,
+      "game": 0,
+      "application": 0,
+      "canvas": 0,
+      "simulationIndices": []
+    }
+  },
+  "cycles": [
+    {
+      "cycle": 1,
+      "heapBytes": 8718308,
+      "documents": 2,
+      "nodes": 173,
+      "jsEventListeners": 186,
+      "canvasCount": 0,
+      "pixiAttached": false,
+      "simulationAttached": false,
+      "retained": {
+        "simulation": 1,
+        "game": 0,
+        "application": 0,
+        "canvas": 0,
+        "simulationIndices": [
+          1
+        ]
+      }
+    },
+    {
+      "cycle": 2,
+      "heapBytes": 8971784,
+      "documents": 2,
+      "nodes": 173,
+      "jsEventListeners": 187,
+      "canvasCount": 0,
+      "pixiAttached": false,
+      "simulationAttached": false,
+      "retained": {
+        "simulation": 1,
+        "game": 0,
+        "application": 0,
+        "canvas": 0,
+        "simulationIndices": [
+          2
+        ]
+      }
+    },
+    {
+      "cycle": 3,
+      "heapBytes": 9045984,
+      "documents": 2,
+      "nodes": 173,
+      "jsEventListeners": 186,
+      "canvasCount": 0,
+      "pixiAttached": false,
+      "simulationAttached": false,
+      "retained": {
+        "simulation": 1,
+        "game": 0,
+        "application": 0,
+        "canvas": 0,
+        "simulationIndices": [
+          3
+        ]
+      }
+    },
+    {
+      "cycle": 4,
+      "heapBytes": 9121876,
+      "documents": 2,
+      "nodes": 173,
+      "jsEventListeners": 186,
+      "canvasCount": 0,
+      "pixiAttached": false,
+      "simulationAttached": false,
+      "retained": {
+        "simulation": 1,
+        "game": 0,
+        "application": 0,
+        "canvas": 0,
+        "simulationIndices": [
+          4
+        ]
+      }
+    },
+    {
+      "cycle": 5,
+      "heapBytes": 9162432,
+      "documents": 2,
+      "nodes": 173,
+      "jsEventListeners": 186,
+      "canvasCount": 0,
+      "pixiAttached": false,
+      "simulationAttached": false,
+      "retained": {
+        "simulation": 1,
+        "game": 0,
+        "application": 0,
+        "canvas": 0,
+        "simulationIndices": [
+          5
+        ]
+      }
+    }
+  ],
+  "afterIdle": {
+    "heapBytes": 9162848,
+    "documents": 2,
+    "nodes": 173,
+    "jsEventListeners": 185,
+    "retained": {
+      "simulation": 1,
+      "game": 0,
+      "application": 0,
+      "canvas": 0,
+      "simulationIndices": [
+        5
+      ]
+    }
+  },
+  "errors": []
+}

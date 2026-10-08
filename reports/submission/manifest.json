@@ -1,0 +1,53 @@
+{
+  "recordedAt": "2026-10-08T02:01:57.765Z",
+  "sourceDigest": "fd84aa9a5e5d6c6a6e49f9c4e5ee2417765b57481b420ed3c8cac8515ffa637a",
+  "sourceDigestMethod": "SHA256 of sorted delivered source/test/tool/config paths and contents, excluding reports",
+  "parentCommit": "4432f90a763fea12ff5c743b575937d079be56f2",
+  "scope": "Local Windows evidence; CI and published URL verification are separate",
+  "summaries": [
+    {
+      "name": "unit",
+      "passed": 292,
+      "skipped": 0,
+      "failed": 0,
+      "files": 32
+    },
+    {
+      "name": "browser",
+      "passed": 101,
+      "skipped": 5,
+      "failed": 0,
+      "flaky": 0,
+      "durationMs": 492986.24899999995
+    },
+    {
+      "name": "leaderboard",
+      "passed": 4,
+      "skipped": 0,
+      "failed": 0,
+      "flaky": 0,
+      "durationMs": 68929.375
+    },
+    {
+      "name": "published",
+      "passed": 8,
+      "skipped": 0,
+      "failed": 0,
+      "flaky": 0,
+      "durationMs": 72530.759
+    },
+    {
+      "name": "engineering",
+      "passed": 6,
+      "skipped": 0,
+      "failed": 0,
+      "flaky": 0,
+      "durationMs": 51942.69300000001
+    }
+  ],
+  "profiles": [
+    "artifacts/performance-desktop-chrome.json",
+    "artifacts/performance-mobile-4x.json",
+    "artifacts/performance-desktop.json"
+  ]
+}

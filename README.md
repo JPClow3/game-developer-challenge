@@ -4,6 +4,8 @@ Single-player naval combat built with React 18, TypeScript and PixiJS 8. Sail ar
 
 [Play](https://game-developer-challenge.pages.dev) · [Source](https://github.com/JPClow3/game-developer-challenge) · [Architecture](ARCHITECTURE.md) · [Deployment](DEPLOYMENT.md) · [Test and performance reports](reports/README.md)
 
+[Requirements matrix and testing story](docs/REVIEW-GUIDE.md) · [Three-minute performance measurements](PERFORMANCE.md)
+
 ## Run locally
 
 Use Node 22 or 24 and npm:

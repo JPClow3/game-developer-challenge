@@ -1,0 +1,9 @@
+{
+  "runUrl": "https://github.com/JPClow3/game-developer-challenge/actions/runs/37714399051",
+  "sourceCommit": "4432f90a763fea12ff5c743b575937d079be56f2",
+  "image": "mcr.microsoft.com/playwright:v1.63.0-noble",
+  "method": "Explicit candidate capture with --update-snapshots; six PNGs reviewed before installation. Full final CI compares these committed baselines without update mode.",
+  "passed": 2,
+  "failed": 0,
+  "durationMs": 12494.709
+}

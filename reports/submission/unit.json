@@ -1,0 +1,3648 @@
+{
+  "numTotalTestSuites": 112,
+  "numPassedTestSuites": 112,
+  "numFailedTestSuites": 0,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 292,
+  "numPassedTests": 292,
+  "numFailedTests": 0,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": {
+    "added": 0,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0,
+    "didUpdate": false
+  },
+  "startTime": 1791423610461,
+  "success": true,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "AssetLoader & Kenney Visual Mappings"
+          ],
+          "fullName": "AssetLoader & Kenney Visual Mappings enforces singleton pattern",
+          "status": "passed",
+          "title": "enforces singleton pattern",
+          "duration": 1.4710999999997512,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AssetLoader & Kenney Visual Mappings",
+            "Damage Tier Calculation"
+          ],
+          "fullName": "AssetLoader & Kenney Visual Mappings Damage Tier Calculation accurately calculates 4 Kenney damage deterioration stages based on health",
+          "status": "passed",
+          "title": "accurately calculates 4 Kenney damage deterioration stages based on health",
+          "duration": 0.599999999999909,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AssetLoader & Kenney Visual Mappings",
+            "Damage Tier Calculation"
+          ],
+          "fullName": "AssetLoader & Kenney Visual Mappings Damage Tier Calculation handles edge cases gracefully",
+          "status": "passed",
+          "title": "handles edge cases gracefully",
+          "duration": 0.24220000000013897,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AssetLoader & Kenney Visual Mappings",
+            "Entity Ship Faction & Frame Mapping"
+          ],
+          "fullName": "AssetLoader & Kenney Visual Mappings Entity Ship Faction & Frame Mapping maps entity types to their designated Kenney ship series",
+          "status": "passed",
+          "title": "maps entity types to their designated Kenney ship series",
+          "duration": 0.2417000000000371,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AssetLoader & Kenney Visual Mappings",
+            "Entity Ship Faction & Frame Mapping"
+          ],
+          "fullName": "AssetLoader & Kenney Visual Mappings Entity Ship Faction & Frame Mapping maps Player Vessel (Series 1) across all 4 damage stages",
+          "status": "passed",
+          "title": "maps Player Vessel (Series 1) across all 4 damage stages",
+          "duration": 0.3215999999997621,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AssetLoader & Kenney Visual Mappings",
+            "Entity Ship Faction & Frame Mapping"
+          ],
+          "fullName": "AssetLoader & Kenney Visual Mappings Entity Ship Faction & Frame Mapping maps Chaser Enemy (Series 2) across all 4 damage stages",
+          "status": "passed",
+          "title": "maps Chaser Enemy (Series 2) across all 4 damage stages",
+          "duration": 0.3526999999999134,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AssetLoader & Kenney Visual Mappings",
+            "Entity Ship Faction & Frame Mapping"
+          ],
+          "fullName": "AssetLoader & Kenney Visual Mappings Entity Ship Faction & Frame Mapping maps Shooter Enemy (Series 3) across all 4 damage stages",
+          "status": "passed",
+          "title": "maps Shooter Enemy (Series 3) across all 4 damage stages",
+          "duration": 0.39409999999998035,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AssetLoader & Kenney Visual Mappings",
+            "Entity Ship Faction & Frame Mapping"
+          ],
+          "fullName": "AssetLoader & Kenney Visual Mappings Entity Ship Faction & Frame Mapping contains all 24 Kenney ship mappings without omissions",
+          "status": "passed",
+          "title": "contains all 24 Kenney ship mappings without omissions",
+          "duration": 3.0327000000002045,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AssetLoader & Kenney Visual Mappings",
+            "Entity Ship Faction & Frame Mapping"
+          ],
+          "fullName": "AssetLoader & Kenney Visual Mappings Entity Ship Faction & Frame Mapping contains projectile and explosion VFX subtextures",
+          "status": "passed",
+          "title": "contains projectile and explosion VFX subtextures",
+          "duration": 0.483600000000024,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AssetLoader & Kenney Visual Mappings",
+            "Tile Grid Coordinate Calculation"
+          ],
+          "fullName": "AssetLoader & Kenney Visual Mappings Tile Grid Coordinate Calculation maps 16x6 tile indices to precise column and row offsets",
+          "status": "passed",
+          "title": "maps 16x6 tile indices to precise column and row offsets",
+          "duration": 1.4326999999998407,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AssetLoader & Kenney Visual Mappings",
+            "Sound Manifest Catalog"
+          ],
+          "fullName": "AssetLoader & Kenney Visual Mappings Sound Manifest Catalog contains exactly 27 audio files according to assets_spec.md",
+          "status": "passed",
+          "title": "contains exactly 27 audio files according to assets_spec.md",
+          "duration": 0.9144000000001142,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AssetLoader & Kenney Visual Mappings",
+            "Sound Manifest Catalog"
+          ],
+          "fullName": "AssetLoader & Kenney Visual Mappings Sound Manifest Catalog identifies looping ambient audio tracks",
+          "status": "passed",
+          "title": "identifies looping ambient audio tracks",
+          "duration": 0.24339999999983775,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AssetLoader & Kenney Visual Mappings",
+            "Sound Manifest Catalog"
+          ],
+          "fullName": "AssetLoader & Kenney Visual Mappings Sound Manifest Catalog defines valid volumes within [0.0, 1.0] for all SFX",
+          "status": "passed",
+          "title": "defines valid volumes within [0.0, 1.0] for all SFX",
+          "duration": 1.8269000000000233,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AssetLoader & Kenney Visual Mappings",
+            "UI Panel Layout Metadata"
+          ],
+          "fullName": "AssetLoader & Kenney Visual Mappings UI Panel Layout Metadata defines 9-slice borders for panel_menu",
+          "status": "passed",
+          "title": "defines 9-slice borders for panel_menu",
+          "duration": 0.26310000000012224,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AssetLoader & Kenney Visual Mappings",
+            "Promise Caching & Double Mount Safety"
+          ],
+          "fullName": "AssetLoader & Kenney Visual Mappings Promise Caching & Double Mount Safety caches the loading promise and returns the same promise for concurrent calls",
+          "status": "passed",
+          "title": "caches the loading promise and returns the same promise for concurrent calls",
+          "duration": 2.8688999999999396,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423672071,
+      "endTime": 1791423672085.869,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m1/assetLoader.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Ambient loop loading across match exit and restart"
+          ],
+          "fullName": "Ambient loop loading across match exit and restart keeps the harbor quiet when the match exits before ambience has loaded",
+          "status": "passed",
+          "title": "keeps the harbor quiet when the match exits before ambience has loaded",
+          "duration": 5.028999999999996,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Ambient loop loading across match exit and restart"
+          ],
+          "fullName": "Ambient loop loading across match exit and restart deduplicates repeated starts while a single loop is loading",
+          "status": "passed",
+          "title": "deduplicates repeated starts while a single loop is loading",
+          "duration": 0.9015000000003965,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Ambient loop loading across match exit and restart"
+          ],
+          "fullName": "Ambient loop loading across match exit and restart stopping one pending loop leaves the other requested loop intact",
+          "status": "passed",
+          "title": "stopping one pending loop leaves the other requested loop intact",
+          "duration": 1.106499999999869,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Ambient loop loading across match exit and restart"
+          ],
+          "fullName": "Ambient loop loading across match exit and restart a stale load cannot start or replace the restarted voyage (old first: true)",
+          "status": "passed",
+          "title": "a stale load cannot start or replace the restarted voyage (old first: true)",
+          "duration": 2.273200000000088,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Ambient loop loading across match exit and restart"
+          ],
+          "fullName": "Ambient loop loading across match exit and restart a stale load cannot start or replace the restarted voyage (old first: false)",
+          "status": "passed",
+          "title": "a stale load cannot start or replace the restarted voyage (old first: false)",
+          "duration": 1.0837000000001353,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Ambient loop loading across match exit and restart"
+          ],
+          "fullName": "Ambient loop loading across match exit and restart allows a fresh request after a failed load",
+          "status": "passed",
+          "title": "allows a fresh request after a failed load",
+          "duration": 0.8287000000000262,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Ambient loop loading across match exit and restart"
+          ],
+          "fullName": "Ambient loop loading across match exit and restart honors pause volume changes while the loop is still loading",
+          "status": "passed",
+          "title": "honors pause volume changes while the loop is still loading",
+          "duration": 0.9203999999999724,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423677749,
+      "endTime": 1791423677761.9204,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m1/audioLoopLifecycle.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "AudioManager Web Audio API Sound Management"
+          ],
+          "fullName": "AudioManager Web Audio API Sound Management enforces singleton pattern",
+          "status": "passed",
+          "title": "enforces singleton pattern",
+          "duration": 2.429099999999835,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AudioManager Web Audio API Sound Management"
+          ],
+          "fullName": "AudioManager Web Audio API Sound Management manages master, sfx, and music volumes with clamping",
+          "status": "passed",
+          "title": "manages master, sfx, and music volumes with clamping",
+          "duration": 0.5989999999997053,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AudioManager Web Audio API Sound Management"
+          ],
+          "fullName": "AudioManager Web Audio API Sound Management handles mute toggle correctly",
+          "status": "passed",
+          "title": "handles mute toggle correctly",
+          "duration": 0.27000000000043656,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AudioManager Web Audio API Sound Management"
+          ],
+          "fullName": "AudioManager Web Audio API Sound Management handles user gesture unlock AudioContext resumption",
+          "status": "passed",
+          "title": "handles user gesture unlock AudioContext resumption",
+          "duration": 0.2316000000000713,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AudioManager Web Audio API Sound Management"
+          ],
+          "fullName": "AudioManager Web Audio API Sound Management manages ambient loops start, stop, and volume update",
+          "status": "passed",
+          "title": "manages ambient loops start, stop, and volume update",
+          "duration": 2.6299999999996544,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AudioManager Web Audio API Sound Management"
+          ],
+          "fullName": "AudioManager Web Audio API Sound Management guards SFX playback against voice clipping",
+          "status": "passed",
+          "title": "guards SFX playback against voice clipping",
+          "duration": 0.6451000000001841,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "AudioManager Web Audio API Sound Management"
+          ],
+          "fullName": "AudioManager Web Audio API Sound Management guards against NaN and non-finite volume inputs without mutating state or throwing",
+          "status": "passed",
+          "title": "guards against NaN and non-finite volume inputs without mutating state or throwing",
+          "duration": 0.6221000000000458,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423686524,
+      "endTime": 1791423686531.622,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m1/audioManager.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Empirical Challenger: AudioManager Adversarial & Stress Verification",
+            "1. Non-finite Volume Setters State Preservation & Exception Safety"
+          ],
+          "fullName": "Empirical Challenger: AudioManager Adversarial & Stress Verification 1. Non-finite Volume Setters State Preservation & Exception Safety preserves masterVolume state and never throws when passed non-finite numbers",
+          "status": "passed",
+          "title": "preserves masterVolume state and never throws when passed non-finite numbers",
+          "duration": 5.617399999999634,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Challenger: AudioManager Adversarial & Stress Verification",
+            "1. Non-finite Volume Setters State Preservation & Exception Safety"
+          ],
+          "fullName": "Empirical Challenger: AudioManager Adversarial & Stress Verification 1. Non-finite Volume Setters State Preservation & Exception Safety preserves sfxVolume state and never throws when passed non-finite numbers",
+          "status": "passed",
+          "title": "preserves sfxVolume state and never throws when passed non-finite numbers",
+          "duration": 1.225500000000011,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Challenger: AudioManager Adversarial & Stress Verification",
+            "1. Non-finite Volume Setters State Preservation & Exception Safety"
+          ],
+          "fullName": "Empirical Challenger: AudioManager Adversarial & Stress Verification 1. Non-finite Volume Setters State Preservation & Exception Safety preserves musicVolume state and never throws when passed non-finite numbers",
+          "status": "passed",
+          "title": "preserves musicVolume state and never throws when passed non-finite numbers",
+          "duration": 4.4331999999999425,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Challenger: AudioManager Adversarial & Stress Verification",
+            "1. Non-finite Volume Setters State Preservation & Exception Safety"
+          ],
+          "fullName": "Empirical Challenger: AudioManager Adversarial & Stress Verification 1. Non-finite Volume Setters State Preservation & Exception Safety rejects malformed non-number types without mutating state or throwing",
+          "status": "passed",
+          "title": "rejects malformed non-number types without mutating state or throwing",
+          "duration": 4.908899999999903,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Challenger: AudioManager Adversarial & Stress Verification",
+            "1. Non-finite Volume Setters State Preservation & Exception Safety"
+          ],
+          "fullName": "Empirical Challenger: AudioManager Adversarial & Stress Verification 1. Non-finite Volume Setters State Preservation & Exception Safety strictly clamps valid boundary floats [0, 1]",
+          "status": "passed",
+          "title": "strictly clamps valid boundary floats [0, 1]",
+          "duration": 7.560599999999795,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Challenger: AudioManager Adversarial & Stress Verification",
+            "2. playSfx Rapid Calls & Voice Limiting Stress Harness"
+          ],
+          "fullName": "Empirical Challenger: AudioManager Adversarial & Stress Verification 2. playSfx Rapid Calls & Voice Limiting Stress Harness survives rapid-fire 1000 calls to playSfx without leaking voices or throwing",
+          "status": "passed",
+          "title": "survives rapid-fire 1000 calls to playSfx without leaking voices or throwing",
+          "duration": 9.41740000000027,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Challenger: AudioManager Adversarial & Stress Verification",
+            "2. playSfx Rapid Calls & Voice Limiting Stress Harness"
+          ],
+          "fullName": "Empirical Challenger: AudioManager Adversarial & Stress Verification 2. playSfx Rapid Calls & Voice Limiting Stress Harness handles rapid lifecycle cycles (fire 4 -> end 4 -> fire 4) over 100 iterations",
+          "status": "passed",
+          "title": "handles rapid lifecycle cycles (fire 4 -> end 4 -> fire 4) over 100 iterations",
+          "duration": 219.65689999999995,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Challenger: AudioManager Adversarial & Stress Verification",
+            "2. playSfx Rapid Calls & Voice Limiting Stress Harness"
+          ],
+          "fullName": "Empirical Challenger: AudioManager Adversarial & Stress Verification 2. playSfx Rapid Calls & Voice Limiting Stress Harness sanitizes volumeScale under adversarial inputs (NaN, Infinity, negative, extreme)",
+          "status": "passed",
+          "title": "sanitizes volumeScale under adversarial inputs (NaN, Infinity, negative, extreme)",
+          "duration": 6.067800000000261,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Challenger: AudioManager Adversarial & Stress Verification",
+            "2. playSfx Rapid Calls & Voice Limiting Stress Harness"
+          ],
+          "fullName": "Empirical Challenger: AudioManager Adversarial & Stress Verification 2. playSfx Rapid Calls & Voice Limiting Stress Harness handles multiple onended calls defensively without driving counter negative",
+          "status": "passed",
+          "title": "handles multiple onended calls defensively without driving counter negative",
+          "duration": 4.077499999999873,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Challenger: AudioManager Adversarial & Stress Verification",
+            "3. Ambient Loops Rapid Calls & Adversarial Scenarios"
+          ],
+          "fullName": "Empirical Challenger: AudioManager Adversarial & Stress Verification 3. Ambient Loops Rapid Calls & Adversarial Scenarios prevents duplication under 500 rapid synchronous startLoop calls",
+          "status": "passed",
+          "title": "prevents duplication under 500 rapid synchronous startLoop calls",
+          "duration": 2.0274999999996908,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Challenger: AudioManager Adversarial & Stress Verification",
+            "3. Ambient Loops Rapid Calls & Adversarial Scenarios"
+          ],
+          "fullName": "Empirical Challenger: AudioManager Adversarial & Stress Verification 3. Ambient Loops Rapid Calls & Adversarial Scenarios survives rapid startLoop / stopLoop churn (200 cycles)",
+          "status": "passed",
+          "title": "survives rapid startLoop / stopLoop churn (200 cycles)",
+          "duration": 77.22470000000021,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Challenger: AudioManager Adversarial & Stress Verification",
+            "3. Ambient Loops Rapid Calls & Adversarial Scenarios"
+          ],
+          "fullName": "Empirical Challenger: AudioManager Adversarial & Stress Verification 3. Ambient Loops Rapid Calls & Adversarial Scenarios handles setLoopVolume with NaN, Infinity, -Infinity without throwing or corrupting gain",
+          "status": "passed",
+          "title": "handles setLoopVolume with NaN, Infinity, -Infinity without throwing or corrupting gain",
+          "duration": 2.673999999999978,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Challenger: AudioManager Adversarial & Stress Verification",
+            "3. Ambient Loops Rapid Calls & Adversarial Scenarios"
+          ],
+          "fullName": "Empirical Challenger: AudioManager Adversarial & Stress Verification 3. Ambient Loops Rapid Calls & Adversarial Scenarios handles concurrent startLoop calls while asset is asynchronously fetching",
+          "status": "passed",
+          "title": "handles concurrent startLoop calls while asset is asynchronously fetching",
+          "duration": 21.309700000000248,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Challenger: AudioManager Adversarial & Stress Verification",
+            "4. Rapid AudioContext Unlock & Mute Toggle Thrash"
+          ],
+          "fullName": "Empirical Challenger: AudioManager Adversarial & Stress Verification 4. Rapid AudioContext Unlock & Mute Toggle Thrash handles 50 parallel unlockAudio calls simultaneously",
+          "status": "passed",
+          "title": "handles 50 parallel unlockAudio calls simultaneously",
+          "duration": 0.9740999999999076,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Challenger: AudioManager Adversarial & Stress Verification",
+            "4. Rapid AudioContext Unlock & Mute Toggle Thrash"
+          ],
+          "fullName": "Empirical Challenger: AudioManager Adversarial & Stress Verification 4. Rapid AudioContext Unlock & Mute Toggle Thrash maintains integrity under simultaneous voice playback, volume thrashing, and muting",
+          "status": "passed",
+          "title": "maintains integrity under simultaneous voice playback, volume thrashing, and muting",
+          "duration": 4.6203999999997905,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423656307,
+      "endTime": 1791423656680.6204,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m1/audioManagerEmpiricalChallenger.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Challenger M1-2: Empirical Audio & Contracts Stress Tests",
+            "1. AudioManager Voice Limiting & Gain Hierarchy"
+          ],
+          "fullName": "Challenger M1-2: Empirical Audio & Contracts Stress Tests 1. AudioManager Voice Limiting & Gain Hierarchy enforces maximum 4 concurrent voices per SFX under rapid fire (50 calls)",
+          "status": "passed",
+          "title": "enforces maximum 4 concurrent voices per SFX under rapid fire (50 calls)",
+          "duration": 9.76509999999962,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Challenger M1-2: Empirical Audio & Contracts Stress Tests",
+            "1. AudioManager Voice Limiting & Gain Hierarchy"
+          ],
+          "fullName": "Challenger M1-2: Empirical Audio & Contracts Stress Tests 1. AudioManager Voice Limiting & Gain Hierarchy maintains independent voice pools for different sound IDs during simultaneous bursts",
+          "status": "passed",
+          "title": "maintains independent voice pools for different sound IDs during simultaneous bursts",
+          "duration": 3.3834999999999127,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Challenger M1-2: Empirical Audio & Contracts Stress Tests",
+            "1. AudioManager Voice Limiting & Gain Hierarchy"
+          ],
+          "fullName": "Challenger M1-2: Empirical Audio & Contracts Stress Tests 1. AudioManager Voice Limiting & Gain Hierarchy reclaims voice slots and disconnects gain nodes as sounds end (source.onended)",
+          "status": "passed",
+          "title": "reclaims voice slots and disconnects gain nodes as sounds end (source.onended)",
+          "duration": 3.1053000000001703,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Challenger M1-2: Empirical Audio & Contracts Stress Tests",
+            "1. AudioManager Voice Limiting & Gain Hierarchy"
+          ],
+          "fullName": "Challenger M1-2: Empirical Audio & Contracts Stress Tests 1. AudioManager Voice Limiting & Gain Hierarchy clamps extreme volumeScale inputs safely without throwing or exceeding limits",
+          "status": "passed",
+          "title": "clamps extreme volumeScale inputs safely without throwing or exceeding limits",
+          "duration": 1.0330000000003565,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Challenger M1-2: Empirical Audio & Contracts Stress Tests",
+            "1. AudioManager Voice Limiting & Gain Hierarchy"
+          ],
+          "fullName": "Challenger M1-2: Empirical Audio & Contracts Stress Tests 1. AudioManager Voice Limiting & Gain Hierarchy suppresses all SFX immediately when muted without incrementing voice counters",
+          "status": "passed",
+          "title": "suppresses all SFX immediately when muted without incrementing voice counters",
+          "duration": 1.242500000000291,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Challenger M1-2: Empirical Audio & Contracts Stress Tests",
+            "1. AudioManager Voice Limiting & Gain Hierarchy"
+          ],
+          "fullName": "Challenger M1-2: Empirical Audio & Contracts Stress Tests 1. AudioManager Voice Limiting & Gain Hierarchy survives volume thrashing and rapid mute toggling (100 iterations)",
+          "status": "passed",
+          "title": "survives volume thrashing and rapid mute toggling (100 iterations)",
+          "duration": 1.7572000000000116,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Challenger M1-2: Empirical Audio & Contracts Stress Tests",
+            "1. AudioManager Voice Limiting & Gain Hierarchy"
+          ],
+          "fullName": "Challenger M1-2: Empirical Audio & Contracts Stress Tests 1. AudioManager Voice Limiting & Gain Hierarchy prevents duplicate ambient loops when startLoop is called multiple times",
+          "status": "passed",
+          "title": "prevents duplicate ambient loops when startLoop is called multiple times",
+          "duration": 1.7710000000006403,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Challenger M1-2: Empirical Audio & Contracts Stress Tests",
+            "1. AudioManager Voice Limiting & Gain Hierarchy"
+          ],
+          "fullName": "Challenger M1-2: Empirical Audio & Contracts Stress Tests 1. AudioManager Voice Limiting & Gain Hierarchy resets cleanly during active playback without throwing errors",
+          "status": "passed",
+          "title": "resets cleanly during active playback without throwing errors",
+          "duration": 1.035899999999856,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Challenger M1-2: Empirical Audio & Contracts Stress Tests",
+            "2. Match Records & Ranking Domain Contracts"
+          ],
+          "fullName": "Challenger M1-2: Empirical Audio & Contracts Stress Tests 2. Match Records & Ranking Domain Contracts verifies strict assignability from SubmitMatchRequest to MatchRecord",
+          "status": "passed",
+          "title": "verifies strict assignability from SubmitMatchRequest to MatchRecord",
+          "duration": 0.5871000000006461,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Challenger M1-2: Empirical Audio & Contracts Stress Tests",
+            "2. Match Records & Ranking Domain Contracts"
+          ],
+          "fullName": "Challenger M1-2: Empirical Audio & Contracts Stress Tests 2. Match Records & Ranking Domain Contracts enforces exclusion of \"abandoned\" endReason from SubmitMatchRequest",
+          "status": "passed",
+          "title": "enforces exclusion of \"abandoned\" endReason from SubmitMatchRequest",
+          "duration": 0.375,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Challenger M1-2: Empirical Audio & Contracts Stress Tests",
+            "2. Match Records & Ranking Domain Contracts"
+          ],
+          "fullName": "Challenger M1-2: Empirical Audio & Contracts Stress Tests 2. Match Records & Ranking Domain Contracts verifies RankingItem mapping and deterministic tiebreaker contract",
+          "status": "passed",
+          "title": "verifies RankingItem mapping and deterministic tiebreaker contract",
+          "duration": 0.5734999999995125,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Challenger M1-2: Empirical Audio & Contracts Stress Tests",
+            "2. Match Records & Ranking Domain Contracts"
+          ],
+          "fullName": "Challenger M1-2: Empirical Audio & Contracts Stress Tests 2. Match Records & Ranking Domain Contracts verifies pagination slicing contract with PaginatedResponse",
+          "status": "passed",
+          "title": "verifies pagination slicing contract with PaginatedResponse",
+          "duration": 0.7328000000006796,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Challenger M1-2: Empirical Audio & Contracts Stress Tests",
+            "3. Sound Manifest Integrity & Edge Contracts"
+          ],
+          "fullName": "Challenger M1-2: Empirical Audio & Contracts Stress Tests 3. Sound Manifest Integrity & Edge Contracts verifies all 27 manifest sound IDs conform to canonical SoundId union",
+          "status": "passed",
+          "title": "verifies all 27 manifest sound IDs conform to canonical SoundId union",
+          "duration": 3.460900000000038,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423651709,
+      "endTime": 1791423651739.461,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m1/challenger2AudioAndContracts.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "GameplayConfig Domain Contracts & Validation"
+          ],
+          "fullName": "GameplayConfig Domain Contracts & Validation should provide complete default configuration matching design specification",
+          "status": "passed",
+          "title": "should provide complete default configuration matching design specification",
+          "duration": 1.6656000000002678,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "GameplayConfig Domain Contracts & Validation",
+            "Clamping Functions"
+          ],
+          "fullName": "GameplayConfig Domain Contracts & Validation Clamping Functions clamps session duration strictly within [60, 180] seconds",
+          "status": "passed",
+          "title": "clamps session duration strictly within [60, 180] seconds",
+          "duration": 0.5518999999999323,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "GameplayConfig Domain Contracts & Validation",
+            "Clamping Functions"
+          ],
+          "fullName": "GameplayConfig Domain Contracts & Validation Clamping Functions clamps enemy spawn interval strictly within [1, 15] seconds",
+          "status": "passed",
+          "title": "clamps enemy spawn interval strictly within [1, 15] seconds",
+          "duration": 0.3368000000000393,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "GameplayConfig Domain Contracts & Validation",
+            "validateGameplayConfig"
+          ],
+          "fullName": "GameplayConfig Domain Contracts & Validation validateGameplayConfig returns isValid true for default and valid configs",
+          "status": "passed",
+          "title": "returns isValid true for default and valid configs",
+          "duration": 1.0230000000001382,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "GameplayConfig Domain Contracts & Validation",
+            "validateGameplayConfig"
+          ],
+          "fullName": "GameplayConfig Domain Contracts & Validation validateGameplayConfig returns validation errors for out-of-range session duration",
+          "status": "passed",
+          "title": "returns validation errors for out-of-range session duration",
+          "duration": 0.4654000000000451,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "GameplayConfig Domain Contracts & Validation",
+            "validateGameplayConfig"
+          ],
+          "fullName": "GameplayConfig Domain Contracts & Validation validateGameplayConfig returns validation errors for out-of-range spawn intervals",
+          "status": "passed",
+          "title": "returns validation errors for out-of-range spawn intervals",
+          "duration": 0.35299999999961074,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423682212,
+      "endTime": 1791423682217.353,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m1/config.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "1. NaN, Infinity, -Infinity Adversarial Inputs"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 1. NaN, Infinity, -Infinity Adversarial Inputs rejects NaN sessionDurationSeconds",
+          "status": "passed",
+          "title": "rejects NaN sessionDurationSeconds",
+          "duration": 2.422900000000027,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "1. NaN, Infinity, -Infinity Adversarial Inputs"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 1. NaN, Infinity, -Infinity Adversarial Inputs rejects +Infinity sessionDurationSeconds",
+          "status": "passed",
+          "title": "rejects +Infinity sessionDurationSeconds",
+          "duration": 0.48889999999983047,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "1. NaN, Infinity, -Infinity Adversarial Inputs"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 1. NaN, Infinity, -Infinity Adversarial Inputs rejects -Infinity sessionDurationSeconds",
+          "status": "passed",
+          "title": "rejects -Infinity sessionDurationSeconds",
+          "duration": 0.41919999999981883,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "1. NaN, Infinity, -Infinity Adversarial Inputs"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 1. NaN, Infinity, -Infinity Adversarial Inputs rejects NaN spawner.spawnIntervalSeconds",
+          "status": "passed",
+          "title": "rejects NaN spawner.spawnIntervalSeconds",
+          "duration": 0.4805999999998676,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "1. NaN, Infinity, -Infinity Adversarial Inputs"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 1. NaN, Infinity, -Infinity Adversarial Inputs rejects +Infinity spawner.spawnIntervalSeconds",
+          "status": "passed",
+          "title": "rejects +Infinity spawner.spawnIntervalSeconds",
+          "duration": 0.4414999999999054,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "1. NaN, Infinity, -Infinity Adversarial Inputs"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 1. NaN, Infinity, -Infinity Adversarial Inputs rejects -Infinity spawner.spawnIntervalSeconds",
+          "status": "passed",
+          "title": "rejects -Infinity spawner.spawnIntervalSeconds",
+          "duration": 0.44669999999996435,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "1. NaN, Infinity, -Infinity Adversarial Inputs"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 1. NaN, Infinity, -Infinity Adversarial Inputs rejects simultaneously NaN sessionDurationSeconds and NaN spawnIntervalSeconds",
+          "status": "passed",
+          "title": "rejects simultaneously NaN sessionDurationSeconds and NaN spawnIntervalSeconds",
+          "duration": 0.36819999999988795,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "2. Negative Numbers and Zero Boundaries"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 2. Negative Numbers and Zero Boundaries rejects negative session duration floats",
+          "status": "passed",
+          "title": "rejects negative session duration floats",
+          "duration": 0.6556000000000495,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "2. Negative Numbers and Zero Boundaries"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 2. Negative Numbers and Zero Boundaries rejects 0 and -0 session duration",
+          "status": "passed",
+          "title": "rejects 0 and -0 session duration",
+          "duration": 0.339799999999741,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "2. Negative Numbers and Zero Boundaries"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 2. Negative Numbers and Zero Boundaries rejects negative spawn interval floats and zero",
+          "status": "passed",
+          "title": "rejects negative spawn interval floats and zero",
+          "duration": 0.6743000000001302,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "3. Strict Boundary Limits"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 3. Strict Boundary Limits validates exact boundaries of session duration",
+          "status": "passed",
+          "title": "validates exact boundaries of session duration",
+          "duration": 0.28070000000025175,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "3. Strict Boundary Limits"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 3. Strict Boundary Limits validates exact boundaries of spawn interval",
+          "status": "passed",
+          "title": "validates exact boundaries of spawn interval",
+          "duration": 0.3019000000003871,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "4. Null, Undefined, and Missing Properties"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 4. Null, Undefined, and Missing Properties handles undefined root input cleanly",
+          "status": "passed",
+          "title": "handles undefined root input cleanly",
+          "duration": 0.2901999999999134,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "4. Null, Undefined, and Missing Properties"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 4. Null, Undefined, and Missing Properties handles null root input gracefully without throwing",
+          "status": "passed",
+          "title": "handles null root input gracefully without throwing",
+          "duration": 0.2723999999998341,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "4. Null, Undefined, and Missing Properties"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 4. Null, Undefined, and Missing Properties handles empty partial object {}",
+          "status": "passed",
+          "title": "handles empty partial object {}",
+          "duration": 0.29680000000007567,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "4. Null, Undefined, and Missing Properties"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 4. Null, Undefined, and Missing Properties handles undefined properties as omission (fallback to default)",
+          "status": "passed",
+          "title": "handles undefined properties as omission (fallback to default)",
+          "duration": 0.36560000000008586,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "4. Null, Undefined, and Missing Properties"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 4. Null, Undefined, and Missing Properties flags null property values as invalid (typeof !== number)",
+          "status": "passed",
+          "title": "flags null property values as invalid (typeof !== number)",
+          "duration": 0.35609999999996944,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "4. Null, Undefined, and Missing Properties"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 4. Null, Undefined, and Missing Properties handles null spawner object gracefully without crashing",
+          "status": "passed",
+          "title": "handles null spawner object gracefully without crashing",
+          "duration": 0.33359999999993306,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "5. Direct Clamping Functions Adversarial Inputs"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 5. Direct Clamping Functions Adversarial Inputs clamps adversarial session duration values safely",
+          "status": "passed",
+          "title": "clamps adversarial session duration values safely",
+          "duration": 0.3678999999997359,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "5. Direct Clamping Functions Adversarial Inputs"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 5. Direct Clamping Functions Adversarial Inputs clamps adversarial spawn interval values safely",
+          "status": "passed",
+          "title": "clamps adversarial spawn interval values safely",
+          "duration": 0.3110999999998967,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "6. Non-Numeric Types (Adversarial Runtime Mismatches)"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 6. Non-Numeric Types (Adversarial Runtime Mismatches) flags non-number sessionDurationSeconds as invalid",
+          "status": "passed",
+          "title": "flags non-number sessionDurationSeconds as invalid",
+          "duration": 0.8423000000002503,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "6. Non-Numeric Types (Adversarial Runtime Mismatches)"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 6. Non-Numeric Types (Adversarial Runtime Mismatches) flags non-number spawnIntervalSeconds as invalid",
+          "status": "passed",
+          "title": "flags non-number spawnIntervalSeconds as invalid",
+          "duration": 0.7352000000000771,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "7. Extreme Number Boundaries and Fuzzing"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 7. Extreme Number Boundaries and Fuzzing handles extreme float boundaries",
+          "status": "passed",
+          "title": "handles extreme float boundaries",
+          "duration": 1.3942999999999302,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Stress Verification for validateGameplayConfig and Clamping",
+            "7. Extreme Number Boundaries and Fuzzing"
+          ],
+          "fullName": "Adversarial Stress Verification for validateGameplayConfig and Clamping 7. Extreme Number Boundaries and Fuzzing fuzzes 100 randomized floats and guarantees sanitized output invariants",
+          "status": "passed",
+          "title": "fuzzes 100 randomized floats and guarantees sanitized output invariants",
+          "duration": 14.66840000000002,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423654416,
+      "endTime": 1791423654444.6685,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m1/configAdversarialStress.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Continuous Improvement Hardening Tests",
+            "1. RFC 4122 UUID v4 Idempotency Key Compliance"
+          ],
+          "fullName": "Continuous Improvement Hardening Tests 1. RFC 4122 UUID v4 Idempotency Key Compliance generates a valid RFC 4122 UUID v4 string",
+          "status": "passed",
+          "title": "generates a valid RFC 4122 UUID v4 string",
+          "duration": 4.4539999999997235,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Continuous Improvement Hardening Tests",
+            "1. RFC 4122 UUID v4 Idempotency Key Compliance"
+          ],
+          "fullName": "Continuous Improvement Hardening Tests 1. RFC 4122 UUID v4 Idempotency Key Compliance generates 100 unique UUIDs without collisions",
+          "status": "passed",
+          "title": "generates 100 unique UUIDs without collisions",
+          "duration": 0.6743999999998778,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Continuous Improvement Hardening Tests",
+            "2. AudioManager Lifecycle & Mobile Audio Interruption Safeguards"
+          ],
+          "fullName": "Continuous Improvement Hardening Tests 2. AudioManager Lifecycle & Mobile Audio Interruption Safeguards supports resumption from interrupted or suspended states in unlockAudio",
+          "status": "passed",
+          "title": "supports resumption from interrupted or suspended states in unlockAudio",
+          "duration": 0.5769000000000233,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Continuous Improvement Hardening Tests",
+            "2. AudioManager Lifecycle & Mobile Audio Interruption Safeguards"
+          ],
+          "fullName": "Continuous Improvement Hardening Tests 2. AudioManager Lifecycle & Mobile Audio Interruption Safeguards auto-resumes AudioContext when visibilitychange fires and document becomes visible",
+          "status": "passed",
+          "title": "auto-resumes AudioContext when visibilitychange fires and document becomes visible",
+          "duration": 1.4317000000000917,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Continuous Improvement Hardening Tests",
+            "3. PixiGame Sound Resource Reclamation & Audio Loop Ducking"
+          ],
+          "fullName": "Continuous Improvement Hardening Tests 3. PixiGame Sound Resource Reclamation & Audio Loop Ducking stops all audio loops when PixiGame.destroy() is invoked",
+          "status": "passed",
+          "title": "stops all audio loops when PixiGame.destroy() is invoked",
+          "duration": 2.0492000000003827,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Continuous Improvement Hardening Tests",
+            "3. PixiGame Sound Resource Reclamation & Audio Loop Ducking"
+          ],
+          "fullName": "Continuous Improvement Hardening Tests 3. PixiGame Sound Resource Reclamation & Audio Loop Ducking ducks ocean ambience loop volume to 0 on match_paused and restores on match_resumed",
+          "status": "passed",
+          "title": "ducks ocean ambience loop volume to 0 on match_paused and restores on match_resumed",
+          "duration": 3.2865999999999076,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Continuous Improvement Hardening Tests",
+            "4. PendingSubmissionQueue Online Event Auto-Drain"
+          ],
+          "fullName": "Continuous Improvement Hardening Tests 4. PendingSubmissionQueue Online Event Auto-Drain listens to window online event and calls processQueue",
+          "status": "passed",
+          "title": "listens to window online event and calls processQueue",
+          "duration": 0.8245999999999185,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423681957,
+      "endTime": 1791423681971.8247,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m1/continuousImprovement.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Domain Contracts, Kinematics Formulas & API Specifications",
+            "Kinematic Unit Vectors & Orientation Standard"
+          ],
+          "fullName": "Domain Contracts, Kinematics Formulas & API Specifications Kinematic Unit Vectors & Orientation Standard evaluates North heading (theta = 0) with zero x drift and negative y velocity",
+          "status": "passed",
+          "title": "evaluates North heading (theta = 0) with zero x drift and negative y velocity",
+          "duration": 1.6907999999998538,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Domain Contracts, Kinematics Formulas & API Specifications",
+            "Kinematic Unit Vectors & Orientation Standard"
+          ],
+          "fullName": "Domain Contracts, Kinematics Formulas & API Specifications Kinematic Unit Vectors & Orientation Standard evaluates East heading (theta = pi/2) with positive x and zero y velocity",
+          "status": "passed",
+          "title": "evaluates East heading (theta = pi/2) with positive x and zero y velocity",
+          "duration": 0.3423999999999978,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Domain Contracts, Kinematics Formulas & API Specifications",
+            "Kinematic Unit Vectors & Orientation Standard"
+          ],
+          "fullName": "Domain Contracts, Kinematics Formulas & API Specifications Kinematic Unit Vectors & Orientation Standard evaluates South heading (theta = pi) with zero x and positive y velocity",
+          "status": "passed",
+          "title": "evaluates South heading (theta = pi) with zero x and positive y velocity",
+          "duration": 0.21869999999989886,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Domain Contracts, Kinematics Formulas & API Specifications",
+            "3-Cannon Parallel Salvo Geometry Contract"
+          ],
+          "fullName": "Domain Contracts, Kinematics Formulas & API Specifications 3-Cannon Parallel Salvo Geometry Contract calculates 3 parallel port/starboard gunport offsets along ship hull",
+          "status": "passed",
+          "title": "calculates 3 parallel port/starboard gunport offsets along ship hull",
+          "duration": 0.49559999999974025,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Domain Contracts, Kinematics Formulas & API Specifications",
+            "MSW Scenario Inventory"
+          ],
+          "fullName": "Domain Contracts, Kinematics Formulas & API Specifications MSW Scenario Inventory defines all 9 required MSW scenarios from README §6",
+          "status": "passed",
+          "title": "defines all 9 required MSW scenarios from README §6",
+          "duration": 2.496599999999944,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Domain Contracts, Kinematics Formulas & API Specifications",
+            "Match Submission Contract Integrity"
+          ],
+          "fullName": "Domain Contracts, Kinematics Formulas & API Specifications Match Submission Contract Integrity adheres to UUID v4 idempotency and ISO 8601 timestamps",
+          "status": "passed",
+          "title": "adheres to UUID v4 idempotency and ISO 8601 timestamps",
+          "duration": 1.3162999999999556,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423680059,
+      "endTime": 1791423680066.3164,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m1/domainContracts.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Renderer lifetime boundaries"
+          ],
+          "fullName": "Renderer lifetime boundaries does not announce ready when the timed-out view finishes before a retry",
+          "status": "passed",
+          "title": "does not announce ready when the timed-out view finishes before a retry",
+          "duration": 223.73549999999977,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Renderer lifetime boundaries"
+          ],
+          "fullName": "Renderer lifetime boundaries expires unfinished initialization and ignores its late resolve after retry",
+          "status": "passed",
+          "title": "expires unfinished initialization and ignores its late resolve after retry",
+          "duration": 79.1871000000001,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Renderer lifetime boundaries"
+          ],
+          "fullName": "Renderer lifetime boundaries expires unfinished initialization and ignores its late reject after retry",
+          "status": "passed",
+          "title": "expires unfinished initialization and ignores its late reject after retry",
+          "duration": 70.10140000000047,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Renderer lifetime boundaries"
+          ],
+          "fullName": "Renderer lifetime boundaries clears the initialization deadline on unmount",
+          "status": "passed",
+          "title": "clears the initialization deadline on unmount",
+          "duration": 72.32800000000043,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Renderer lifetime boundaries"
+          ],
+          "fullName": "Renderer lifetime boundaries pauses and clears inputs on context loss, then restores drawing without resuming",
+          "status": "passed",
+          "title": "pauses and clears inputs on context loss, then restores drawing without resuming",
+          "duration": 87.53329999999914,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Renderer lifetime boundaries"
+          ],
+          "fullName": "Renderer lifetime boundaries reports initialization failure and retries using the same paused simulation",
+          "status": "passed",
+          "title": "reports initialization failure and retries using the same paused simulation",
+          "duration": 38.579499999999825,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Renderer lifetime boundaries"
+          ],
+          "fullName": "Renderer lifetime boundaries ignores an old restoration frame after renderer replacement",
+          "status": "passed",
+          "title": "ignores an old restoration frame after renderer replacement",
+          "duration": 118.0081999999984,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Renderer lifetime boundaries"
+          ],
+          "fullName": "Renderer lifetime boundaries ignores late initialization resolve after unmount",
+          "status": "passed",
+          "title": "ignores late initialization resolve after unmount",
+          "duration": 59.766999999999825,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Renderer lifetime boundaries"
+          ],
+          "fullName": "Renderer lifetime boundaries ignores late initialization reject after unmount",
+          "status": "passed",
+          "title": "ignores late initialization reject after unmount",
+          "duration": 17.716599999999744,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423662460,
+      "endTime": 1791423663227.7166,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m1/rendererLifecycle.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Milestone 1 Empirical Stress Tests",
+            "1. AssetLoader Concurrency & Lifecycle Stress Tests"
+          ],
+          "fullName": "Milestone 1 Empirical Stress Tests 1. AssetLoader Concurrency & Lifecycle Stress Tests handles 50 concurrent preload() calls returning the exact same Promise instance",
+          "status": "passed",
+          "title": "handles 50 concurrent preload() calls returning the exact same Promise instance",
+          "duration": 7.547900000000482,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Milestone 1 Empirical Stress Tests",
+            "1. AssetLoader Concurrency & Lifecycle Stress Tests"
+          ],
+          "fullName": "Milestone 1 Empirical Stress Tests 1. AssetLoader Concurrency & Lifecycle Stress Tests immediately resolves subsequent preload() calls once loaded and triggers onProgress(1.0)",
+          "status": "passed",
+          "title": "immediately resolves subsequent preload() calls once loaded and triggers onProgress(1.0)",
+          "duration": 4.518799999999828,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Milestone 1 Empirical Stress Tests",
+            "1. AssetLoader Concurrency & Lifecycle Stress Tests"
+          ],
+          "fullName": "Milestone 1 Empirical Stress Tests 1. AssetLoader Concurrency & Lifecycle Stress Tests simulates React 18 StrictMode double-mount lifecycle without resource destruction or errors",
+          "status": "passed",
+          "title": "simulates React 18 StrictMode double-mount lifecycle without resource destruction or errors",
+          "duration": 2.9384000000000015,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Milestone 1 Empirical Stress Tests",
+            "1. AssetLoader Concurrency & Lifecycle Stress Tests"
+          ],
+          "fullName": "Milestone 1 Empirical Stress Tests 1. AssetLoader Concurrency & Lifecycle Stress Tests recovers cleanly when loading fails, allowing subsequent retry",
+          "status": "passed",
+          "title": "recovers cleanly when loading fails, allowing subsequent retry",
+          "duration": 12.0625,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Milestone 1 Empirical Stress Tests",
+            "1. AssetLoader Concurrency & Lifecycle Stress Tests",
+            "Kenney Damage Tier & Tile Coordinate Adversarial Inputs"
+          ],
+          "fullName": "Milestone 1 Empirical Stress Tests 1. AssetLoader Concurrency & Lifecycle Stress Tests Kenney Damage Tier & Tile Coordinate Adversarial Inputs calculates damage tiers with boundary, negative, and extreme float values",
+          "status": "passed",
+          "title": "calculates damage tiers with boundary, negative, and extreme float values",
+          "duration": 0.8395000000000437,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Milestone 1 Empirical Stress Tests",
+            "1. AssetLoader Concurrency & Lifecycle Stress Tests",
+            "Kenney Damage Tier & Tile Coordinate Adversarial Inputs"
+          ],
+          "fullName": "Milestone 1 Empirical Stress Tests 1. AssetLoader Concurrency & Lifecycle Stress Tests Kenney Damage Tier & Tile Coordinate Adversarial Inputs clamps tile coordinates safely for out-of-range indices",
+          "status": "passed",
+          "title": "clamps tile coordinates safely for out-of-range indices",
+          "duration": 0.7089000000005399,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Milestone 1 Empirical Stress Tests",
+            "1. AssetLoader Concurrency & Lifecycle Stress Tests",
+            "Kenney Damage Tier & Tile Coordinate Adversarial Inputs"
+          ],
+          "fullName": "Milestone 1 Empirical Stress Tests 1. AssetLoader Concurrency & Lifecycle Stress Tests Kenney Damage Tier & Tile Coordinate Adversarial Inputs gracefully handles fallback for unknown ship series or tiers",
+          "status": "passed",
+          "title": "gracefully handles fallback for unknown ship series or tiers",
+          "duration": 0.2668999999996231,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Milestone 1 Empirical Stress Tests",
+            "2. Config & Clamping Adversarial Stress Tests",
+            "clampSessionDuration"
+          ],
+          "fullName": "Milestone 1 Empirical Stress Tests 2. Config & Clamping Adversarial Stress Tests clampSessionDuration clamps boundary values and extreme numbers",
+          "status": "passed",
+          "title": "clamps boundary values and extreme numbers",
+          "duration": 0.9393000000000029,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Milestone 1 Empirical Stress Tests",
+            "2. Config & Clamping Adversarial Stress Tests",
+            "clampSpawnInterval"
+          ],
+          "fullName": "Milestone 1 Empirical Stress Tests 2. Config & Clamping Adversarial Stress Tests clampSpawnInterval clamps boundary values and extreme floats with 1 decimal precision",
+          "status": "passed",
+          "title": "clamps boundary values and extreme floats with 1 decimal precision",
+          "duration": 1.7384999999994761,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Milestone 1 Empirical Stress Tests",
+            "2. Config & Clamping Adversarial Stress Tests",
+            "validateGameplayConfig Adversarial Testing"
+          ],
+          "fullName": "Milestone 1 Empirical Stress Tests 2. Config & Clamping Adversarial Stress Tests validateGameplayConfig Adversarial Testing accepts valid boundary configurations",
+          "status": "passed",
+          "title": "accepts valid boundary configurations",
+          "duration": 1.6536999999998443,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Milestone 1 Empirical Stress Tests",
+            "2. Config & Clamping Adversarial Stress Tests",
+            "validateGameplayConfig Adversarial Testing"
+          ],
+          "fullName": "Milestone 1 Empirical Stress Tests 2. Config & Clamping Adversarial Stress Tests validateGameplayConfig Adversarial Testing detects out-of-range negative numbers and extreme values",
+          "status": "passed",
+          "title": "detects out-of-range negative numbers and extreme values",
+          "duration": 1.1674999999995634,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Milestone 1 Empirical Stress Tests",
+            "2. Config & Clamping Adversarial Stress Tests",
+            "validateGameplayConfig Adversarial Testing"
+          ],
+          "fullName": "Milestone 1 Empirical Stress Tests 2. Config & Clamping Adversarial Stress Tests validateGameplayConfig Adversarial Testing detects Infinity and -Infinity as invalid configuration values",
+          "status": "passed",
+          "title": "detects Infinity and -Infinity as invalid configuration values",
+          "duration": 0.4128000000000611,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Milestone 1 Empirical Stress Tests",
+            "2. Config & Clamping Adversarial Stress Tests",
+            "validateGameplayConfig Adversarial Testing"
+          ],
+          "fullName": "Milestone 1 Empirical Stress Tests 2. Config & Clamping Adversarial Stress Tests validateGameplayConfig Adversarial Testing adversarially rejects NaN sessionDurationSeconds with isValid: false and an error message",
+          "status": "passed",
+          "title": "adversarially rejects NaN sessionDurationSeconds with isValid: false and an error message",
+          "duration": 0.3441000000002532,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Milestone 1 Empirical Stress Tests",
+            "2. Config & Clamping Adversarial Stress Tests",
+            "validateGameplayConfig Adversarial Testing"
+          ],
+          "fullName": "Milestone 1 Empirical Stress Tests 2. Config & Clamping Adversarial Stress Tests validateGameplayConfig Adversarial Testing adversarially rejects NaN spawner.spawnIntervalSeconds with isValid: false and an error message",
+          "status": "passed",
+          "title": "adversarially rejects NaN spawner.spawnIntervalSeconds with isValid: false and an error message",
+          "duration": 0.34539999999924476,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Milestone 1 Empirical Stress Tests",
+            "3. Sound Manifest & Physical Asset Verification"
+          ],
+          "fullName": "Milestone 1 Empirical Stress Tests 3. Sound Manifest & Physical Asset Verification verifies SOUND_MANIFEST has exactly 27 entries",
+          "status": "passed",
+          "title": "verifies SOUND_MANIFEST has exactly 27 entries",
+          "duration": 2.6884999999992942,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Milestone 1 Empirical Stress Tests",
+            "3. Sound Manifest & Physical Asset Verification"
+          ],
+          "fullName": "Milestone 1 Empirical Stress Tests 3. Sound Manifest & Physical Asset Verification verifies all 27 sound files exist on disk in assets/sounds/ and are valid non-empty WAV files",
+          "status": "passed",
+          "title": "verifies all 27 sound files exist on disk in assets/sounds/ and are valid non-empty WAV files",
+          "duration": 1343.2095,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Milestone 1 Empirical Stress Tests",
+            "3. Sound Manifest & Physical Asset Verification"
+          ],
+          "fullName": "Milestone 1 Empirical Stress Tests 3. Sound Manifest & Physical Asset Verification verifies all 27 sound files are mirrored into public/assets/sounds/ for Vite web serving",
+          "status": "passed",
+          "title": "verifies all 27 sound files are mirrored into public/assets/sounds/ for Vite web serving",
+          "duration": 4.867000000000189,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Milestone 1 Empirical Stress Tests",
+            "3. Sound Manifest & Physical Asset Verification"
+          ],
+          "fullName": "Milestone 1 Empirical Stress Tests 3. Sound Manifest & Physical Asset Verification confirms there are zero orphaned sound files on disk not registered in the manifest",
+          "status": "passed",
+          "title": "confirms there are zero orphaned sound files on disk not registered in the manifest",
+          "duration": 0.9830000000001746,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423651284,
+      "endTime": 1791423652674.983,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m1/stressTest.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "production fixture mode for VITE_USE_MSW=undefined is true",
+          "status": "passed",
+          "title": "production fixture mode for VITE_USE_MSW=undefined is true",
+          "duration": 25.390899999999874,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "production fixture mode for VITE_USE_MSW=true is true",
+          "status": "passed",
+          "title": "production fixture mode for VITE_USE_MSW=true is true",
+          "duration": 1.559099999999944,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "production fixture mode for VITE_USE_MSW=false is false",
+          "status": "passed",
+          "title": "production fixture mode for VITE_USE_MSW=false is false",
+          "duration": 1.3746000000001004,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423697539,
+      "endTime": 1791423697567.3745,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m3/environment.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Leaderboard client regressions"
+          ],
+          "fullName": "Leaderboard client regressions keeps submission ranks equal to filtered board positions for ties and other configurations",
+          "status": "passed",
+          "title": "keeps submission ranks equal to filtered board positions for ties and other configurations",
+          "duration": 4.246000000000095,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Leaderboard client regressions"
+          ],
+          "fullName": "Leaderboard client regressions highlights the actual browser player from live response IDs without a mock flag",
+          "status": "passed",
+          "title": "highlights the actual browser player from live response IDs without a mock flag",
+          "duration": 46.148099999999886,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Leaderboard client regressions"
+          ],
+          "fullName": "Leaderboard client regressions discards permanently rejected scores but keeps transient errors for offline retry",
+          "status": "passed",
+          "title": "discards permanently rejected scores but keeps transient errors for offline retry",
+          "duration": 1.8447000000001026,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423684670,
+      "endTime": 1791423684721.8447,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m3/leaderboardClient.test.tsx"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Live leaderboard endpoints against isolated PostgreSQL"
+          ],
+          "fullName": "Live leaderboard endpoints against isolated PostgreSQL issues an HttpOnly identity and a configuration-bound random voyage",
+          "status": "passed",
+          "title": "issues an HttpOnly identity and a configuration-bound random voyage",
+          "duration": 45.207000000000335,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Live leaderboard endpoints against isolated PostgreSQL"
+          ],
+          "fullName": "Live leaderboard endpoints against isolated PostgreSQL accepts natural gameplay, gives a server timestamp, and returns the same rank as its board",
+          "status": "passed",
+          "title": "accepts natural gameplay, gives a server timestamp, and returns the same rank as its board",
+          "duration": 166.09940000000006,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Live leaderboard endpoints against isolated PostgreSQL"
+          ],
+          "fullName": "Live leaderboard endpoints against isolated PostgreSQL rejects inflated points, edited rules, wrong seeds, and forged checkpoints before writing",
+          "status": "passed",
+          "title": "rejects inflated points, edited rules, wrong seeds, and forged checkpoints before writing",
+          "duration": 206.22479999999996,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Live leaderboard endpoints against isolated PostgreSQL"
+          ],
+          "fullName": "Live leaderboard endpoints against isolated PostgreSQL derives an honest result independently of browser-specific checkpoint hashes",
+          "status": "passed",
+          "title": "derives an honest result independently of browser-specific checkpoint hashes",
+          "duration": 60.40480000000025,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Live leaderboard endpoints against isolated PostgreSQL"
+          ],
+          "fullName": "Live leaderboard endpoints against isolated PostgreSQL rejects premature endings and elapsed time fabricated by a fast-forwarded client",
+          "status": "passed",
+          "title": "rejects premature endings and elapsed time fabricated by a fast-forwarded client",
+          "duration": 52.65520000000015,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Live leaderboard endpoints against isolated PostgreSQL"
+          ],
+          "fullName": "Live leaderboard endpoints against isolated PostgreSQL rejects another browser identity, missing tickets, expired tickets and cross-origin writes",
+          "status": "passed",
+          "title": "rejects another browser identity, missing tickets, expired tickets and cross-origin writes",
+          "duration": 75.68419999999969,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Live leaderboard endpoints against isolated PostgreSQL"
+          ],
+          "fullName": "Live leaderboard endpoints against isolated PostgreSQL deduplicates simultaneous retries, preserves expired-ticket retries of saved results, and rejects collisions",
+          "status": "passed",
+          "title": "deduplicates simultaneous retries, preserves expired-ticket retries of saved results, and rejects collisions",
+          "duration": 84.21050000000014,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Live leaderboard endpoints against isolated PostgreSQL"
+          ],
+          "fullName": "Live leaderboard endpoints against isolated PostgreSQL uses all tie-breakers and configuration scope across page boundaries and excludes legacy scores",
+          "status": "passed",
+          "title": "uses all tie-breakers and configuration scope across page boundaries and excludes legacy scores",
+          "duration": 23.362199999999575,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Live leaderboard endpoints against isolated PostgreSQL"
+          ],
+          "fullName": "Live leaderboard endpoints against isolated PostgreSQL rejects malformed query page=abc",
+          "status": "passed",
+          "title": "rejects malformed query page=abc",
+          "duration": 7.107100000000173,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Live leaderboard endpoints against isolated PostgreSQL"
+          ],
+          "fullName": "Live leaderboard endpoints against isolated PostgreSQL rejects malformed query pageSize=abc",
+          "status": "passed",
+          "title": "rejects malformed query pageSize=abc",
+          "duration": 7.211200000000645,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Live leaderboard endpoints against isolated PostgreSQL"
+          ],
+          "fullName": "Live leaderboard endpoints against isolated PostgreSQL rejects malformed query page=0",
+          "status": "passed",
+          "title": "rejects malformed query page=0",
+          "duration": 7.018900000000031,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Live leaderboard endpoints against isolated PostgreSQL"
+          ],
+          "fullName": "Live leaderboard endpoints against isolated PostgreSQL rejects malformed query page=-1",
+          "status": "passed",
+          "title": "rejects malformed query page=-1",
+          "duration": 8.370200000000295,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Live leaderboard endpoints against isolated PostgreSQL"
+          ],
+          "fullName": "Live leaderboard endpoints against isolated PostgreSQL rejects malformed query page=1.5",
+          "status": "passed",
+          "title": "rejects malformed query page=1.5",
+          "duration": 7.416400000000067,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Live leaderboard endpoints against isolated PostgreSQL"
+          ],
+          "fullName": "Live leaderboard endpoints against isolated PostgreSQL rejects malformed query pageSize=51",
+          "status": "passed",
+          "title": "rejects malformed query pageSize=51",
+          "duration": 7.698999999999614,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Live leaderboard endpoints against isolated PostgreSQL"
+          ],
+          "fullName": "Live leaderboard endpoints against isolated PostgreSQL rejects malformed query page=9999999999999999",
+          "status": "passed",
+          "title": "rejects malformed query page=9999999999999999",
+          "duration": 7.974899999999252,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Live leaderboard endpoints against isolated PostgreSQL"
+          ],
+          "fullName": "Live leaderboard endpoints against isolated PostgreSQL rejects malformed query sessionDuration=59",
+          "status": "passed",
+          "title": "rejects malformed query sessionDuration=59",
+          "duration": 7.237600000000384,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Live leaderboard endpoints against isolated PostgreSQL"
+          ],
+          "fullName": "Live leaderboard endpoints against isolated PostgreSQL rejects malformed query spawnInterval=1.5",
+          "status": "passed",
+          "title": "rejects malformed query spawnInterval=1.5",
+          "duration": 7.358700000000681,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Live leaderboard endpoints against isolated PostgreSQL"
+          ],
+          "fullName": "Live leaderboard endpoints against isolated PostgreSQL rejects malformed query spawnInterval=16",
+          "status": "passed",
+          "title": "rejects malformed query spawnInterval=16",
+          "duration": 9.535499999999956,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Live leaderboard endpoints against isolated PostgreSQL"
+          ],
+          "fullName": "Live leaderboard endpoints against isolated PostgreSQL rejects malformed query page=",
+          "status": "passed",
+          "title": "rejects malformed query page=",
+          "duration": 13.26929999999993,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Live leaderboard endpoints against isolated PostgreSQL"
+          ],
+          "fullName": "Live leaderboard endpoints against isolated PostgreSQL rejects invalid voyage setup and oversized submission bodies",
+          "status": "passed",
+          "title": "rejects invalid voyage setup and oversized submission bodies",
+          "duration": 19.35900000000038,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Live leaderboard endpoints against isolated PostgreSQL"
+          ],
+          "fullName": "Live leaderboard endpoints against isolated PostgreSQL limits repeated starts for the same session",
+          "status": "passed",
+          "title": "limits repeated starts for the same session",
+          "duration": 58.98040000000037,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423701725,
+      "endTime": 1791423702607.9805,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m3/leaderboardServer.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "durable submission recovery"
+          ],
+          "fullName": "durable submission recovery persists before dispatch and shares in-flight work with concurrent sync",
+          "status": "passed",
+          "title": "persists before dispatch and shares in-flight work with concurrent sync",
+          "duration": 2.4839999999999236,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "durable submission recovery"
+          ],
+          "fullName": "durable submission recovery retains a timeout and clears it only after a duplicate acknowledgement",
+          "status": "passed",
+          "title": "retains a timeout and clears it only after a duplicate acknowledgement",
+          "duration": 1.6637000000000626,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "durable submission recovery"
+          ],
+          "fullName": "durable submission recovery refreshes every ranking/history key after automatic background sync",
+          "status": "passed",
+          "title": "refreshes every ranking/history key after automatic background sync",
+          "duration": 55.80859999999984,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423687332,
+      "endTime": 1791423687391.8086,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m3/pendingQueueRecovery.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "does not attach simulation mutation globals in production",
+          "status": "passed",
+          "title": "does not attach simulation mutation globals in production",
+          "duration": 52.35330000000022,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "allows deterministic controls in an explicit test build",
+          "status": "passed",
+          "title": "allows deterministic controls in an explicit test build",
+          "duration": 20.526099999999587,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423694738,
+      "endTime": 1791423694810.5261,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m3/productionHarness.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "URL scenarios override session state, and switching updates the reproducible URL",
+          "status": "passed",
+          "title": "URL scenarios override session state, and switching updates the reproducible URL",
+          "duration": 45.04049999999961,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "invalid scenarios fall back safely and seeded delays reproduce for both endpoints",
+          "status": "passed",
+          "title": "invalid scenarios fall back safely and seeded delays reproduce for both endpoints",
+          "duration": 5.8542999999999665,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423691923,
+      "endTime": 1791423691973.8542,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m3/scenarioSelection.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Enemy AI Subsystem",
+            "DamageTier Computation"
+          ],
+          "fullName": "Enemy AI Subsystem DamageTier Computation correctly maps health percentages to damage tiers 1 through 4",
+          "status": "passed",
+          "title": "correctly maps health percentages to damage tiers 1 through 4",
+          "duration": 2.238299999999981,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Enemy AI Subsystem",
+            "ChaserAI: Pure Pursuit & Suicide Ramming"
+          ],
+          "fullName": "Enemy AI Subsystem ChaserAI: Pure Pursuit & Suicide Ramming creates Chaser enemy with correct initial stats and pursuit phase",
+          "status": "passed",
+          "title": "creates Chaser enemy with correct initial stats and pursuit phase",
+          "duration": 0.6817000000000917,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Enemy AI Subsystem",
+            "ChaserAI: Pure Pursuit & Suicide Ramming"
+          ],
+          "fullName": "Enemy AI Subsystem ChaserAI: Pure Pursuit & Suicide Ramming steers and moves towards the player position in pursuit",
+          "status": "passed",
+          "title": "steers and moves towards the player position in pursuit",
+          "duration": 1.304399999999987,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Enemy AI Subsystem",
+            "ChaserAI: Pure Pursuit & Suicide Ramming"
+          ],
+          "fullName": "Enemy AI Subsystem ChaserAI: Pure Pursuit & Suicide Ramming repels away from nearby island obstacles to avoid getting stuck",
+          "status": "passed",
+          "title": "repels away from nearby island obstacles to avoid getting stuck",
+          "duration": 0.46420000000034634,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Enemy AI Subsystem",
+            "ChaserAI: Pure Pursuit & Suicide Ramming"
+          ],
+          "fullName": "Enemy AI Subsystem ChaserAI: Pure Pursuit & Suicide Ramming detonates in suicide ram dealing 35 ramming damage and awarding strictly 0 score",
+          "status": "passed",
+          "title": "detonates in suicide ram dealing 35 ramming damage and awarding strictly 0 score",
+          "duration": 0.8578999999999724,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Enemy AI Subsystem",
+            "ShooterAI: Range-Keeping & Facing-Aligned Firing"
+          ],
+          "fullName": "Enemy AI Subsystem ShooterAI: Range-Keeping & Facing-Aligned Firing creates Shooter enemy with 60 HP and approach phase",
+          "status": "passed",
+          "title": "creates Shooter enemy with 60 HP and approach phase",
+          "duration": 0.8396999999999935,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Enemy AI Subsystem",
+            "ShooterAI: Range-Keeping & Facing-Aligned Firing"
+          ],
+          "fullName": "Enemy AI Subsystem ShooterAI: Range-Keeping & Facing-Aligned Firing enters approach phase when distance to player > 360px",
+          "status": "passed",
+          "title": "enters approach phase when distance to player > 360px",
+          "duration": 0.8272000000001754,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Enemy AI Subsystem",
+            "ShooterAI: Range-Keeping & Facing-Aligned Firing"
+          ],
+          "fullName": "Enemy AI Subsystem ShooterAI: Range-Keeping & Facing-Aligned Firing enters evade phase when distance to player < 240px",
+          "status": "passed",
+          "title": "enters evade phase when distance to player < 240px",
+          "duration": 0.36340000000018335,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Enemy AI Subsystem",
+            "ShooterAI: Range-Keeping & Facing-Aligned Firing"
+          ],
+          "fullName": "Enemy AI Subsystem ShooterAI: Range-Keeping & Facing-Aligned Firing enters engage phase when distance is in tactical ring [240px, 360px]",
+          "status": "passed",
+          "title": "enters engage phase when distance is in tactical ring [240px, 360px]",
+          "duration": 0.33439999999973224,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Enemy AI Subsystem",
+            "ShooterAI: Range-Keeping & Facing-Aligned Firing"
+          ],
+          "fullName": "Enemy AI Subsystem ShooterAI: Range-Keeping & Facing-Aligned Firing fires cannon projectile (15 damage, 380 px/s) when facing player (|deltaTheta| < 12 deg) and cooldown is ready",
+          "status": "passed",
+          "title": "fires cannon projectile (15 damage, 380 px/s) when facing player (|deltaTheta| < 12 deg) and cooldown is ready",
+          "duration": 2.506800000000112,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Enemy AI Subsystem",
+            "ShooterAI: Range-Keeping & Facing-Aligned Firing"
+          ],
+          "fullName": "Enemy AI Subsystem ShooterAI: Range-Keeping & Facing-Aligned Firing does NOT fire if aim alignment exceeds 12 degrees (|deltaTheta| > 0.21 rad)",
+          "status": "passed",
+          "title": "does NOT fire if aim alignment exceeds 12 degrees (|deltaTheta| > 0.21 rad)",
+          "duration": 0.2777000000000953,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423672664,
+      "endTime": 1791423672675.5068,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m2/ai.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "separates crowded bearings at 393x851 and preserves every enemy",
+          "status": "passed",
+          "title": "separates crowded bearings at 393x851 and preserves every enemy",
+          "duration": 5.56919999999991,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "separates crowded bearings at 320x568 and preserves every enemy",
+          "status": "passed",
+          "title": "separates crowded bearings at 320x568 and preserves every enemy",
+          "duration": 1.2363000000000284,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "merges same-type groups under edge capacity pressure without hiding enemies",
+          "status": "passed",
+          "title": "merges same-type groups under edge capacity pressure without hiding enemies",
+          "duration": 0.642699999999877,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "keeps well-separated directions and different edges independent",
+          "status": "passed",
+          "title": "keeps well-separated directions and different edges independent",
+          "duration": 1.447099999999864,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "separates bearings sharing a corner and preserves the nearer shooter before moving a chaser",
+          "status": "passed",
+          "title": "separates bearings sharing a corner and preserves the nearer shooter before moving a chaser",
+          "duration": 0.6415000000001783,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423684147,
+      "endTime": 1791423684156.6416,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m2/bearings.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "predicts the six actual shell trajectories at heading 0 without altering inputs or IDs",
+          "status": "passed",
+          "title": "predicts the six actual shell trajectories at heading 0 without altering inputs or IDs",
+          "duration": 6.377399999999852,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "predicts the six actual shell trajectories at heading 1.5707963267948966 without altering inputs or IDs",
+          "status": "passed",
+          "title": "predicts the six actual shell trajectories at heading 1.5707963267948966 without altering inputs or IDs",
+          "duration": 1.7450000000003456,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "predicts the six actual shell trajectories at heading 3.141592653589793 without altering inputs or IDs",
+          "status": "passed",
+          "title": "predicts the six actual shell trajectories at heading 3.141592653589793 without altering inputs or IDs",
+          "duration": 1.6157000000002881,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "predicts the six actual shell trajectories at heading -1.5707963267948966 without altering inputs or IDs",
+          "status": "passed",
+          "title": "predicts the six actual shell trajectories at heading -1.5707963267948966 without altering inputs or IDs",
+          "duration": 1.9027000000000953,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "predicts the six actual shell trajectories at heading 0.73 without altering inputs or IDs",
+          "status": "passed",
+          "title": "predicts the six actual shell trajectories at heading 0.73 without altering inputs or IDs",
+          "duration": 1.4092000000000553,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "shows three parallel lanes on each side and reaches beyond the previous short cone",
+          "status": "passed",
+          "title": "shows three parallel lanes on each side and reaches beyond the previous short cone",
+          "duration": 0.47200000000020736,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423689709,
+      "endTime": 1791423689722.472,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m2/broadsideGeometry.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "1. Anti-Buffering & Pause Freeze Mechanics"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 1. Anti-Buffering & Pause Freeze Mechanics freezes simulation loop, session timer, and weapon cooldowns during manual pause",
+          "status": "passed",
+          "title": "freezes simulation loop, session timer, and weapon cooldowns during manual pause",
+          "duration": 5.359299999996438,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "1. Anti-Buffering & Pause Freeze Mechanics"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 1. Anti-Buffering & Pause Freeze Mechanics rejects input updates while paused and clears held inputs upon pause and resume",
+          "status": "passed",
+          "title": "rejects input updates while paused and clears held inputs upon pause and resume",
+          "duration": 8.269200000002456,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "1. Anti-Buffering & Pause Freeze Mechanics"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 1. Anti-Buffering & Pause Freeze Mechanics pauses automatically on window blur, but forbids auto-unpause on window focus",
+          "status": "passed",
+          "title": "pauses automatically on window blur, but forbids auto-unpause on window focus",
+          "duration": 1.7871000000013737,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "1. Anti-Buffering & Pause Freeze Mechanics"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 1. Anti-Buffering & Pause Freeze Mechanics pauses on document visibility hidden, and does not unpause when document becomes visible",
+          "status": "passed",
+          "title": "pauses on document visibility hidden, and does not unpause when document becomes visible",
+          "duration": 7.910599999995611,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "2. Scoring & Suicide Rules"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 2. Scoring & Suicide Rules damages player on Chaser suicide ram but awards STRICTLY 0 score",
+          "status": "passed",
+          "title": "damages player on Chaser suicide ram but awards STRICTLY 0 score",
+          "duration": 6.050499999997555,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "2. Scoring & Suicide Rules"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 2. Scoring & Suicide Rules awards 0 score across multiple simultaneous Chaser suicide rams",
+          "status": "passed",
+          "title": "awards 0 score across multiple simultaneous Chaser suicide rams",
+          "duration": 1.6083999999973457,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "2. Scoring & Suicide Rules"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 2. Scoring & Suicide Rules separates Shooter without suicide explosion and deals 0 damage and 0 score",
+          "status": "passed",
+          "title": "separates Shooter without suicide explosion and deals 0 damage and 0 score",
+          "duration": 1.7954000000027008,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "2. Scoring & Suicide Rules"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 2. Scoring & Suicide Rules awards +1 score when player frontal cannon destroys a Chaser",
+          "status": "passed",
+          "title": "awards +1 score when player frontal cannon destroys a Chaser",
+          "duration": 2.097799999995914,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "2. Scoring & Suicide Rules"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 2. Scoring & Suicide Rules awards +1 score (and NOT +3) when player broadside salvo destroys a Shooter",
+          "status": "passed",
+          "title": "awards +1 score (and NOT +3) when player broadside salvo destroys a Shooter",
+          "duration": 6.338400000000547,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "2. Scoring & Suicide Rules"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 2. Scoring & Suicide Rules awards +2 score when broadside destroys 2 distinct enemies in same salvo",
+          "status": "passed",
+          "title": "awards +2 score when broadside destroys 2 distinct enemies in same salvo",
+          "duration": 1.9302000000025146,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "2. Scoring & Suicide Rules"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 2. Scoring & Suicide Rules deals 15 damage to player when Shooter cannon hits player and awards 0 score",
+          "status": "passed",
+          "title": "deals 15 damage to player when Shooter cannon hits player and awards 0 score",
+          "duration": 0.7972999999983585,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "3. Game Over Triggers & Match State Machine"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 3. Game Over Triggers & Match State Machine triggers game over with reason time_expired when session timer reaches zero",
+          "status": "passed",
+          "title": "triggers game over with reason time_expired when session timer reaches zero",
+          "duration": 2.625500000001921,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "3. Game Over Triggers & Match State Machine"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 3. Game Over Triggers & Match State Machine triggers game over with reason player_destroyed when player health reaches zero",
+          "status": "passed",
+          "title": "triggers game over with reason player_destroyed when player health reaches zero",
+          "duration": 1.101199999997334,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "3. Game Over Triggers & Match State Machine"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 3. Game Over Triggers & Match State Machine ensures match state machine transitions cleanly and forbids overwriting endReason",
+          "status": "passed",
+          "title": "ensures match state machine transitions cleanly and forbids overwriting endReason",
+          "duration": 0.7502000000022235,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "3. Game Over Triggers & Match State Machine"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 3. Game Over Triggers & Match State Machine handles match abandonment cleanly (endReason: abandoned, listeners cleaned)",
+          "status": "passed",
+          "title": "handles match abandonment cleanly (endReason: abandoned, listeners cleaned)",
+          "duration": 1.4061000000001513,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "3. Game Over Triggers & Match State Machine"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 3. Game Over Triggers & Match State Machine resets state cleanly on restart for subsequent matches",
+          "status": "passed",
+          "title": "resets state cleanly on restart for subsequent matches",
+          "duration": 1.102099999996426,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "4. State Decoupling & Zero-Jank Event Bridge"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 4. State Decoupling & Zero-Jank Event Bridge throttles time_tick events to 1Hz over 180 frames (3 seconds) of 60 FPS simulation",
+          "status": "passed",
+          "title": "throttles time_tick events to 1Hz over 180 frames (3 seconds) of 60 FPS simulation",
+          "duration": 6.666000000004715,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "4. State Decoupling & Zero-Jank Event Bridge"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 4. State Decoupling & Zero-Jank Event Bridge emits discrete score_changed and health_changed events ONLY when values change",
+          "status": "passed",
+          "title": "emits discrete score_changed and health_changed events ONLY when values change",
+          "duration": 1.9467999999978929,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "5. window.__GAME_SIMULATION__ Harness Inspection & Control"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 5. window.__GAME_SIMULATION__ Harness Inspection & Control provides full inspection, manual stepping, and state mutation on window harness",
+          "status": "passed",
+          "title": "provides full inspection, manual stepping, and state mutation on window harness",
+          "duration": 2.4648999999990338,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "6. Stress, Invariant & Robustness Harness"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 6. Stress, Invariant & Robustness Harness enforces spawner invariants: <=10 concurrent enemies, >=380px distance, island clearance",
+          "status": "passed",
+          "title": "enforces spawner invariants: <=10 concurrent enemies, >=380px distance, island clearance",
+          "duration": 331.68009999999776,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "6. Stress, Invariant & Robustness Harness"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 6. Stress, Invariant & Robustness Harness proves 3-cannon broadside salvo has strictly parallel trajectories with exact gunport spacing",
+          "status": "passed",
+          "title": "proves 3-cannon broadside salvo has strictly parallel trajectories with exact gunport spacing",
+          "duration": 2.0094000000026426,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "6. Stress, Invariant & Robustness Harness"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 6. Stress, Invariant & Robustness Harness prevents tunneling when player ship charges full speed into island obstacle",
+          "status": "passed",
+          "title": "prevents tunneling when player ship charges full speed into island obstacle",
+          "duration": 4.241799999996147,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "6. Stress, Invariant & Robustness Harness"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 6. Stress, Invariant & Robustness Harness survives severe browser lag spike (5.0s delta) without spiral of death",
+          "status": "passed",
+          "title": "survives severe browser lag spike (5.0s delta) without spiral of death",
+          "duration": 1.2119000000020606,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness",
+            "6. Stress, Invariant & Robustness Harness"
+          ],
+          "fullName": "Adversarial Verification: Game Rules, Anti-Buffering, State Decoupling & Harness 6. Stress, Invariant & Robustness Harness guarantees reproducible deterministic enemy generation with identical seeds",
+          "status": "passed",
+          "title": "guarantees reproducible deterministic enemy generation with identical seeds",
+          "duration": 20.107100000001083,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423644029,
+      "endTime": 1791423644454.1072,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m2/challenger2SimulationAdversarial.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Empirical Adversarial Stress Suite: Milestone 2",
+            "1. Kinematics Stress & Lateral Drag Keel Damping"
+          ],
+          "fullName": "Empirical Adversarial Stress Suite: Milestone 2 1. Kinematics Stress & Lateral Drag Keel Damping survives rapid directional reversals (steer +1 / -1 alternating) under full throttle without NaN or angular explosion",
+          "status": "passed",
+          "title": "survives rapid directional reversals (steer +1 / -1 alternating) under full throttle without NaN or angular explosion",
+          "duration": 145.71459999999934,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Adversarial Stress Suite: Milestone 2",
+            "1. Kinematics Stress & Lateral Drag Keel Damping"
+          ],
+          "fullName": "Empirical Adversarial Stress Suite: Milestone 2 1. Kinematics Stress & Lateral Drag Keel Damping clamps extreme forward velocity surges to maxForwardSpeed within one step",
+          "status": "passed",
+          "title": "clamps extreme forward velocity surges to maxForwardSpeed within one step",
+          "duration": 0.5149999999994179,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Adversarial Stress Suite: Milestone 2",
+            "1. Kinematics Stress & Lateral Drag Keel Damping"
+          ],
+          "fullName": "Empirical Adversarial Stress Suite: Milestone 2 1. Kinematics Stress & Lateral Drag Keel Damping exponentially damps extreme lateral velocity (>99% damped in 1s) to eliminate unnatural drift",
+          "status": "passed",
+          "title": "exponentially damps extreme lateral velocity (>99% damped in 1s) to eliminate unnatural drift",
+          "duration": 0.3758000000016182,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Adversarial Stress Suite: Milestone 2",
+            "1. Kinematics Stress & Lateral Drag Keel Damping"
+          ],
+          "fullName": "Empirical Adversarial Stress Suite: Milestone 2 1. Kinematics Stress & Lateral Drag Keel Damping enforces non-negative forward speed when reverseAllowed is false",
+          "status": "passed",
+          "title": "enforces non-negative forward speed when reverseAllowed is false",
+          "duration": 0.2974000000031083,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Adversarial Stress Suite: Milestone 2",
+            "1. Kinematics Stress & Lateral Drag Keel Damping"
+          ],
+          "fullName": "Empirical Adversarial Stress Suite: Milestone 2 1. Kinematics Stress & Lateral Drag Keel Damping handles extreme velocity impacts with boundary margins without escaping",
+          "status": "passed",
+          "title": "handles extreme velocity impacts with boundary margins without escaping",
+          "duration": 0.2606999999989057,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Adversarial Stress Suite: Milestone 2",
+            "2. Broadside Salvo Geometry & Parallel Trajectories"
+          ],
+          "fullName": "Empirical Adversarial Stress Suite: Milestone 2 2. Broadside Salvo Geometry & Parallel Trajectories fires exactly 3 port projectiles with strictly parallel velocities and correct gunport offsets for all headings",
+          "status": "passed",
+          "title": "fires exactly 3 port projectiles with strictly parallel velocities and correct gunport offsets for all headings",
+          "duration": 12.053599999999278,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Adversarial Stress Suite: Milestone 2",
+            "2. Broadside Salvo Geometry & Parallel Trajectories"
+          ],
+          "fullName": "Empirical Adversarial Stress Suite: Milestone 2 2. Broadside Salvo Geometry & Parallel Trajectories fires exactly 3 starboard projectiles with strictly parallel velocities and correct gunport offsets for all headings",
+          "status": "passed",
+          "title": "fires exactly 3 starboard projectiles with strictly parallel velocities and correct gunport offsets for all headings",
+          "duration": 4.834399999999732,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Adversarial Stress Suite: Milestone 2",
+            "2. Broadside Salvo Geometry & Parallel Trajectories"
+          ],
+          "fullName": "Empirical Adversarial Stress Suite: Milestone 2 2. Broadside Salvo Geometry & Parallel Trajectories preserves independent cooldowns under simultaneous and staggered discharges",
+          "status": "passed",
+          "title": "preserves independent cooldowns under simultaneous and staggered discharges",
+          "duration": 2.5417000000015832,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Adversarial Stress Suite: Milestone 2",
+            "3. Collision Resolution, Tangent Sliding & Single-Hit Consumption"
+          ],
+          "fullName": "Empirical Adversarial Stress Suite: Milestone 2 3. Collision Resolution, Tangent Sliding & Single-Hit Consumption pushes deeply penetrating ship out to clear circular obstacle along surface normal",
+          "status": "passed",
+          "title": "pushes deeply penetrating ship out to clear circular obstacle along surface normal",
+          "duration": 0.5696000000025379,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Adversarial Stress Suite: Milestone 2",
+            "3. Collision Resolution, Tangent Sliding & Single-Hit Consumption"
+          ],
+          "fullName": "Empirical Adversarial Stress Suite: Milestone 2 3. Collision Resolution, Tangent Sliding & Single-Hit Consumption resolves oblique collision with pure tangent sliding without sticking or losing tangent speed",
+          "status": "passed",
+          "title": "resolves oblique collision with pure tangent sliding without sticking or losing tangent speed",
+          "duration": 0.25850000000355067,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Adversarial Stress Suite: Milestone 2",
+            "3. Collision Resolution, Tangent Sliding & Single-Hit Consumption"
+          ],
+          "fullName": "Empirical Adversarial Stress Suite: Milestone 2 3. Collision Resolution, Tangent Sliding & Single-Hit Consumption smoothly slides along circular obstacle over 60 continuous steps without corner snagging or penetration",
+          "status": "passed",
+          "title": "smoothly slides along circular obstacle over 60 continuous steps without corner snagging or penetration",
+          "duration": 7.502999999996973,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Adversarial Stress Suite: Milestone 2",
+            "3. Collision Resolution, Tangent Sliding & Single-Hit Consumption"
+          ],
+          "fullName": "Empirical Adversarial Stress Suite: Milestone 2 3. Collision Resolution, Tangent Sliding & Single-Hit Consumption enforces single-hit consumption: projectile damages only one target and despawns immediately",
+          "status": "passed",
+          "title": "enforces single-hit consumption: projectile damages only one target and despawns immediately",
+          "duration": 3.4213999999992666,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Adversarial Stress Suite: Milestone 2",
+            "3. Collision Resolution, Tangent Sliding & Single-Hit Consumption"
+          ],
+          "fullName": "Empirical Adversarial Stress Suite: Milestone 2 3. Collision Resolution, Tangent Sliding & Single-Hit Consumption immediately consumes projectiles colliding with island obstacles",
+          "status": "passed",
+          "title": "immediately consumes projectiles colliding with island obstacles",
+          "duration": 0.44759999999951106,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Adversarial Stress Suite: Milestone 2",
+            "4. Spawner Clearance: 1,000 Simulated Spawn Cycles"
+          ],
+          "fullName": "Empirical Adversarial Stress Suite: Milestone 2 4. Spawner Clearance: 1,000 Simulated Spawn Cycles verifies 100% of spawns across 1,000 cycles maintain >=380px safe player distance, clear obstacles, and respect 10 enemy cap",
+          "status": "passed",
+          "title": "verifies 100% of spawns across 1,000 cycles maintain >=380px safe player distance, clear obstacles, and respect 10 enemy cap",
+          "duration": 221.31930000000284,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Adversarial Stress Suite: Milestone 2",
+            "4. Spawner Clearance: 1,000 Simulated Spawn Cycles"
+          ],
+          "fullName": "Empirical Adversarial Stress Suite: Milestone 2 4. Spawner Clearance: 1,000 Simulated Spawn Cycles findSafeSpawnPosition returns 100% compliant positions across 1,000 independent trials",
+          "status": "passed",
+          "title": "findSafeSpawnPosition returns 100% compliant positions across 1,000 independent trials",
+          "duration": 277.2149999999965,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Adversarial Stress Suite: Milestone 2",
+            "5. Full Simulation Combat & Match Integrity"
+          ],
+          "fullName": "Empirical Adversarial Stress Suite: Milestone 2 5. Full Simulation Combat & Match Integrity executes 1,000 fixed-timestep simulation ticks with simultaneous movement, firing, and enemies without desync or crash",
+          "status": "passed",
+          "title": "executes 1,000 fixed-timestep simulation ticks with simultaneous movement, firing, and enemies without desync or crash",
+          "duration": 170.0283000000054,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Empirical Adversarial Stress Suite: Milestone 2",
+            "5. Full Simulation Combat & Match Integrity"
+          ],
+          "fullName": "Empirical Adversarial Stress Suite: Milestone 2 5. Full Simulation Combat & Match Integrity freezes completely on pause: timer, cooldowns, spawner, and rejects input buffering",
+          "status": "passed",
+          "title": "freezes completely on pause: timer, cooldowns, spawner, and rejects input buffering",
+          "duration": 0.923399999999674,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423644027,
+      "endTime": 1791423644877.9233,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m2/challengerStressTest.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [],
+          "fullName": "verifies the pre-removal Classic recording at 30 Hz",
+          "status": "passed",
+          "title": "verifies the pre-removal Classic recording at 30 Hz",
+          "duration": 123.88560000000007,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "verifies the pre-removal Classic recording at 60 Hz",
+          "status": "passed",
+          "title": "verifies the pre-removal Classic recording at 60 Hz",
+          "duration": 63.4708999999998,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "verifies the pre-removal Classic recording at 144 Hz",
+          "status": "passed",
+          "title": "verifies the pre-removal Classic recording at 144 Hz",
+          "duration": 53.195900000000165,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "rejects prototype rulesets and extra scoring metadata",
+          "status": "passed",
+          "title": "rejects prototype rulesets and extra scoring metadata",
+          "duration": 1.795799999999872,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423694480,
+      "endTime": 1791423694722.796,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m2/classicReplayCompatibility.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "CollisionSystem Subsystem"
+          ],
+          "fullName": "CollisionSystem Subsystem computes dual-disk capsule collider with bow and stern disks (R=16px, offset 15px)",
+          "status": "passed",
+          "title": "computes dual-disk capsule collider with bow and stern disks (R=16px, offset 15px)",
+          "duration": 3.719300000000203,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CollisionSystem Subsystem"
+          ],
+          "fullName": "CollisionSystem Subsystem detects overlap between two dual-disk capsule colliders",
+          "status": "passed",
+          "title": "detects overlap between two dual-disk capsule colliders",
+          "duration": 0.44600000000036744,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CollisionSystem Subsystem"
+          ],
+          "fullName": "CollisionSystem Subsystem detects overlap between point projectile and dual-disk capsule",
+          "status": "passed",
+          "title": "detects overlap between point projectile and dual-disk capsule",
+          "duration": 0.3478999999997541,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CollisionSystem Subsystem"
+          ],
+          "fullName": "CollisionSystem Subsystem resolves ship-island collision via tangent sliding (preserves tangential speed, clears normal velocity)",
+          "status": "passed",
+          "title": "resolves ship-island collision via tangent sliding (preserves tangential speed, clears normal velocity)",
+          "duration": 1.25,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CollisionSystem Subsystem"
+          ],
+          "fullName": "CollisionSystem Subsystem resolves ship-arena border collisions with tangent sliding",
+          "status": "passed",
+          "title": "resolves ship-arena border collisions with tangent sliding",
+          "duration": 0.8800999999998567,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CollisionSystem Subsystem"
+          ],
+          "fullName": "CollisionSystem Subsystem triggers suicide ramming on Chaser-Player collision (35 damage, strictly 0 score awarded)",
+          "status": "passed",
+          "title": "triggers suicide ramming on Chaser-Player collision (35 damage, strictly 0 score awarded)",
+          "duration": 1.8565999999996166,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CollisionSystem Subsystem"
+          ],
+          "fullName": "CollisionSystem Subsystem enforces single-hit projectile consumption (inflicts damage once, despawns, awards 1 point on kill)",
+          "status": "passed",
+          "title": "enforces single-hit projectile consumption (inflicts damage once, despawns, awards 1 point on kill)",
+          "duration": 2.780699999999797,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "CollisionSystem Subsystem"
+          ],
+          "fullName": "CollisionSystem Subsystem despawns projectiles immediately on island obstacle impact",
+          "status": "passed",
+          "title": "despawns projectiles immediately on island obstacle impact",
+          "duration": 0.5019999999999527,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423660798,
+      "endTime": 1791423660810.502,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m2/collision.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Independent keyboard and touch commands"
+          ],
+          "fullName": "Independent keyboard and touch commands keeps keyboard thrust when a touch cannon is released",
+          "status": "passed",
+          "title": "keeps keyboard thrust when a touch cannon is released",
+          "duration": 6.195999999999913,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Independent keyboard and touch commands"
+          ],
+          "fullName": "Independent keyboard and touch commands combines opposite steering commands without exceeding the turn range",
+          "status": "passed",
+          "title": "combines opposite steering commands without exceeding the turn range",
+          "duration": 1.1345000000001164,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Independent keyboard and touch commands"
+          ],
+          "fullName": "Independent keyboard and touch commands clears every input source and rejects commands entered while paused",
+          "status": "passed",
+          "title": "clears every input source and rejects commands entered while paused",
+          "duration": 0.6829999999999927,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423692186,
+      "endTime": 1791423692194.683,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m2/inputSources.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "ShipKinematics Subsystem"
+          ],
+          "fullName": "ShipKinematics Subsystem creates clean initial kinematic state with wrapped angle",
+          "status": "passed",
+          "title": "creates clean initial kinematic state with wrapped angle",
+          "duration": 2.0437999999999192,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "ShipKinematics Subsystem"
+          ],
+          "fullName": "ShipKinematics Subsystem computes correct directional unit vectors for cardinal directions",
+          "status": "passed",
+          "title": "computes correct directional unit vectors for cardinal directions",
+          "duration": 1.1251999999999498,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "ShipKinematics Subsystem"
+          ],
+          "fullName": "ShipKinematics Subsystem correctly wraps angles to [-PI, PI]",
+          "status": "passed",
+          "title": "correctly wraps angles to [-PI, PI]",
+          "duration": 0.44039999999995416,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "ShipKinematics Subsystem"
+          ],
+          "fullName": "ShipKinematics Subsystem computes shortest-arc lerpAngle interpolation",
+          "status": "passed",
+          "title": "computes shortest-arc lerpAngle interpolation",
+          "duration": 0.2617000000000189,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "ShipKinematics Subsystem"
+          ],
+          "fullName": "ShipKinematics Subsystem accelerates forward along heading when throttle is applied",
+          "status": "passed",
+          "title": "accelerates forward along heading when throttle is applied",
+          "duration": 0.5608999999999469,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "ShipKinematics Subsystem"
+          ],
+          "fullName": "ShipKinematics Subsystem applies bilateral steering left (-1) and right (+1)",
+          "status": "passed",
+          "title": "applies bilateral steering left (-1) and right (+1)",
+          "duration": 0.38000000000010914,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "ShipKinematics Subsystem"
+          ],
+          "fullName": "ShipKinematics Subsystem damps lateral velocity much faster than longitudinal velocity due to keel drag (c_lat=5.5 vs c_long=0.95)",
+          "status": "passed",
+          "title": "damps lateral velocity much faster than longitudinal velocity due to keel drag (c_lat=5.5 vs c_long=0.95)",
+          "duration": 0.3775999999998021,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "ShipKinematics Subsystem"
+          ],
+          "fullName": "ShipKinematics Subsystem clamps forward velocity to maxForwardSpeed",
+          "status": "passed",
+          "title": "clamps forward velocity to maxForwardSpeed",
+          "duration": 0.47220000000015716,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "ShipKinematics Subsystem"
+          ],
+          "fullName": "ShipKinematics Subsystem clamps position to arena boundaries and zeroes outbound velocity",
+          "status": "passed",
+          "title": "clamps position to arena boundaries and zeroes outbound velocity",
+          "duration": 0.43489999999974316,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "ShipKinematics Subsystem"
+          ],
+          "fullName": "ShipKinematics Subsystem ignores invalid dt values <= 0",
+          "status": "passed",
+          "title": "ignores invalid dt values <= 0",
+          "duration": 0.3043000000002394,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423675296,
+      "endTime": 1791423675302.4348,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m2/kinematics.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Pause Mechanics, Anti-Input Buffering & Decoupled State Bridge",
+            "Pause & Anti-Input Buffering"
+          ],
+          "fullName": "Pause Mechanics, Anti-Input Buffering & Decoupled State Bridge Pause & Anti-Input Buffering freezes timers, physics, and cooldowns during manual pause",
+          "status": "passed",
+          "title": "freezes timers, physics, and cooldowns during manual pause",
+          "duration": 4.061999999999898,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Pause Mechanics, Anti-Input Buffering & Decoupled State Bridge",
+            "Pause & Anti-Input Buffering"
+          ],
+          "fullName": "Pause Mechanics, Anti-Input Buffering & Decoupled State Bridge Pause & Anti-Input Buffering clears all held inputs on pause and on resume to eliminate buffered inputs",
+          "status": "passed",
+          "title": "clears all held inputs on pause and on resume to eliminate buffered inputs",
+          "duration": 2.63779999999997,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Pause Mechanics, Anti-Input Buffering & Decoupled State Bridge",
+            "Pause & Anti-Input Buffering"
+          ],
+          "fullName": "Pause Mechanics, Anti-Input Buffering & Decoupled State Bridge Pause & Anti-Input Buffering auto-pauses on window blur and visibility change, but forbids auto-unpause on focus return",
+          "status": "passed",
+          "title": "auto-pauses on window blur and visibility change, but forbids auto-unpause on focus return",
+          "duration": 1.1644000000001142,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Pause Mechanics, Anti-Input Buffering & Decoupled State Bridge",
+            "Decoupled State Sync (Zero-Jank Bridge)"
+          ],
+          "fullName": "Pause Mechanics, Anti-Input Buffering & Decoupled State Bridge Decoupled State Sync (Zero-Jank Bridge) throttles time_tick events to 1Hz (only on integer second transitions)",
+          "status": "passed",
+          "title": "throttles time_tick events to 1Hz (only on integer second transitions)",
+          "duration": 2.4958999999998923,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Pause Mechanics, Anti-Input Buffering & Decoupled State Bridge",
+            "Decoupled State Sync (Zero-Jank Bridge)"
+          ],
+          "fullName": "Pause Mechanics, Anti-Input Buffering & Decoupled State Bridge Decoupled State Sync (Zero-Jank Bridge) emits discrete score_changed event only on actual score modification",
+          "status": "passed",
+          "title": "emits discrete score_changed event only on actual score modification",
+          "duration": 1.293500000000222,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Pause Mechanics, Anti-Input Buffering & Decoupled State Bridge",
+            "Decoupled State Sync (Zero-Jank Bridge)"
+          ],
+          "fullName": "Pause Mechanics, Anti-Input Buffering & Decoupled State Bridge Decoupled State Sync (Zero-Jank Bridge) emits discrete health_changed event only on damage",
+          "status": "passed",
+          "title": "emits discrete health_changed event only on damage",
+          "duration": 0.9229999999997744,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Pause Mechanics, Anti-Input Buffering & Decoupled State Bridge",
+            "window.__GAME_SIMULATION__ Test Harness Interface"
+          ],
+          "fullName": "Pause Mechanics, Anti-Input Buffering & Decoupled State Bridge window.__GAME_SIMULATION__ Test Harness Interface exposes deterministic inspection and control API on window",
+          "status": "passed",
+          "title": "exposes deterministic inspection and control API on window",
+          "duration": 4.195900000000165,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423674713,
+      "endTime": 1791423674730.1958,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m2/pauseAndDecoupling.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Battle replay"
+          ],
+          "fullName": "Battle replay reproduces seed 42 at 144 Hz after other simulations allocated IDs",
+          "status": "passed",
+          "title": "reproduces seed 42 at 144 Hz after other simulations allocated IDs",
+          "duration": 135.14500000000044,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Battle replay"
+          ],
+          "fullName": "Battle replay reproduces seed 1337 at 144 Hz after other simulations allocated IDs",
+          "status": "passed",
+          "title": "reproduces seed 1337 at 144 Hz after other simulations allocated IDs",
+          "duration": 89.48580000000038,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Battle replay"
+          ],
+          "fullName": "Battle replay reproduces seed 17845 at 144 Hz after other simulations allocated IDs",
+          "status": "passed",
+          "title": "reproduces seed 17845 at 144 Hz after other simulations allocated IDs",
+          "duration": 63.6828000000005,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Battle replay"
+          ],
+          "fullName": "Battle replay detects divergence at the first periodic checkpoint and rejects incompatible versions",
+          "status": "passed",
+          "title": "detects divergence at the first periodic checkpoint and rejects incompatible versions",
+          "duration": 28.735000000000582,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Battle replay"
+          ],
+          "fullName": "Battle replay restarts the seed, configuration, counters, and recording together",
+          "status": "passed",
+          "title": "restarts the seed, configuration, counters, and recording together",
+          "duration": 30.207899999999427,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "teaches three real actions without opponents, a timer, a scored result, or a replay",
+          "status": "passed",
+          "title": "teaches three real actions without opponents, a timer, a scored result, or a replay",
+          "duration": 4.952599999998711,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "interpolates on the shortest arc, clamps catch-up alpha, and leaves physics untouched",
+          "status": "passed",
+          "title": "interpolates on the shortest arc, clamps catch-up alpha, and leaves physics untouched",
+          "duration": 3.305499999998574,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "recovers each practice lesson with clean inputs, cooldowns, and no scored recording",
+          "status": "passed",
+          "title": "recovers each practice lesson with clean inputs, cooldowns, and no scored recording",
+          "duration": 7.4421000000002095,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "gives portrait ships usable scale and clamps bearings above touch controls",
+          "status": "passed",
+          "title": "gives portrait ships usable scale and clamps bearings above touch controls",
+          "duration": 2.5072999999993044,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [],
+          "fullName": "warns before a charge, then locks its bearing, and cancels shooter loading when aim is lost",
+          "status": "passed",
+          "title": "warns before a charge, then locks its bearing, and cancels shooter loading when aim is lost",
+          "duration": 0.5252000000000407,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423669490,
+      "endTime": 1791423669857.5251,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m2/replayAndTraining.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "Replay transport"
+          ],
+          "fullName": "Replay transport verifies every checkpoint at 0.5x on 30 Hz and 144 Hz displays",
+          "status": "passed",
+          "title": "verifies every checkpoint at 0.5x on 30 Hz and 144 Hz displays",
+          "duration": 237.06849999999986,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Replay transport"
+          ],
+          "fullName": "Replay transport verifies every checkpoint at 1x on 30 Hz and 144 Hz displays",
+          "status": "passed",
+          "title": "verifies every checkpoint at 1x on 30 Hz and 144 Hz displays",
+          "duration": 156.85809999999992,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Replay transport"
+          ],
+          "fullName": "Replay transport verifies every checkpoint at 2x on 30 Hz and 144 Hz displays",
+          "status": "passed",
+          "title": "verifies every checkpoint at 2x on 30 Hz and 144 Hz displays",
+          "duration": 140.25459999999975,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Replay transport"
+          ],
+          "fullName": "Replay transport verifies every checkpoint at 4x on 30 Hz and 144 Hz displays",
+          "status": "passed",
+          "title": "verifies every checkpoint at 4x on 30 Hz and 144 Hz displays",
+          "duration": 132.98889999999983,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "Replay transport"
+          ],
+          "fullName": "Replay transport changes pace mid-replay without skipping tamper checks or changing live battle speed",
+          "status": "passed",
+          "title": "changes pace mid-replay without skipping tamper checks or changing live battle speed",
+          "duration": 90.0961000000002,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423688698,
+      "endTime": 1791423689455.0962,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m2/replayTransport.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "GameSimulation Engine"
+          ],
+          "fullName": "GameSimulation Engine initializes with full health, configured timer, and 0 score",
+          "status": "passed",
+          "title": "initializes with full health, configured timer, and 0 score",
+          "duration": 2.8706999999999425,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "GameSimulation Engine"
+          ],
+          "fullName": "GameSimulation Engine runs fixed timestep loop with accumulator and sub-step clamp of 5",
+          "status": "passed",
+          "title": "runs fixed timestep loop with accumulator and sub-step clamp of 5",
+          "duration": 2.6212000000000444,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "GameSimulation Engine"
+          ],
+          "fullName": "GameSimulation Engine ends match with reason time_expired when session timer runs out",
+          "status": "passed",
+          "title": "ends match with reason time_expired when session timer runs out",
+          "duration": 1.4373999999997977,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "GameSimulation Engine"
+          ],
+          "fullName": "GameSimulation Engine ends match with reason player_destroyed when player health reaches zero",
+          "status": "passed",
+          "title": "ends match with reason player_destroyed when player health reaches zero",
+          "duration": 1.5318999999999505,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "GameSimulation Engine"
+          ],
+          "fullName": "GameSimulation Engine awards +1 score per enemy destroyed by player attacks",
+          "status": "passed",
+          "title": "awards +1 score per enemy destroyed by player attacks",
+          "duration": 1.7771999999999935,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "GameSimulation Engine"
+          ],
+          "fullName": "GameSimulation Engine discards match when abandoned mid-game (endReason: abandoned)",
+          "status": "passed",
+          "title": "discards match when abandoned mid-game (endReason: abandoned)",
+          "duration": 0.8755000000001019,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "GameSimulation Engine"
+          ],
+          "fullName": "GameSimulation Engine restores all state cleanly on restart",
+          "status": "passed",
+          "title": "restores all state cleanly on restart",
+          "duration": 0.8087000000000444,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "GameSimulation Engine"
+          ],
+          "fullName": "GameSimulation Engine provides comprehensive snapshot and debug state",
+          "status": "passed",
+          "title": "provides comprehensive snapshot and debug state",
+          "duration": 0.9017000000003463,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423677181,
+      "endTime": 1791423677194.9016,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m2/simulation.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "EnemySpawner Subsystem"
+          ],
+          "fullName": "EnemySpawner Subsystem provides deterministic random sequences with SeededPRNG",
+          "status": "passed",
+          "title": "provides deterministic random sequences with SeededPRNG",
+          "duration": 2.2316000000000713,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "EnemySpawner Subsystem"
+          ],
+          "fullName": "EnemySpawner Subsystem respects configurable spawn interval (validated positive, default 3s)",
+          "status": "passed",
+          "title": "respects configurable spawn interval (validated positive, default 3s)",
+          "duration": 1.1604000000002088,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "EnemySpawner Subsystem"
+          ],
+          "fullName": "EnemySpawner Subsystem guarantees safe distance from player (>= 380px) for all spawns",
+          "status": "passed",
+          "title": "guarantees safe distance from player (>= 380px) for all spawns",
+          "duration": 1.3065999999998894,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "EnemySpawner Subsystem"
+          ],
+          "fullName": "EnemySpawner Subsystem guarantees clearance from island obstacles for all spawns",
+          "status": "passed",
+          "title": "guarantees clearance from island obstacles for all spawns",
+          "duration": 2.2188999999998487,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "EnemySpawner Subsystem"
+          ],
+          "fullName": "EnemySpawner Subsystem enforces entity density cap (max 10 active enemies)",
+          "status": "passed",
+          "title": "enforces entity density cap (max 10 active enemies)",
+          "duration": 0.568199999999706,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "EnemySpawner Subsystem"
+          ],
+          "fullName": "EnemySpawner Subsystem guarantees both enemy archetypes (Chaser & Shooter) appear during a match",
+          "status": "passed",
+          "title": "guarantees both enemy archetypes (Chaser & Shooter) appear during a match",
+          "duration": 0.4487999999996646,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423679531,
+      "endTime": 1791423679539.568,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m2/spawner.test.ts"
+    },
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": [
+            "WeaponSystem Subsystem"
+          ],
+          "fullName": "WeaponSystem Subsystem initializes with all weapons ready (cooldown 0)",
+          "status": "passed",
+          "title": "initializes with all weapons ready (cooldown 0)",
+          "duration": 10.980099999999766,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "WeaponSystem Subsystem"
+          ],
+          "fullName": "WeaponSystem Subsystem fires single frontal projectile along heading from bow with 25 damage and 480 px/s",
+          "status": "passed",
+          "title": "fires single frontal projectile along heading from bow with 25 damage and 480 px/s",
+          "duration": 2.0670000000000073,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "WeaponSystem Subsystem"
+          ],
+          "fullName": "WeaponSystem Subsystem fires port (left) broadside with 3 parallel projectiles along hull normal",
+          "status": "passed",
+          "title": "fires port (left) broadside with 3 parallel projectiles along hull normal",
+          "duration": 2.9588999999996304,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "WeaponSystem Subsystem"
+          ],
+          "fullName": "WeaponSystem Subsystem fires starboard (right) broadside with 3 parallel projectiles along hull normal",
+          "status": "passed",
+          "title": "fires starboard (right) broadside with 3 parallel projectiles along hull normal",
+          "duration": 2.0943999999999505,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "WeaponSystem Subsystem"
+          ],
+          "fullName": "WeaponSystem Subsystem maintains separate, independent cooldown clocks for all three weapons",
+          "status": "passed",
+          "title": "maintains separate, independent cooldown clocks for all three weapons",
+          "duration": 0.772899999999936,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "WeaponSystem Subsystem"
+          ],
+          "fullName": "WeaponSystem Subsystem updates projectile position, life, and arena bounds in stepProjectiles",
+          "status": "passed",
+          "title": "updates projectile position, life, and arena bounds in stepProjectiles",
+          "duration": 0.4554000000007363,
+          "failureMessages": [],
+          "meta": {}
+        },
+        {
+          "ancestorTitles": [
+            "WeaponSystem Subsystem"
+          ],
+          "fullName": "WeaponSystem Subsystem despawns projectiles that cross arena boundaries",
+          "status": "passed",
+          "title": "despawns projectiles that cross arena boundaries",
+          "duration": 0.346400000000358,
+          "failureMessages": [],
+          "meta": {}
+        }
+      ],
+      "startTime": 1791423669534,
+      "endTime": 1791423669555.3464,
+      "status": "passed",
+      "message": "",
+      "name": "<checkout>/tests/unit/m2/weapons.test.ts"
+    }
+  ]
+}
