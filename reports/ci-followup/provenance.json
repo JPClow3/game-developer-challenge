@@ -1,0 +1,15 @@
+{
+  "recordedAt": "2026-10-08T02:45:04.383Z",
+  "scope": "Local Windows recheck after rank-column locator fix; full CI remains separate",
+  "parentCommit": "ee2262fdc9058c617a15662e93150f8c251815a2",
+  "testFile": "tests/leaderboard/verified-ranking.spec.ts",
+  "testFileSha256": "39d65716fdfcca84004b4f65262358ddf13ef54604e389528f34d68d06b45e9d",
+  "stats": {
+    "startTime": "2026-10-08T02:42:27.381Z",
+    "duration": 93317.829,
+    "expected": 4,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

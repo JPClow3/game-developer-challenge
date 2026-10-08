@@ -65,7 +65,8 @@ test('live client receives a ticket, submits verified gameplay and highlights it
   await page.getByRole('button', { name: /main menu/i }).click();
   await page.getByRole('tab', { name: /ranking/i }).click();
   await expect(page.getByText('You', { exact: true })).toBeVisible();
-  await expect(page.getByRole('cell', { name: '1', exact: true })).toBeVisible();
+  const playerRow = page.getByRole('row').filter({ has: page.getByText('You', { exact: true }) });
+  await expect(playerRow.getByRole('cell').first()).toHaveText('1');
 });
 
 test('a forged early result is rejected visibly and never queued or ranked', async ({ page }) => {
