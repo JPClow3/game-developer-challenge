@@ -32,4 +32,14 @@ Source `231c0c7` freezes live ticks for the controlled scoring phase, clears unr
 
 These are local Windows results. CI checks on Windows and the pinned Linux Playwright image, deployment identity and live public-browser checks are separate release gates. No physical-phone performance claim is made.
 
+## Windows browser capture follow-up
+
+[CI run 37730245021](https://github.com/JPClow3/game-developer-challenge/actions/runs/37730245021) passed validation and all Linux gates (105 gameplay, 4 backend and 12 fixture-build cases). Windows passed 101 gameplay cases and skipped five, but four cases failed; deployment was blocked. Its [structured report](remaining-nits/windows-ci-before-trace-fix.json) is retained, including the failures.
+
+The practice and legacy-options assertions completed before context teardown exceeded its 60-second budget. The pause snapshot showed the vessel had sunk during delayed browser commands. The replay trace recorded a 43.075-second resume click; both pause and replay traces included WebGL GPU readback stall warnings. These observations support reducing capture overhead, rather than treating the run as successful.
+
+The gameplay runner now retains action/DOM traces, final screenshots and failure videos without automatically capturing a trace filmstrip on every action. The console fixture stops rendering after assertions and before browser teardown. The keyboard-only pause case freezes live ticks, and replay transport advances time explicitly while checking its controls, so slow commands cannot consume the battle or replay. Input, paused-state, exact speed/tick, restart identity and replay verification assertions remain.
+
+[Two sequential repetitions](remaining-nits/windows-stall-followup.json) of the affected specs passed 26 cases with two expected desktop portrait skips and zero failures, flaky results or retries. The [manifest](remaining-nits/windows-stall-followup-manifest.json) records test/configuration digests and the previous CI findings. One earlier exploratory run collided with a second runner sharing the report directory and failed on a missing trace file; it is not this acceptance run. A six-case standalone replay repetition also passed. Complete CI and public deployment remain separate gates.
+
 Reproduce with `npm ci`, `npm test`, `npm run lint`, `npm run build`, `npm run test:e2e`, `npm run test:leaderboard` and `npm run test:published`. Open the retained fixture-build report with `npx playwright show-report reports/remaining-nits/published`.

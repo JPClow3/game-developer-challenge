@@ -17,7 +17,10 @@ export default defineConfig({
     ['json', { outputFile: 'test-results/browser.json' }]],
   use: {
     baseURL,
-    trace: 'retain-on-failure',
+    // Continuous trace filmstrips force GPU readbacks on software-rendered
+    // Windows runners. Keep DOM/action traces, final screenshots and failure
+    // videos without stalling every live gameplay command for another frame.
+    trace: { mode: 'retain-on-failure', screenshots: false, snapshots: true },
     screenshot: 'on',
     video: 'retain-on-failure',
     channel: process.env.PLAYWRIGHT_CHANNEL || undefined,
