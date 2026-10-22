@@ -1,8 +1,6 @@
 name: Validate and deploy
 
 on:
-  push:
-    branches: [main]
   pull_request:
   workflow_dispatch:
     inputs:
@@ -111,7 +109,7 @@ jobs:
           retention-days: 14
 
   deploy:
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && !inputs.refresh_linux_baselines && vars.CLOUDFLARE_DEPLOY_ENABLED == 'true'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && !inputs.refresh_linux_baselines && vars.CLOUDFLARE_DEPLOY_ENABLED == 'true'
     needs: [validate, browser]
     runs-on: ubuntu-latest
     timeout-minutes: 15
