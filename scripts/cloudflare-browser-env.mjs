@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import { mkdir, mkdtemp, readdir, writeFile } from 'node:fs/promises';
+import { access, mkdir, mkdtemp, readFile, readdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -15,7 +15,20 @@ function run(command, args, options = {}) {
 
 run(process.execPath, [playwright, 'install', 'chromium']);
 const env = { ...process.env };
+const version = JSON.parse(await readFile(join(root, 'node_modules/playwright/package.json'), 'utf8')).version;
+const environmentCache = join(root, 'node_modules/.cache/cloudflare-browser-env.json');
+let prepared = false;
 if (process.platform === 'linux' && process.env.WORKERS_CI) {
+  try {
+    const cached = JSON.parse(await readFile(environmentCache, 'utf8'));
+    if (cached.version === version && cached.libraryDirs?.length) {
+      await Promise.all(cached.libraryDirs.map(directory => access(directory)));
+      env.LD_LIBRARY_PATH = [...cached.libraryDirs, env.LD_LIBRARY_PATH].filter(Boolean).join(':');
+      prepared = true;
+    }
+  } catch { /* Temporary directories may no longer exist in a fresh build container. */ }
+}
+if (process.platform === 'linux' && process.env.WORKERS_CI && !prepared) {
   // Workers Builds has no sudo/root access. Ask the pinned Playwright CLI which
   // distro packages are missing, download official .debs, and extract locally.
   // No system packages or installation scripts are changed or executed.
@@ -45,6 +58,9 @@ if (process.platform === 'linux' && process.env.WORKERS_CI) {
     if (simulation.status !== 0) throw new Error(`Cannot resolve browser packages:\n${simulation.stderr}`);
     missing = [...simulation.stdout.matchAll(/^Inst (\S+) /gm)].map(match => match[1]);
   }
+  // Headless functional checks do not use Xvfb or system font collections.
+  // Fonts in extracted .debs are not registered with fontconfig in this setup.
+  missing = missing.filter(name => !/^(?:fonts-|xfonts-|xvfb$|xserver-common$)/.test(name));
   if (missing.length) {
     console.log(`Preparing ${missing.length} browser dependency packages without root access.`);
     run('apt-get', ['download', ...new Set(missing)], { cwd: cache, env: aptEnv });
@@ -57,6 +73,8 @@ if (process.platform === 'linux' && process.env.WORKERS_CI) {
       if (entry.name.includes('.so')) libraryDirs.add(entry.parentPath);
     }
     env.LD_LIBRARY_PATH = [...libraryDirs, env.LD_LIBRARY_PATH].filter(Boolean).join(':');
+    await mkdir(join(root, 'node_modules/.cache'), { recursive: true });
+    await writeFile(environmentCache, JSON.stringify({ version, libraryDirs: [...libraryDirs] }));
   } else if (dry.status !== 0 || (!install && !output.includes('All system dependencies are installed.'))) {
     throw new Error(`Cannot determine browser dependencies:\n${output}`);
   }
